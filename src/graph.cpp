@@ -3,18 +3,22 @@
 namespace MolCpp
 {
 
-    void Node::add_edge(Edge* edge)
+    bool Node::add_edge(std::shared_ptr<Edge> edge)
     {
-        if (!has_edge(edge))
+        if (has_edge(edge))
+        {
+            return false;
+        }
+        else
         {
             _edges.push_back(edge);
+            return true;
         }
-
     }
 
-    bool Node::has_edge(Edge* edge)
+    bool Node::has_edge(std::shared_ptr<Edge> edge)
     {
-        for (auto e : _edges)
+        for (const auto e : _edges)
         {
             if (e == edge)
             {
@@ -24,28 +28,33 @@ namespace MolCpp
         return false;
     }
 
-    void Node::del_edge(Edge* edge)
+    void Node::del_edge(Edge *edge)
     {
-        for (auto e : _edges)
+        for (auto it = _edges.begin(); it != _edges.end(); ++it)
         {
-            if (e == edge)
+            if (it->get() == edge)
             {
-                _edges.erase(std::remove(_edges.begin(), _edges.end(), edge), _edges.end());
+                _edges.erase(it);
+                return;
             }
         }
     }
 
+    void Node::del_edge(std::shared_ptr<Edge> edge)
+    {
+        return del_edge(edge.get());
+    }
 
     NodeVec Node::get_neighbors()
     {
         NodeVec _nbrs;
-        for (auto edge : _edges)
+        for (const auto edge : _edges)
         {
-            if (edge->get_bgn() == this)
+            if (edge->get_bgn().get() == this)
             {
                 _nbrs.push_back(edge->get_end());
             }
-            else if (edge->get_end() == this)
+            else if (edge->get_end().get() == this)
             {
                 _nbrs.push_back(edge->get_bgn());
             }
@@ -65,42 +74,87 @@ namespace MolCpp
         }
     }
 
-
-    void Graph::add_node(Node* node)
+    std::shared_ptr<Node> Graph::new_node()
     {
+        auto node = std::make_shared<Node>();
         _nodes.push_back(node);
-        node->set_parent(this);
+        return node;
     }
 
-    void Graph::add_edge(Edge* edge)
+    std::shared_ptr<Edge> Graph::new_edge(size_t bgn_idx, size_t end_idx)
     {
-        _edges.push_back(edge);
-        edge->set_parent(this);
+        auto bgn = _nodes.at(bgn_idx);
+        auto end = _nodes.at(end_idx);
+        return this->new_edge(bgn, end);
     }
 
-    void Graph::add_subgraph(Graph* subgraph)
+    std::shared_ptr<Edge> Graph::new_edge(std::shared_ptr<Node> bgn, std::shared_ptr<Node> end)
     {
-        _subgraphs.push_back(subgraph);
-        subgraph->set_parent(this);
+        auto new_edge = std::make_shared<Edge>(bgn, end);
+        bgn->add_edge(new_edge);
+        end->add_edge(new_edge);
+        _edges.push_back(new_edge);
+        return new_edge;
     }
 
-    void Graph::del_node(Node* node)
+    std::shared_ptr<Graph> Graph::new_subgraph()
     {
-        for (auto n = _nodes.begin(); n != _nodes.end(); n++)
+        auto graph = std::make_shared<Graph>();
+        _subgraphs.push_back(graph);
+        return graph;
+    }
+
+    bool Graph::del_node(size_t idx)
+    {
+        if (idx >= _nodes.size())
         {
-            if (*n == node)
+            return false;
+        }
+        else
+        {
+            _nodes.erase(_nodes.begin() + idx);
+            return true;
+        }
+    }
+
+    bool Graph::del_node(std::shared_ptr<Node> node)
+    {
+        for (const auto n : _nodes)
+        {
+            if (n == node)
             {
-                _nodes.erase(n);
-                break;
+                auto nbrs = node->get_neighbors();
+                for (const auto nbr : nbrs)
+                {
+                    for (const auto edge : nbr->get_edges())
+                    {
+                        if (edge->get_bgn() == node || edge->get_end() == node)
+                        {
+                            del_edge(edge);
+                        }
+                    }
+                }
+
+                _nodes.erase(std::remove(_nodes.begin(), _nodes.end(), node), _nodes.end());
+                return true;
             }
         }
-        for (auto e = _edges.begin(); e != _edges.end(); e++)
+        return false;
+    }
+
+    bool Graph::del_edge(std::shared_ptr<Edge> edge)
+    {
+        edge->get_bgn()->del_edge(edge);
+        edge->get_end()->del_edge(edge);
+        for (auto it = _edges.begin(); it != _edges.end(); ++it)
         {
-            if ((*e)->get_bgn() == node || (*e)->get_end() == node)
+            if (*it == edge)
             {
-                _edges.erase(e);
+                _edges.erase(it);
+                return true;
             }
         }
+        return false;
     }
 
     NodeVec Graph::get_nodes()
@@ -134,7 +188,6 @@ namespace MolCpp
             nnodes += subgraph->get_nnodes();
         }
         return nnodes;
-
     }
 
     size_t Graph::get_nedges()
@@ -147,7 +200,7 @@ namespace MolCpp
         return nedges;
     }
 
-    size_t Graph::get_local_index(Node* node)
+    size_t Graph::get_local_index(std::shared_ptr<Node> node)
     {
         auto ans = find_in_container(get_nodes(), node);
         if (ans.has_value())
@@ -173,27 +226,24 @@ namespace MolCpp
             if (node->get_nedges() > 1)
             {
                 three_body[1] = get_local_index(node);
-                
-                for(auto nbr : node->get_neighbors())
+
+                for (auto nbr : node->get_neighbors())
                 {
                     nbr_indices.push_back(get_local_index(nbr));
                 }
 
                 auto combinations = combination(nbr_indices, 2);
-                for (auto i = 0; i < combinations.size(); i += 2)
+                for (size_t i = 0; i < combinations.size(); i += 2)
                 {
                     three_body[0] = combinations[i];
-                    three_body[2] = combinations[i+1];
+                    three_body[2] = combinations[i + 1];
                     three_bodies.push_back(three_body);
                 }
-
             }
             nbr_indices.clear();
-            
         }
 
         return three_bodies;
     }
-
 
 }
