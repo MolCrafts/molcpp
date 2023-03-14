@@ -11,24 +11,28 @@
 namespace MolCpp
 {
 
-    class Atom: public Node
+    class Atom : public Node
     {
-        public:
-            Atom(const chemfiles::Atom&);
-            Atom(const Element&);
-            Atom() = default;
+    public:
+        Atom(const chemfiles::Atom &);
+        Atom(const Element &);
+        Atom() = default;
 
-            Element get_element() const { return _element; }
+        Element get_element() const { return _element; }
 
-        private:
+        size_t get_implicit_hcount();
+        void set_implicit_hcount();
 
-            const Element& _element;
-            std::string _name;
-            std::string _type;
-            double _mass;
-            double _charge;
+    private:
+        Element _element;
+        std::string _name;
+        std::string _type;
+        double _mass;
+        double _charge;
+        size_t _implicit_hcount;
     };
 
+    using AtomPtr = std::shared_ptr<Atom>;
 }
 
-#endif  // ATOM_H
+#endif // ATOM_H

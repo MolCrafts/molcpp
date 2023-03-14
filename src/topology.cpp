@@ -8,9 +8,7 @@ namespace MolCpp
         // copy atoms
         for (size_t i = 0; i < chflTopology.size(); i++)
         {
-            auto _atom = new Atom(chflTopology[i]);
-            _atom->set_parent(this);
-            add_atom(_atom);
+            this.new_atom(chflTopology[i]);
         }
 
         // copy bonds
@@ -18,14 +16,28 @@ namespace MolCpp
         {
 
             auto _chflBond = chflTopology.bonds()[i];
-            auto _bond = new Bond(_atoms[_chflBond[0]], _atoms[_chflBond[1]]);
-            _bond->set_parent(this);
-            add_bond(_bond);
+            this->new_bond(_chflBond[0], _chflBond[1]);
         }
 
         // register subgraph
 
 
+    }
+
+    AtomPtr Topology::new_atom()
+    {
+        AtomPtr atom = std::make_shared<Atom>();
+        _atoms.push_back(atom);
+        add_node(atom);
+        return atom;
+    }
+
+    AtomPtr Topology::new_atom(const chemfiles::Atom &chflAtom)
+    {
+        AtomPtr atom = std::make_shared<Atom>(chflAtom);
+        _atoms.push_back(atom);
+        add_node(atom);
+        return atom;
     }
 
 }

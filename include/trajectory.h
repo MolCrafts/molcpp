@@ -12,7 +12,7 @@ class Trajectory
 {
 
     public:
-        explicit Trajectory(std::string , char, const std::string& );
+        explicit Trajectory(std::string, char, const std::string& );
         Trajectory();
 
         Frame read();

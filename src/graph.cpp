@@ -3,7 +3,7 @@
 namespace MolCpp
 {
 
-    bool Node::add_edge(std::shared_ptr<Edge> edge)
+    bool Node::add_edge(EdgePtr edge)
     {
         if (has_edge(edge))
         {
@@ -16,7 +16,7 @@ namespace MolCpp
         }
     }
 
-    bool Node::has_edge(std::shared_ptr<Edge> edge)
+    bool Node::has_edge(EdgePtr edge)
     {
         for (const auto e : _edges)
         {
@@ -30,19 +30,19 @@ namespace MolCpp
 
     void Node::del_edge(Edge *edge)
     {
-        for (auto it = _edges.begin(); it != _edges.end(); ++it)
-        {
-            if (it->get() == edge)
-            {
-                _edges.erase(it);
-                return;
-            }
-        }
+
     }
 
-    void Node::del_edge(std::shared_ptr<Edge> edge)
+    void Node::del_edge(EdgePtr edge)
     {
-        return del_edge(edge.get());
+        for (auto it = _edges.begin(); it != _edges.end(); ++it)
+        {
+            if (*it == edge)
+            {
+                _edges.erase(it);
+                break;
+            }
+        }
     }
 
     NodeVec Node::get_neighbors()
@@ -50,11 +50,11 @@ namespace MolCpp
         NodeVec _nbrs;
         for (const auto edge : _edges)
         {
-            if (edge->get_bgn().get() == this)
+            if ((edge->get_bgn()) == this)
             {
                 _nbrs.push_back(edge->get_end());
             }
-            else if (edge->get_end().get() == this)
+            else if (*(edge->get_end()) == this)
             {
                 _nbrs.push_back(edge->get_bgn());
             }
@@ -74,21 +74,21 @@ namespace MolCpp
         }
     }
 
-    std::shared_ptr<Node> Graph::new_node()
+    NodePtr Graph::new_node()
     {
         auto node = std::make_shared<Node>();
         _nodes.push_back(node);
         return node;
     }
 
-    std::shared_ptr<Edge> Graph::new_edge(size_t bgn_idx, size_t end_idx)
+    EdgePtr Graph::new_edge(size_t bgn_idx, size_t end_idx)
     {
         auto bgn = _nodes.at(bgn_idx);
         auto end = _nodes.at(end_idx);
         return this->new_edge(bgn, end);
     }
 
-    std::shared_ptr<Edge> Graph::new_edge(std::shared_ptr<Node> bgn, std::shared_ptr<Node> end)
+    EdgePtr Graph::new_edge(NodePtr bgn, NodePtr end)
     {
         auto new_edge = std::make_shared<Edge>(bgn, end);
         bgn->add_edge(new_edge);
@@ -117,7 +117,7 @@ namespace MolCpp
         }
     }
 
-    bool Graph::del_node(std::shared_ptr<Node> node)
+    bool Graph::del_node(NodePtr node)
     {
         for (const auto n : _nodes)
         {
@@ -142,7 +142,7 @@ namespace MolCpp
         return false;
     }
 
-    bool Graph::del_edge(std::shared_ptr<Edge> edge)
+    bool Graph::del_edge(EdgePtr edge)
     {
         edge->get_bgn()->del_edge(edge);
         edge->get_end()->del_edge(edge);
@@ -200,7 +200,7 @@ namespace MolCpp
         return nedges;
     }
 
-    size_t Graph::get_local_index(std::shared_ptr<Node> node)
+    size_t Graph::get_local_index(NodePtr node)
     {
         auto ans = find_in_container(get_nodes(), node);
         if (ans.has_value())

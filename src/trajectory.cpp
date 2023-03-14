@@ -3,9 +3,8 @@
 namespace MolCpp
 {
 
-    explicit Trajectory::Trajectory(std::string path, char mode='r', const std::string& format="xyz"): _fileHandler(chemfiles::Trajectory(path, mode, format))
+    explicit Trajectory::Trajectory(std::string path, char mode = 'r', const std::string& format = "xyz") : _fileHandler(chemfiles::Trajectory(path, mode, format))
     {
-
     }
 
     Frame read()

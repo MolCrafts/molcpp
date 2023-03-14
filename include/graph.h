@@ -12,80 +12,83 @@ namespace MolCpp
     class Graph;
     class Edge;
     class Node;
-    using NodeVec = std::vector<std::shared_ptr<Node>>;
-    using EdgeVec = std::vector<std::shared_ptr<Edge>>;
-    using GraphVec = std::vector<std::shared_ptr<Graph>>;
+    using NodePtr = std::shared_ptr<Node>;
+    using EdgePtr = std::shared_ptr<Edge>;
+    using GraphPtr = std::shared_ptr<Graph>;
+    using NodeVec = std::vector<NodePtr>;
+    using EdgeVec = std::vector<EdgePtr>;
+    using GraphVec = std::vector<GraphPtr>;
     using ThreeBodyIndex = std::vector<std::array<size_t, 3>>;
 
     class Node
     {
 
-        public:
-            Node(): _parent{nullptr}, _edges{} {}
-            int get_nedges() const { return _edges.size(); }
-            void set_parent(std::shared_ptr<Graph> parent) { _parent = parent; }
-            EdgeVec get_edges() const { return _edges; }
-            bool add_edge(std::shared_ptr<Edge>);
-            bool has_edge(std::shared_ptr<Edge>);
-            void del_edge(std::shared_ptr<Edge>);
-            void del_edge(Edge*);
-            NodeVec get_neighbors();
+    public:
+        Node() : _parent{nullptr}, _edges{} {}
+        int get_nedges() const { return _edges.size(); }
+        void set_parent(GraphPtr parent) { _parent = parent; }
+        EdgeVec get_edges() const { return _edges; }
+        bool add_edge(EdgePtr);
+        bool has_edge(EdgePtr);
+        void del_edge(EdgePtr);
+        void del_edge(Edge *);
+        NodeVec get_neighbors();
 
-        protected:
-            std::shared_ptr<Graph> _parent;
-            EdgeVec _edges;
-
+    protected:
+        GraphPtr _parent;
+        EdgeVec _edges;
     };
-
 
     class Edge
     {
-        public:
-            Edge(): _parent{nullptr}, _bgn{nullptr}, _end{nullptr} {}
-            Edge(std::shared_ptr<Node> begin, std::shared_ptr<Node> end):_parent{nullptr}, _bgn{begin}, _end{end} {
+    public:
+        Edge() : _parent{nullptr}, _bgn{nullptr}, _end{nullptr} {}
+        Edge(NodePtr begin, NodePtr end) : _parent{nullptr}, _bgn{begin}, _end{end}
+        {
+        }
+        ~Edge();
+        NodePtr get_bgn() const { return _bgn; }
+        NodePtr get_end() const { return _end; }
+        void set_parent(GraphPtr parent) { _parent = parent; }
 
-            }
-            ~Edge();
-            std::shared_ptr<Node> get_bgn() const { return _bgn; }
-            std::shared_ptr<Node> get_end() const { return _end; }
-            void set_parent(std::shared_ptr<Graph> parent) { _parent = parent; }
-
-        protected:
-            std::shared_ptr<Graph> _parent;
-            std::shared_ptr<Node> _bgn;
-            std::shared_ptr<Node> _end;
-
+    protected:
+        GraphPtr _parent;
+        NodePtr _bgn;
+        NodePtr _end;
     };
-
 
     class Graph
     {
-        public:
-            Graph(): _parent{nullptr}, _nodes{}, _edges{}, _subgraphs{} {};
-            std::shared_ptr<Node> new_node();
-            std::shared_ptr<Edge> new_edge(size_t, size_t);
-            std::shared_ptr<Edge> new_edge(std::shared_ptr<Node>, std::shared_ptr<Node>);
-            std::shared_ptr<Graph> new_subgraph();
-            bool del_node(std::shared_ptr<Node>);
-            bool del_node(size_t);
-            bool del_edge(std::shared_ptr<Edge>);
-            NodeVec get_nodes();
-            EdgeVec get_edges();
-            size_t get_nnodes();
-            size_t get_nedges();
-            size_t get_local_index(std::shared_ptr<Node> node);
-            void set_parent(std::shared_ptr<Graph> parent) { _parent = parent; }
+    public:
+        Graph() : _parent{nullptr}, _nodes{}, _edges{}, _subgraphs{} {};
+        void add_node(NodePtr node) { _nodes.push_back(node); };
+        void add_edge(EdgePtr edge) { _edges.push_back(edge); };
+        void add_subgraph(GraphPtr graph) { _subgraphs.push_back(graph); };
+        NodePtr new_node();
+        EdgePtr new_edge(size_t, size_t);
+        bool add_node(size_t);
+        EdgePtr new_edge(NodePtr, NodePtr);
+        GraphPtr new_subgraph();
 
-            ThreeBodyIndex find_three_bodies();
+        bool del_node(NodePtr);
+        bool del_node(size_t);
+        bool del_edge(EdgePtr);
+        NodeVec get_nodes();
+        EdgeVec get_edges();
+        size_t get_nnodes();
+        size_t get_nedges();
+        size_t get_local_index(NodePtr node);
+        void set_parent(GraphPtr parent) { _parent = parent; }
 
-        protected:
-            std::shared_ptr<Graph> _parent;
-            NodeVec _nodes;
-            EdgeVec _edges;
-            GraphVec _subgraphs;
+        ThreeBodyIndex find_three_bodies();
 
+    protected:
+        GraphPtr _parent;
+        NodeVec _nodes;
+        EdgeVec _edges;
+        GraphVec _subgraphs;
     };
 
 }
 
-#endif  // GRAPH_H
+#endif // GRAPH_H

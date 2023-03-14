@@ -62,8 +62,7 @@ namespace MolCpp
         // count up number of hydrogens to add
         Atom *atom, *h;
         int hcount, count = 0;
-        std::vector<pair<OBAtom *, int>> vhadd;
-        std::vector<Atom *>::iterator i;
+        std::vector<std::pair<, int>> vhadd;
         for (auto atom : get_atoms())
         {
             if (whichHydrogen == PolarHydrogen && !atom->get_element().is_NOSP())
@@ -71,12 +70,12 @@ namespace MolCpp
             if (whichHydrogen == NonPolarHydrogen && atom->get_element().is_NOSP())
                 continue;
 
-            hcount = atom->GetImplicitHCount();
-            atom->SetImplicitHCount(0);
+            hcount = atom->get_implicit_hcount();
+            atom->set_implicit_hcount(0);
 
             if (hcount)
             {
-                vhadd.push_back(pair<OBAtom *, int>(atom, hcount));
+                vhadd.push_back(std::pair<auto, int>(atom, hcount));
                 count += hcount;
             }
         }

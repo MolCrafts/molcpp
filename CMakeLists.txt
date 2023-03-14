@@ -33,14 +33,14 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/graph.cpp
-#   src/atom.cpp
-#   src/bond.cpp
-#   src/trajectory.cpp
-#   src/topology.cpp
-#   src/frame.cpp
-#   src/parsmart.cpp
-#   src/molecule.cpp
-#   src/element.cpp
+  src/atom.cpp
+  src/bond.cpp
+  src/element.cpp
+  src/molecule.cpp
+  # src/trajectory.cpp
+  # src/topology.cpp
+  # src/frame.cpp
+  # src/parsmart.cpp
 )
 
 target_link_libraries(

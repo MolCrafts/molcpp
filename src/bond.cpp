@@ -3,9 +3,7 @@
 namespace MolCpp
 {
 
-
-    Bond::Bond(Atom* begin, Atom* end): 
-    Edge {begin, end}
+    Bond::Bond(AtomPtr begin, AtomPtr end) : Edge(std::static_pointer_cast<Node>(begin);, std::static_pointer_cast<Node>(end);)
     {
     }
 
