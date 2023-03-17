@@ -37,6 +37,7 @@ target_sources(
   src/bond.cpp
   src/element.cpp
   src/molecule.cpp
+  src/forcefield.cpp
   # src/trajectory.cpp
   # src/topology.cpp
   # src/frame.cpp
