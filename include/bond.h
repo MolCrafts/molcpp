@@ -6,13 +6,19 @@
 
 namespace MolCpp
 {
-
     class Bond : public Edge
     {
-    public:
-        Bond(AtomPtr, AtomPtr);
+        public:
+            Bond(AtomPtr begin, AtomPtr end) : Edge{begin, end}, _bgn{begin}, _end{end} {}
+            ~Bond() = default;
 
-    private:
+            AtomPtr get_bgn() const { return _bgn; }
+            AtomPtr get_end() const { return _end; }
+
+        private:
+            AtomPtr _bgn, _end;
+
+        
     };
     using BondPtr = std::shared_ptr<Bond>;
 

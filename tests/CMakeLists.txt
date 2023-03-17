@@ -25,7 +25,7 @@ add_executable(
     molcpp_test
     test_algo.cpp
     test_graph.cpp
-    test_frame.cpp
+    # test_frame.cpp
     test_element.cpp
     # test_parsmart.cpp
 )

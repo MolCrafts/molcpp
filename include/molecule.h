@@ -2,7 +2,6 @@
 #define MOLECULE_H
 
 #include "topology.h"
-#include "parsmart.h"
 #include "atom.h"
 #include "bond.h"
 #include "utils.h"
@@ -54,14 +53,15 @@ namespace MolCpp
     const int REACTION_MOL = 1 << 22;
     //! Molecule is repeating in a periodic unit cell
     const int PERIODIC_MOL = 1 << 23;
-    // flags 24-32 unspecified
+    //! If set, the molecule has been modified since the properties were calculated
+    const int IS_MODIFIED = 1 << 24;
+    // flags 25-32 unspecified
 
     class Molecule : public Topology
     {
 
     public:
         Molecule();
-        Molecule(const Pattern *);
 
         bool add_new_hydrogens(HydrogenType whichHydrogen, bool correctForPh, double pH=7.4);
 
@@ -71,11 +71,14 @@ namespace MolCpp
         bool is_empty() { return _atoms.empty() && _subgraphs.empty(); }
         void set_hydrogens_added() { switch_flag(_flags, H_ADDED_MOL); }
         void set_chirality_perceived() { switch_flag(_flags, CHIRALITY_MOL); }
+        size_t get_natoms() const;
+        bool add_hydrogens(bool polaronly, bool correctForPH, double pH = 7.4) {
+            return add_new_hydrogens(polaronly ? PolarHydrogen : AllHydrogen, correctForPH, pH);
+        }
 
     private:
         int _flags;
         std::vector<double*> _conformers;
-
 
     };
 

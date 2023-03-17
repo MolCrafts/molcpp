@@ -6,8 +6,6 @@
 #include <bitset>
 #include <cstring>
 #include "molecule.h"
-#include "atom.h"
-#include "bond.h"
 
 using bitset = std::bitset<10>;
 
@@ -514,8 +512,8 @@ namespace MolCpp
         std::vector<std::pair<const Pattern *, std::vector<bool>>> RSCACHE;
         // list of fragment patterns (e.g., (*).(*)
         std::vector<const Pattern *> Fragments;
-        bool EvalAtomExpr(AtomExpr *expr, Atom *atom);
-        bool EvalBondExpr(BondExpr *expr, Bond *bond);
+        bool EvalAtomExpr(AtomExpr *expr, AtomPtr atom);
+        bool EvalBondExpr(BondExpr *expr, BondPtr bond);
         void SetupAtomMatchTable(std::vector<std::vector<bool>> &ttab,
                                  const Pattern *pat, Molecule &mol);
         void FastSingleMatch(Molecule &mol, const Pattern *pat,

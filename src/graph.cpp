@@ -50,11 +50,11 @@ namespace MolCpp
         NodeVec _nbrs;
         for (const auto edge : _edges)
         {
-            if ((edge->get_bgn()) == this)
+            if (edge->get_bgn().get() == this)
             {
                 _nbrs.push_back(edge->get_end());
             }
-            else if (*(edge->get_end()) == this)
+            else if (edge->get_end().get() == this)
             {
                 _nbrs.push_back(edge->get_bgn());
             }
@@ -119,9 +119,9 @@ namespace MolCpp
 
     bool Graph::del_node(NodePtr node)
     {
-        for (const auto n : _nodes)
+        for (auto it = _nodes.begin(); it != _nodes.end(); ++it)
         {
-            if (n == node)
+            if (*it == node)
             {
                 auto nbrs = node->get_neighbors();
                 for (const auto nbr : nbrs)
@@ -134,8 +134,7 @@ namespace MolCpp
                         }
                     }
                 }
-
-                _nodes.erase(std::remove(_nodes.begin(), _nodes.end(), node), _nodes.end());
+                _nodes.erase(it);
                 return true;
             }
         }
@@ -244,6 +243,43 @@ namespace MolCpp
         }
 
         return three_bodies;
+    }
+
+    static int find_rings(NodePtr node, std::vector<NodePtr> &path, std::vector<std::vector<NodePtr>> &rings)
+    {
+
+    }
+
+    //! @brief: find which node and edge are in the ring
+    void Graph::find_nodes_edges_in_ring()
+    {
+        // clean up the flags
+        for (auto node : get_nodes())
+        {
+            node->set_in_ring_flag(false);
+        }
+        // for (auto edge : get_edges())
+        // {
+        //     edge->set_in_ring_flag(false);
+        // }
+
+        // find the nodes and edges in the ring
+        unsigned int natoms = this->get_nnodes();
+        unsigned int nbonds = this->get_nedges() + 1;
+        std::vector<unsigned int> avisit(natoms, 0);
+        std::vector<unsigned int> bvisit(nbonds, 0);
+
+        unsigned int frj = 0;
+        for (unsigned int i=1; i <= natoms; i++)
+            if (avisit[i] == 0)
+            {
+                avisit[i] == 1;
+                auto node = _nodes[i];
+                find_rings(node, avisit, bvisit, frj, 1);
+            }
+
+        // return frj;
+
     }
 
 }

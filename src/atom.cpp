@@ -10,6 +10,7 @@ namespace MolCpp
                                                   _mass(chflAtom.mass()),
                                                   _charge(chflAtom.charge()),
                                                   _implicit_hcount(0)
+                                                    // _bonds{}
     {
     }
 
@@ -20,8 +21,32 @@ namespace MolCpp
                                          _mass{element.get_mass()}, 
                                          _charge{0.0}, 
                                          _implicit_hcount{0}
+                                            // _bonds{}
     {
-        
+
+    }
+
+    size_t Atom::get_implicit_hcount()
+    {
+        return _implicit_hcount;
+    }
+
+    void Atom::set_implicit_hcount(size_t hcount)
+    {
+        _implicit_hcount = hcount;
+    }
+
+    bool Atom::IsAromatic() const
+    {
+
+        auto mol = this->get_parent();
+        if (!mol->HasAromaticPerceived())
+            aromtyper.AssignAromaticFlags(*mol);
+
+        if (this->has_flag(AROMATIC_ATOM))
+            return true;
+
+        return false;
     }
 
 }

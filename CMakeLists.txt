@@ -32,15 +32,15 @@ target_sources(
   molcpp
   PRIVATE
   src/algo.cpp
+  src/element.cpp
   src/graph.cpp
   src/atom.cpp
   src/bond.cpp
-  src/element.cpp
   src/molecule.cpp
   # src/trajectory.cpp
-  # src/topology.cpp
+  src/topology.cpp
   # src/frame.cpp
-  # src/parsmart.cpp
+  src/parsmart.cpp
 )
 
 target_link_libraries(

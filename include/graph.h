@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <array>
-#include <algo.h>
+#include "algo.h"
 #include <memory>
+#include "utils.h"
 
 namespace MolCpp
 {
@@ -20,39 +21,43 @@ namespace MolCpp
     using GraphVec = std::vector<GraphPtr>;
     using ThreeBodyIndex = std::vector<std::array<size_t, 3>>;
 
+    //! Node in a ring
+    const int NODE_IN_RING = 1 << 4;
+
     class Node
     {
 
     public:
-        Node() : _parent{nullptr}, _edges{} {}
+        Node() : _edges{}, _flags{0} {}
         int get_nedges() const { return _edges.size(); }
-        void set_parent(GraphPtr parent) { _parent = parent; }
         EdgeVec get_edges() const { return _edges; }
         bool add_edge(EdgePtr);
         bool has_edge(EdgePtr);
         void del_edge(EdgePtr);
         void del_edge(Edge *);
         NodeVec get_neighbors();
+        void set_in_ring_flag(bool val=true) { set_unset_flag(val, _flags, NODE_IN_RING); }
 
     protected:
-        GraphPtr _parent;
         EdgeVec _edges;
+        int _flags;
+
+    private:
+
     };
 
     class Edge
     {
     public:
-        Edge() : _parent{nullptr}, _bgn{nullptr}, _end{nullptr} {}
-        Edge(NodePtr begin, NodePtr end) : _parent{nullptr}, _bgn{begin}, _end{end}
+        Edge() : _bgn{nullptr}, _end{nullptr} {}
+        Edge(NodePtr begin, NodePtr end) : _bgn{begin}, _end{end}
         {
         }
         ~Edge();
         NodePtr get_bgn() const { return _bgn; }
         NodePtr get_end() const { return _end; }
-        void set_parent(GraphPtr parent) { _parent = parent; }
 
     protected:
-        GraphPtr _parent;
         NodePtr _bgn;
         NodePtr _end;
     };
@@ -60,7 +65,7 @@ namespace MolCpp
     class Graph
     {
     public:
-        Graph() : _parent{nullptr}, _nodes{}, _edges{}, _subgraphs{} {};
+        Graph() : _nodes{}, _edges{}, _subgraphs{} {};
         void add_node(NodePtr node) { _nodes.push_back(node); };
         void add_edge(EdgePtr edge) { _edges.push_back(edge); };
         void add_subgraph(GraphPtr graph) { _subgraphs.push_back(graph); };
@@ -78,15 +83,16 @@ namespace MolCpp
         size_t get_nnodes();
         size_t get_nedges();
         size_t get_local_index(NodePtr node);
-        void set_parent(GraphPtr parent) { _parent = parent; }
 
         ThreeBodyIndex find_three_bodies();
 
+        void find_nodes_edges_in_ring();
+
     protected:
-        GraphPtr _parent;
         NodeVec _nodes;
         EdgeVec _edges;
         GraphVec _subgraphs;
+
     };
 
 }

@@ -1834,7 +1834,7 @@ namespace MolCpp
         {
             // Do matching on a copy of mol with explicit hydrogens
             Molecule tmol = mol;
-            tmol.AddHydrogens(false, false);
+            tmol.add_hydrogens(false, false);
             return (matcher.match(tmol, _pat, _mlist, single));
         }
         return (matcher.match(mol, _pat, _mlist, single));
@@ -1858,7 +1858,7 @@ namespace MolCpp
         {
             // Do matching on a copy of mol with explicit hydrogens
             Molecule tmol = mol;
-            tmol.AddHydrogens(false, false);
+            tmol.add_hydrogens(false, false);
             if (!matcher.match(tmol, _pat, mlist, mtype == Single))
                 return false;
         }
@@ -1968,14 +1968,13 @@ namespace MolCpp
 
         ttab.resize(pat->acount);
         for (i = 0; i < pat->acount; ++i)
-            ttab[i].resize(mol.NumAtoms() + 1);
+            ttab[i].resize(mol.get_natoms() + 1);
 
-        Atom *atom;
-        std::vector<Atom *>::iterator j;
         for (i = 0; i < pat->acount; ++i)
-            for (atom = mol.BeginAtom(j); atom; atom = mol.NextAtom(j))
+            for (auto atom : mol.get_atoms())
                 if (EvalAtomExpr(pat->atom[0].expr, atom))
                     ttab[i][atom->GetIdx()] = true;
+
     }
 
     void SmartsMatcher::FastSingleMatch(Molecule &mol, const Pattern *pat,
@@ -2189,7 +2188,7 @@ namespace MolCpp
         return (!mlist.empty());
     }
 
-    bool SmartsMatcher::EvalAtomExpr(AtomExpr *expr, Atom *atom)
+    bool SmartsMatcher::EvalAtomExpr(AtomExpr *expr, AtomPtr atom)
     {
         for (;;)
             switch (expr->type)

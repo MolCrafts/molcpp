@@ -1,7 +1,6 @@
 #ifndef TOPOLOGY_H
 #define TOPOLOGY_H
 
-#include "graph.h"
 #include "atom.h"
 #include "bond.h"
 
@@ -17,9 +16,11 @@ namespace MolCpp
         public:
             Topology() = default;
             Topology(const chemfiles::Topology& chflTopology);
+            bool add_atom(AtomPtr);
             AtomPtr new_atom();
             AtomPtr new_atom(const chemfiles::Atom &);
             AtomVec get_atoms() const { return _atoms; }
+            bool add_bond(BondPtr);
             BondPtr new_bond(AtomPtr, AtomPtr);
             BondPtr new_bond(size_t, size_t);
             BondVec get_bonds() const { return _bonds; }
