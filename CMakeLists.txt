@@ -60,5 +60,11 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   )
   enable_testing()
   add_subdirectory(tests)
-  
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  target_compile_options(molcpp
+      PUBLIC
+          -O3
+  )
+else()
+  message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()
