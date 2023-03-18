@@ -83,8 +83,11 @@ namespace MolCpp
 
         public:
             ForceField();
+<<<<<<< HEAD
             bool def(std::string name);
             bool def_bondtype(std::string name, AtomType itype, AtomType jtype);
+=======
+>>>>>>> feat-forcefield
 
         private:
             AtomTypeManager _atom_type_manager;
