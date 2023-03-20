@@ -78,7 +78,7 @@ namespace MolCpp
         public:
             ForceField();
             AtomTypePtr def_atomtype(std::string name);
-            size_t get_natypes() const { return _atom_type_manager.get_ntypes(); }
+            size_t get_natomtypes() const { return _atom_type_manager.get_ntypes(); }
             // bool def_bondtype(std::string name, AtomType itype, AtomType jtype);
 
         private:

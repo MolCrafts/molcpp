@@ -14,7 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Add dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
@@ -66,8 +66,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "Release")
       PUBLIC
           -O3
   )
-  install(TARGETS molcpp DESTINATION lib)
-  install(DIRECTORY include/ DESTINATION include)
+  # install(TARGETS molcpp DESTINATION lib)
+  # install(DIRECTORY include/ DESTINATION include)
 else()
   message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()
