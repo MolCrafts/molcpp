@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(molcpp LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # CMake helpers
 include(CMakePrintHelpers)
@@ -14,7 +14,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Add dependencies
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/libs)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
@@ -31,17 +31,17 @@ target_include_directories(
 target_sources(
   molcpp
   PRIVATE
-  src/algo.cpp
-  src/element.cpp
-  src/graph.cpp
-  src/atom.cpp
-  src/bond.cpp
-  src/molecule.cpp
+  # src/algo.cpp
+  # src/element.cpp
+  # src/graph.cpp
+  # src/atom.cpp
+  # src/bond.cpp
+  # src/molecule.cpp
   src/forcefield.cpp
   # src/trajectory.cpp
-  src/topology.cpp
+  # src/topology.cpp
   # src/frame.cpp
-  src/parsmart.cpp
+  # src/parsmart.cpp
 )
 
 target_link_libraries(
@@ -66,6 +66,8 @@ elseif(CMAKE_BUILD_TYPE MATCHES "Release")
       PUBLIC
           -O3
   )
+  install(TARGETS molcpp DESTINATION lib)
+  install(DIRECTORY include/ DESTINATION include)
 else()
   message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()

@@ -1,8 +1,8 @@
-#ifndef FORCEFIELD_H
-#define FORCEFIELD_H
+# pragma once
 #include <string>
 #include <vector>
 #include <memory>
+#include <optional>
 #include "mplog.h"
 namespace MolCpp
 {
@@ -10,91 +10,81 @@ namespace MolCpp
     class AtomType
     {
         public:
-            AtomType(std::string name) : _name{name} {};
-
+            AtomType(const std::string&);
+            std::string get_name() const { return _name; };
+            bool operator== (const AtomType&) const;
+            bool operator!= (const AtomType&) const;
+            
         private:
             std::string _name;
     };
 
-    // using AtomTypePtr = std::shared_ptr<AtomType>;
+    using AtomTypePtr = std::shared_ptr<AtomType>;
 
     class AtomTypeManager
     {
 
         public:
             AtomTypeManager();
-            AtomType get_by_type(std::string tname);
-            bool def(std::string name);
+            /// @brief define a atomtype by its name
+            /// @param  const std::string&
+            /// @return true if success else false
+            AtomTypePtr def(const std::string&);
+            /// @brief get a atomtype by its name
+            /// @param  const std::string&
+            /// @return AtomType
+            std::optional<AtomTypePtr> get(std::string);
             size_t get_ntypes() const { return _atom_types.size(); }
 
-            bool operator == (const AtomType& other) const
-            {
-                if (other._name == _name)
-                    return true;
-                else
-                    return false;
-            }
 
         private:
-            std::vector<AtomType> _atom_types;
+            std::vector<AtomTypePtr> _atom_types;
 
     };
 
-    class BondType
-    {
-        public:
-            BondType(std::string name, const AtomType& _itype, const AtomType& _jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
+    // class BondType
+    // {
+    //     public:
+    //         BondType(const std::string& name, const AtomType& _itype, const AtomType& _jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
 
-            AtomType get_itype() const { return _itomtype; }
-            AtomType get_jtype() const { return _jtomtype; }
+    //         AtomType get_itype() const { return _itomtype; }
+    //         AtomType get_jtype() const { return _jtomtype; }
+    //         std::string get_name() const { return _name; }
 
-            bool opertaor == (const BondType& other) const
-            {
-                if (other.get_itype() == _itomtype && other.get_jtype() == _jtomtype)
-                    return true;
-                else if (other.get_itype() == _jtomtype && other.get_jtype() == _itomtype)
-                    return true;
-                else
-                    return false;
-            }
+    //         bool operator== (const BondType&) const;
 
+    //     private:
+    //         std::string _name;
+    //         AtomType _itomtype, _jtomtype;
 
-        private:
-            std::string _name;
-            AtomType _itomtype, _jtomtype;
+    // };
 
-    };
+    // class BondTypeManager
+    // {
+    //     public:
+    //         BondTypeManager();
+    //         std::optional<BondType> get(const std::string& tname);
+    //         std::optional<BondType> get(const AtomType& itype, const AtomType& jtype);
+    //         BondType def(const std::string&, const AtomType&, const AtomType&);
+    //         size_t get_ntypes() const { return _bond_types.size(); }
 
-    class BondTypeManager
-    {
-        public:
-            BondTypeManager();
-            BondType get(std::string tname);
-            BondType get(const AtomType& itype, const AtomType& jtype);
-            bool def_bondtype(std::string name, AtomType itype, AtomType jtype);
-            size_t get_ntypes() const { return _bond_types.size(); }
-
-        private:
-            std::vector<BondType> _bond_types;
-    };
+    //     private:
+    //         std::vector<BondType> _bond_types;
+    // };
 
     class ForceField
     {
 
         public:
             ForceField();
-<<<<<<< HEAD
-            bool def(std::string name);
-            bool def_bondtype(std::string name, AtomType itype, AtomType jtype);
-=======
->>>>>>> feat-forcefield
+            AtomTypePtr def_atomtype(std::string name);
+            size_t get_natypes() const { return _atom_type_manager.get_ntypes(); }
+            // bool def_bondtype(std::string name, AtomType itype, AtomType jtype);
 
         private:
             AtomTypeManager _atom_type_manager;
-            BondTypeManager _bond_type_manager;
+            // BondTypeManager _bond_type_manager;
 
     };
 
 }
-
-#endif

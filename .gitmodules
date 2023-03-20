@@ -1,9 +1,9 @@
-[submodule "libs/chemfiles"]
-	path = libs/chemfiles
+[submodule "external/chemfiles"]
+	path = external/chemfiles
 	url = https://github.com/chemfiles/chemfiles
-[submodule "libs/xtl"]
-	path = libs/xtl
+[submodule "external/xtl"]
+	path = external/xtl
 	url = https://github.com/xtensor-stack/xtl.git
-[submodule "libs/xtensor"]
-	path = libs/xtensor
+[submodule "external/xtensor"]
+	path = external/xtensor
 	url = https://github.com/xtensor-stack/xtensor.git
