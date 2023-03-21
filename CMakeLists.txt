@@ -9,8 +9,10 @@ include(CMakePrintHelpers)
 # cmake_print_variables(CMAKE_MODULE_PATH)
 
 # Set default build type to Release
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
+  message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 endif()
 
 # Add dependencies
@@ -20,12 +22,12 @@ add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
 add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
 
-add_library(molcpp)
+add_library(molcpp SHARED)
 
 target_include_directories(
   molcpp
   PUBLIC
-  ${PROJECT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_sources(
@@ -52,8 +54,10 @@ target_link_libraries(
   xtensor
 )
 
+
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  message(STATUS "Debug build.")
   target_compile_options(molcpp
       PUBLIC
           -Wall
@@ -62,6 +66,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   enable_testing()
   add_subdirectory(tests)
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  message(STATUS "Release build.")
   target_compile_options(molcpp
       PUBLIC
           -O3
