@@ -9,18 +9,41 @@ include(CMakePrintHelpers)
 # cmake_print_variables(CMAKE_MODULE_PATH)
 
 # Set default build type to Release
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
-  message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 endif()
 
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
-add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
-add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
-add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
+find_package(chemfiles)
+if(chemfiles_FOUND)
+  message(STATUS "Chemfiles installed")
+else()
+  message(STATUS "Chemfiles not installed, compile from source code")
+  execute_process(
+    COMMAND git submodule update --init --recursive external/chemfiles
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+  add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
+endif()
+
+find_package(xtensor)
+if(xtensor_FOUND)
+  message(STATUS "xtensor installed")
+else()
+  message(STATUS "xtensor not installed, compile from source code")
+  execute_process(
+    COMMAND git submodule update --init --recursive external/xtl
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+  execute_process(
+    COMMAND git submodule update --init --recursive external/xtensor
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
+  add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
+endif()
 
 add_library(molcpp SHARED)
 
