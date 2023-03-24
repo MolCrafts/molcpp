@@ -11,31 +11,32 @@ namespace MolCpp
 
     TEST(TestNode, test_crud_edge)
     {
-        Node node;
-        EdgePtr edge = std::make_shared<Edge>();
-        node.add_edge(edge);
-        EXPECT_EQ(node.get_nedges(), 1);
-        EXPECT_TRUE(node.has_edge(edge));
+        NodePtr node = std::make_shared<Node>();
+        NodePtr node1 = std::make_shared<Node>();
+        EdgePtr edge = std::make_shared<Edge>(node, node1);
+        node->add_edge(edge);
+        EXPECT_EQ(node->get_nedges(), 1);
+        EXPECT_TRUE(node->has_edge(edge));
 
-        node.del_edge(edge);
-        EXPECT_EQ(node.get_nedges(), 0);
-        EXPECT_FALSE(node.has_edge(edge));
+        node->del_edge(edge);
+        EXPECT_EQ(node->get_nedges(), 0);
+        EXPECT_FALSE(node->has_edge(edge));
     }
 
     TEST(TestNode, test_get_neighbors)
     {
-        Node node;
+        NodePtr node = std::make_shared<Node>();
         NodePtr node1 = std::make_shared<Node>();
         NodePtr node2 = std::make_shared<Node>();
         NodePtr node3 = std::make_shared<Node>();
-        EdgePtr edge1 = std::make_shared<Edge>(node1, node2);
-        EdgePtr edge2 = std::make_shared<Edge>(node2, node3);
-        EdgePtr edge3 = std::make_shared<Edge>(node3, node1);
-        node.add_edge(edge1);
-        node.add_edge(edge2);
-        node.add_edge(edge3);
-        NodeVec nbrs = node.get_neighbors();
-        EXPECT_EQ(nbrs.size(), 2);
+        EdgePtr edge1 = std::make_shared<Edge>(node1, node);
+        EdgePtr edge2 = std::make_shared<Edge>(node2, node);
+        EdgePtr edge3 = std::make_shared<Edge>(node3, node);
+        node->add_edge(edge1);
+        node->add_edge(edge2);
+        node->add_edge(edge3);
+        NodeVec nbrs = node->get_neighbors();
+        EXPECT_EQ(nbrs.size(), 3);
     }
 
     TEST(TestEdge, test_init)

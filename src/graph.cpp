@@ -5,15 +5,19 @@ namespace MolCpp
 
     bool Node::add_edge(EdgePtr edge)
     {
-        if (has_edge(edge))
+        if (edge->get_bgn().get()==this || edge->get_end().get()==this)
         {
-            return false;
+            if (has_edge(edge))
+            {
+                return false;
+            }
+            else
+            {
+                _edges.push_back(edge);
+                return true;
+            }
         }
-        else
-        {
-            _edges.push_back(edge);
-            return true;
-        }
+        return false;
     }
 
     bool Node::has_edge(EdgePtr edge)
@@ -76,7 +80,7 @@ namespace MolCpp
     {
         if (has_node(edge->get_bgn()) == false) add_node(edge->get_bgn());
         if (has_node(edge->get_end()) == false) add_node(edge->get_end());
-        if (has_edge(edge))
+        if (!has_edge(edge))
         {
             _edges.push_back(edge);
             return true;
