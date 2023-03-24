@@ -56,13 +56,14 @@ target_include_directories(
 target_sources(
   molcpp
   PRIVATE
-  # src/algo.cpp
+  src/algo.cpp
   # src/element.cpp
-  # src/graph.cpp
+  src/graph.cpp
+  # src/cgmodel.cpp
   # src/atom.cpp
   # src/bond.cpp
   # src/molecule.cpp
-  src/forcefield.cpp
+  # src/forcefield.cpp
   # src/trajectory.cpp
   # src/topology.cpp
   # src/frame.cpp

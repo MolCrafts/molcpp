@@ -63,18 +63,18 @@ namespace MolCpp
     public:
         Molecule();
 
-        bool add_new_hydrogens(HydrogenType whichHydrogen, bool correctForPh, double pH=7.4);
+        // bool add_new_hydrogens(HydrogenType whichHydrogen, bool correctForPh, double pH=7.4);
 
-        bool is_corrected_for_ph() { return has_flag(_flags, PH_CORRECTED_MOL); }
-        bool has_hydrogens_added() { return has_flag(_flags, H_ADDED_MOL); }
-        bool has_chirality_perceived() { return has_flag(_flags, CHIRALITY_MOL); }
+        // bool is_corrected_for_ph() { return has_flag(_flags, PH_CORRECTED_MOL); }
+        // bool has_hydrogens_added() { return has_flag(_flags, H_ADDED_MOL); }
+        // bool has_chirality_perceived() { return has_flag(_flags, CHIRALITY_MOL); }
         bool is_empty() { return _atoms.empty() && _subgraphs.empty(); }
-        void set_hydrogens_added() { switch_flag(_flags, H_ADDED_MOL); }
-        void set_chirality_perceived() { switch_flag(_flags, CHIRALITY_MOL); }
+        // void set_hydrogens_added() { switch_flag(_flags, H_ADDED_MOL); }
+        // void set_chirality_perceived() { switch_flag(_flags, CHIRALITY_MOL); }
         size_t get_natoms() const;
-        bool add_hydrogens(bool polaronly, bool correctForPH, double pH = 7.4) {
-            return add_new_hydrogens(polaronly ? PolarHydrogen : AllHydrogen, correctForPH, pH);
-        }
+        // bool add_hydrogens(bool polaronly, bool correctForPH, double pH = 7.4) {
+        //     return add_new_hydrogens(polaronly ? PolarHydrogen : AllHydrogen, correctForPH, pH);
+        // }
 
     private:
         int _flags;

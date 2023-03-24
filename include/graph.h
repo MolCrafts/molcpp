@@ -1,11 +1,11 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#pragma once
 
 #include <vector>
 #include <array>
 #include "algo.h"
 #include <memory>
 #include "utils.h"
+#include "mplog.h"
 
 namespace MolCpp
 {
@@ -21,28 +21,24 @@ namespace MolCpp
     using GraphVec = std::vector<GraphPtr>;
     using ThreeBodyIndex = std::vector<std::array<size_t, 3>>;
 
-    //! Node in a ring
-    const int NODE_IN_RING = 1 << 4;
-
     class Node
     {
 
     public:
-        Node() : _edges{}, _flags{0} {}
-        int get_nedges() const { return _edges.size(); }
+
+        Node() : _edges{} {}
         EdgeVec get_edges() const { return _edges; }
+        int get_nedges() const { return _edges.size(); }
+
         bool add_edge(EdgePtr);
         bool has_edge(EdgePtr);
-        void del_edge(EdgePtr);
-        void del_edge(Edge *);
+        bool del_edge(EdgePtr);
         NodeVec get_neighbors();
-        void set_in_ring_flag(bool val=true) { set_unset_flag(val, _flags, NODE_IN_RING); }
 
     protected:
-        EdgeVec _edges;
-        int _flags;
 
     private:
+        EdgeVec _edges;
 
     };
 
@@ -50,14 +46,16 @@ namespace MolCpp
     {
     public:
         Edge() : _bgn{nullptr}, _end{nullptr} {}
-        Edge(NodePtr begin, NodePtr end) : _bgn{begin}, _end{end}
-        {
-        }
-        ~Edge();
+        Edge(NodePtr begin, NodePtr end) : _bgn{begin}, _end{end} {}
+
         NodePtr get_bgn() const { return _bgn; }
         NodePtr get_end() const { return _end; }
+        void set_bgn(NodePtr bgn) { _bgn = bgn; }
+        void set_end(NodePtr end) { _end = end; }
 
     protected:
+
+    private:
         NodePtr _bgn;
         NodePtr _end;
     };
@@ -65,30 +63,39 @@ namespace MolCpp
     class Graph
     {
     public:
+
         Graph() : _nodes{}, _edges{}, _subgraphs{} {};
-        void add_node(NodePtr node) { _nodes.push_back(node); };
-        void add_edge(EdgePtr edge) { _edges.push_back(edge); };
-        void add_subgraph(GraphPtr graph) { _subgraphs.push_back(graph); };
+
+        bool add_node(NodePtr node);
+        bool add_edge(EdgePtr edge);
+        bool add_subgraph(GraphPtr graph);
+
         NodePtr new_node();
         EdgePtr new_edge(size_t, size_t);
-        bool add_node(size_t);
         EdgePtr new_edge(NodePtr, NodePtr);
         GraphPtr new_subgraph();
+
+        bool has_node(NodePtr);
+        bool has_edge(EdgePtr);
+        bool has_subgraph(GraphPtr);
 
         bool del_node(NodePtr);
         bool del_node(size_t);
         bool del_edge(EdgePtr);
+
         NodeVec get_nodes();
         EdgeVec get_edges();
+        GraphVec get_subgraphs();
+
         size_t get_nnodes();
         size_t get_nedges();
+        size_t get_nsubgraphs();
+
         size_t get_local_index(NodePtr node);
 
         ThreeBodyIndex find_three_bodies();
 
-        void find_nodes_edges_in_ring();
-
-    protected:
+    private:
         NodeVec _nodes;
         EdgeVec _edges;
         GraphVec _subgraphs;
@@ -96,5 +103,3 @@ namespace MolCpp
     };
 
 }
-
-#endif // GRAPH_H

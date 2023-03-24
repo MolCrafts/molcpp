@@ -28,21 +28,17 @@ namespace MolCpp
         return false;
     }
 
-    void Node::del_edge(Edge *edge)
-    {
-
-    }
-
-    void Node::del_edge(EdgePtr edge)
+    bool Node::del_edge(EdgePtr edge)
     {
         for (auto it = _edges.begin(); it != _edges.end(); ++it)
         {
             if (*it == edge)
             {
                 _edges.erase(it);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     NodeVec Node::get_neighbors()
@@ -62,15 +58,42 @@ namespace MolCpp
         return _nbrs;
     }
 
-    Edge::~Edge()
+    bool Graph::add_node(NodePtr node)
     {
-        if (_bgn != nullptr)
+        if(has_node(node))
         {
-            _bgn->del_edge(this);
+            return false;
         }
-        if (_end != nullptr)
+        else
         {
-            _end->del_edge(this);
+            _nodes.push_back(node);
+            return true;
+        }
+
+    }
+
+    bool Graph::add_edge(EdgePtr edge)
+    {
+        if (has_node(edge->get_bgn()) == false) add_node(edge->get_bgn());
+        if (has_node(edge->get_end()) == false) add_node(edge->get_end());
+        if (has_edge(edge))
+        {
+            _edges.push_back(edge);
+            return true;
+        }
+        return false;
+    }
+
+    bool Graph::add_subgraph(GraphPtr graph)
+    {
+        if (has_subgraph(graph))
+        {
+            return false;
+        }
+        else
+        {
+            _subgraphs.push_back(graph);
+            return true;
         }
     }
 
@@ -90,6 +113,18 @@ namespace MolCpp
 
     EdgePtr Graph::new_edge(NodePtr bgn, NodePtr end)
     {
+        if (bgn == nullptr || end == nullptr)
+        {
+            LOG_ERROR("Cannot create edge with null node");
+        }
+
+        if (bgn == end)
+        {
+            LOG_ERROR("Cannot create edge with same node");
+        }
+
+        if (has_node(bgn) == false) add_node(bgn);
+        if (has_node(end) == false) add_node(end);
         auto new_edge = std::make_shared<Edge>(bgn, end);
         bgn->add_edge(new_edge);
         end->add_edge(new_edge);
@@ -97,24 +132,52 @@ namespace MolCpp
         return new_edge;
     }
 
-    std::shared_ptr<Graph> Graph::new_subgraph()
+    GraphPtr Graph::new_subgraph()
     {
         auto graph = std::make_shared<Graph>();
         _subgraphs.push_back(graph);
         return graph;
     }
 
+    bool Graph::has_node(NodePtr node)
+    {
+        for (const auto n : _nodes)
+        {
+            if (n == node)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Graph::has_edge(EdgePtr edge)
+    {
+        for (const auto e : _edges)
+        {
+            if (e == edge)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool Graph::has_subgraph(GraphPtr graph)
+    {
+        for (const auto g : _subgraphs)
+        {
+            if (g == graph)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     bool Graph::del_node(size_t idx)
     {
-        if (idx >= _nodes.size())
-        {
-            return false;
-        }
-        else
-        {
-            _nodes.erase(_nodes.begin() + idx);
-            return true;
-        }
+        return del_node(_nodes.at(idx));
     }
 
     bool Graph::del_node(NodePtr node)
@@ -178,6 +241,17 @@ namespace MolCpp
         return edges;
     }
 
+    GraphVec Graph::get_subgraphs()
+    {
+        GraphVec subgraphs = _subgraphs;
+        for (auto subgraph : _subgraphs)
+        {
+            GraphVec subsubgraphs = subgraph->get_subgraphs();
+            subgraphs.insert(subgraphs.end(), subsubgraphs.begin(), subsubgraphs.end());
+        }
+        return subgraphs;
+    }
+
     size_t Graph::get_nnodes()
     {
 
@@ -197,6 +271,16 @@ namespace MolCpp
             nedges += subgraph->get_nedges();
         }
         return nedges;
+    }
+
+    size_t Graph::get_nsubgraphs()
+    {
+        size_t nsubgraphs = _subgraphs.size();
+        for (auto subgraph : _subgraphs)
+        {
+            nsubgraphs += subgraph->get_nsubgraphs();
+        }
+        return nsubgraphs;
     }
 
     size_t Graph::get_local_index(NodePtr node)
@@ -243,43 +327,6 @@ namespace MolCpp
         }
 
         return three_bodies;
-    }
-
-    static int find_rings(NodePtr node, std::vector<NodePtr> &path, std::vector<std::vector<NodePtr>> &rings)
-    {
-
-    }
-
-    //! @brief: find which node and edge are in the ring
-    void Graph::find_nodes_edges_in_ring()
-    {
-        // clean up the flags
-        for (auto node : get_nodes())
-        {
-            node->set_in_ring_flag(false);
-        }
-        // for (auto edge : get_edges())
-        // {
-        //     edge->set_in_ring_flag(false);
-        // }
-
-        // find the nodes and edges in the ring
-        unsigned int natoms = this->get_nnodes();
-        unsigned int nbonds = this->get_nedges() + 1;
-        std::vector<unsigned int> avisit(natoms, 0);
-        std::vector<unsigned int> bvisit(nbonds, 0);
-
-        unsigned int frj = 0;
-        for (unsigned int i=1; i <= natoms; i++)
-            if (avisit[i] == 0)
-            {
-                avisit[i] == 1;
-                auto node = _nodes[i];
-                find_rings(node, avisit, bvisit, frj, 1);
-            }
-
-        // return frj;
-
     }
 
 }
