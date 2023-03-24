@@ -8,5 +8,4 @@
 #include <iostream>
 #include "xtensor/xtensor.hpp"
 
-
 #endif  // TEST_UTILS_H
