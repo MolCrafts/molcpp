@@ -14,9 +14,9 @@ namespace MolCpp
     class Bond : protected Edge
     {
     public:
-        Bond(AtomPtr bgn, AtomPtr end) : Edge{std::static_pointer_cast<Node>(bgn), std::static_pointer_cast<Node>(end)} {}
-        AtomPtr get_itom() const { return std::static_pointer_cast<Atom>(get_bgn()); }
-        AtomPtr get_jtom() const { return std::static_pointer_cast<Atom>(get_end()); }
+        Bond(AtomPtr bgn, AtomPtr end);
+        AtomPtr get_itom() const;
+        AtomPtr get_jtom() const;
     };
 
 }

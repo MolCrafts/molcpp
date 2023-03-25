@@ -18,9 +18,9 @@ namespace MolCpp
 
         public:
             Atom(): Node{} {}
-            bool add_bond(BondPtr bond) { return add_edge(std::static_pointer_cast<Edge>(bond)); }
-            bool has_bond(BondPtr bond) { return has_edge(std::static_pointer_cast<Edge>(bond)); }
-            bool del_bond(BondPtr bond) { return del_edge(std::static_pointer_cast<Edge>(bond)); }
+            bool add_bond(BondPtr);
+            bool has_bond(BondPtr bond);
+            bool del_bond(BondPtr bond);
             BondVec get_bonds() const;
             size_t get_nbonds() const { return get_nedges(); }
 

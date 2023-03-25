@@ -60,8 +60,8 @@ target_sources(
   # src/element.cpp
   src/graph.cpp
   # src/cgmodel.cpp
-  # src/atom.cpp
-  # src/bond.cpp
+  src/atom.cpp
+  src/bond.cpp
   # src/molecule.cpp
   # src/forcefield.cpp
   # src/trajectory.cpp
