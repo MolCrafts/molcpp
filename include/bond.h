@@ -1,22 +1,32 @@
 #pragma once
+#include <vector>
+#include <memory>
 
-#include "graph.h"
-
-namespace MolCpp
+namespace molcpp
 {
+
     class Atom;
     using AtomPtr = std::shared_ptr<Atom>;
-    using AtomVec = std::vector<AtomPtr>;
     class Bond;
     using BondPtr = std::shared_ptr<Bond>;
-    using BondVec = std::vector<BondPtr>;
 
-    class Bond : protected Edge
+    class Bond
     {
-    public:
-        Bond(AtomPtr bgn, AtomPtr end);
-        AtomPtr get_itom() const;
-        AtomPtr get_jtom() const;
+
+        public:
+            Bond(AtomPtr, AtomPtr);
+            AtomPtr get_itom() const;
+            AtomPtr get_jtom() const;
+            // operator==
+            bool operator==(const Bond &other) const;
+
+        private:
+            std::weak_ptr<Atom> _itom;
+            std::weak_ptr<Atom> _jtom;
+
     };
+
+    // factory function
+    BondPtr create_bond(AtomPtr, AtomPtr);
 
 }

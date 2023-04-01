@@ -1,29 +1,75 @@
 #include "atom.h"
 #include "bond.h"
 
-namespace MolCpp
+namespace molcpp
 {
+
+    Atom::Atom() {}
 
     bool Atom::add_bond(BondPtr bond)
     {
-        return add_edge(std::dynamic_pointer_cast<Edge>(bond));
+        if (has_bond(bond))
+        {
+            return false;
+        }
+        else
+        {
+            _bonds.push_back(bond);
+            return true;
+        }
     }
 
-    bool Atom::has_bond(BondPtr bond) 
-    { return has_edge(std::dynamic_pointer_cast<Edge>(bond)); }
+    bool Atom::has_bond(BondPtr bond)
+    {
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b) {
+            return *b == *bond;
+        });
+        return results == _bonds.end() ? false : true;
+    }
+
+    bool Atom::is_nbr(AtomPtr atom)
+    {
+        auto nbrs = this->get_nbrs();
+        auto isInNbrs = find_in_container<std::vector<AtomPtr>, AtomPtr>(nbrs, atom).has_value();
+        return isInNbrs;
+    }
 
     bool Atom::del_bond(BondPtr bond)
-    { return del_edge(std::dynamic_pointer_cast<Edge>(bond)); }
-
-    BondVec Atom::get_bonds() const
     {
-        BondVec _bonds;
-        _bonds.reserve(get_nbonds());
-        for (const auto edge : get_edges())
+        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
+        if (result.has_value())
         {
-            _bonds.push_back(std::static_pointer_cast<Bond>(edge));
+            _bonds.erase(_bonds.begin() + result.value());
+            return true;
         }
-        return _bonds;
+        else
+        {
+            return false;
+        }
+    }
+
+    std::vector<AtomPtr> Atom::get_nbrs()
+    {
+        std::vector<AtomPtr> nbrs;
+        for (auto bond : _bonds)
+        {
+            auto itom = bond->get_itom();
+            auto jtom = bond->get_jtom();
+            if (itom.get() == this)
+            {
+                nbrs.push_back(jtom);
+            }
+            else
+            {
+                nbrs.push_back(itom);
+            }
+        }
+        return nbrs;
+    }
+
+    AtomPtr create_atom()
+    {
+        return std::make_shared<Atom>();
     }
 
 }

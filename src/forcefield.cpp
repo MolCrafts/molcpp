@@ -1,6 +1,6 @@
 #include "forcefield.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     AtomType::AtomType(const std::string &name) : _name{name} {};

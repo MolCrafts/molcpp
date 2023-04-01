@@ -4,9 +4,9 @@
 TEST(TestAtomType, test_init)
 {
 
-    auto at1 = MolCpp::AtomType("C");
-    auto at2 = MolCpp::AtomType("C");
-    auto at3 = MolCpp::AtomType("H");
+    auto at1 = molcpp::AtomType("C");
+    auto at2 = molcpp::AtomType("C");
+    auto at3 = molcpp::AtomType("H");
 
     EXPECT_EQ(at1, at2);
     EXPECT_NE(at1, at3);
@@ -16,7 +16,7 @@ TEST(TestAtomType, test_init)
 TEST(TestAtomTypeManager, test_init)
 {
 
-    auto avec = MolCpp::AtomTypeManager();
+    auto avec = molcpp::AtomTypeManager();
     auto at1 = avec.def("C");
     EXPECT_EQ(at1->get_name(), "C");
     EXPECT_EQ(avec.get_ntypes(), 1);

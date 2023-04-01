@@ -57,15 +57,14 @@ target_sources(
   molcpp
   PRIVATE
   src/algo.cpp
-  # src/element.cpp
-  src/graph.cpp
-  # src/cgmodel.cpp
   src/atom.cpp
   src/bond.cpp
+  src/topology.cpp
+  # src/element.cpp
+  # src/cgmodel.cpp
   # src/molecule.cpp
   # src/forcefield.cpp
   # src/trajectory.cpp
-  # src/topology.cpp
   # src/frame.cpp
   # src/parsmart.cpp
 )

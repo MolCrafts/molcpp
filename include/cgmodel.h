@@ -3,7 +3,7 @@
 #include "graph.h"
 #include "forcefield.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     namespace cg

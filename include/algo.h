@@ -6,7 +6,7 @@
 #include <exception>
 #include <optional>
 
-namespace MolCpp
+namespace molcpp
 {
 
     // @brief: the number of combinations in a given container

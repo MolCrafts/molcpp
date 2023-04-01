@@ -1,19 +1,36 @@
 #include "atom.h"
 #include "bond.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
-    Bond::Bond(AtomPtr bgn, AtomPtr end) : Edge{std::dynamic_pointer_cast<Node>(bgn), std::dynamic_pointer_cast<Node>(end)} {}
+    Bond::Bond(AtomPtr itom, AtomPtr jtom) : _itom{itom}, _jtom{jtom} {}
 
     AtomPtr Bond::get_itom() const
     {
-        return std::static_pointer_cast<Atom>(get_bgn());
+        return _itom.lock();
     }
 
     AtomPtr Bond::get_jtom() const
     {
-        return std::static_pointer_cast<Atom>(get_end());
+        return _jtom.lock();
+    }
+
+    bool Bond::operator==(const Bond &other) const
+    {
+        auto itom = get_itom();
+        auto jtom = get_jtom();
+        auto other_itom = other.get_itom();
+        auto other_jtom = other.get_jtom();
+        return (itom == other_itom && jtom == other_jtom) ||
+               (itom == other_jtom && jtom == other_itom);
+
+    }
+
+    // factory function
+    BondPtr create_bond(AtomPtr itom, AtomPtr jtom)
+    {
+        return std::make_shared<Bond>(itom, jtom);
     }
 
 }

@@ -9,7 +9,7 @@
 #include "atom.h"
 #include "topology.h"
 
-namespace MolCpp
+namespace molcpp
 {
     class Frame
     {

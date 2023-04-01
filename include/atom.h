@@ -1,35 +1,33 @@
 #pragma once
+#include "algo.h"
+#include <vector>
+#include <memory>
 
-#include "graph.h"
-
-namespace MolCpp
+namespace molcpp
 {
 
     class Atom;
     using AtomPtr = std::shared_ptr<Atom>;
-    using AtomVec = std::vector<AtomPtr>;
     class Bond;
     using BondPtr = std::shared_ptr<Bond>;
-    using BondVec = std::vector<BondPtr>;
 
-
-    class Atom : protected Node
+    class Atom
     {
 
         public:
-            Atom(): Node{} {}
+            Atom();
             bool add_bond(BondPtr);
-            bool has_bond(BondPtr bond);
-            bool del_bond(BondPtr bond);
-            BondVec get_bonds() const;
-            size_t get_nbonds() const { return get_nedges(); }
-
-
-        protected:
+            bool del_bond(BondPtr);
+            bool has_bond(BondPtr);
+            bool is_nbr(AtomPtr);
+            std::vector<AtomPtr> get_nbrs();
 
         private:
-            
+            std::vector<BondPtr> _bonds; 
 
     };
+
+    // factory function
+    AtomPtr create_atom();
 
 }

@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-namespace MolCpp
+namespace molcpp
 {
 
     class Element

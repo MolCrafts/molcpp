@@ -1,6 +1,6 @@
 #include "parsmart.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     /*! \class SmartsPattern parsmart.h <openbabel/parsmart.h>

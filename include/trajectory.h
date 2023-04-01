@@ -5,7 +5,7 @@
 #include "frame.h"
 #include <chemfiles.hpp>
 
-namespace MolCpp
+namespace molcpp
 {
 
 class Trajectory

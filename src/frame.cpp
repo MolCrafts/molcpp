@@ -1,6 +1,6 @@
 #include "frame.h"
 
-namespace MolCpp
+namespace molcpp
 {
     xt::xarray<double> copy_to_xarray(const std::vector<chemfiles::Vector3D>& vec, std::vector<size_t> shape)
     {

@@ -1,6 +1,6 @@
 #include "trajectory.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     explicit Trajectory::Trajectory(std::string path, char mode = 'r', const std::string& format = "xyz") : _fileHandler(chemfiles::Trajectory(path, mode, format))

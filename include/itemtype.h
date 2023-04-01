@@ -6,7 +6,7 @@
 #include "mplog.h"
 #include "topology.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     class AtomType

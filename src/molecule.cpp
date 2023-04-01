@@ -1,6 +1,6 @@
 #include "molecule.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     Molecule::Molecule(): Topology{}, _flags{0}

@@ -7,7 +7,7 @@
 // #include "topology.h"
 // #include "itemtype.h"
 
-// namespace MolCpp
+// namespace molcpp
 // {
 
 //     class ForceField

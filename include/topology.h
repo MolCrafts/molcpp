@@ -1,28 +1,31 @@
-#ifndef TOPOLOGY_H
-#define TOPOLOGY_H
+#pragma once
 
 #include "atom.h"
 #include "bond.h"
+#include "algo.h"
+#include "mplog.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     using AtomVec = std::vector<AtomPtr>;
     using BondVec = std::vector<BondPtr>;
 
-    class Topology: public Graph
+    class Topology
     {
 
         public:
             Topology() = default;
-            Topology(const chemfiles::Topology& chflTopology);
+            // Topology(const chemfiles::Topology& chflTopology);
             bool add_atom(AtomPtr);
-            AtomPtr new_atom();
-            AtomPtr new_atom(const chemfiles::Atom &);
+            bool has_atom(AtomPtr);
+            AtomPtr create_atom();
+            // AtomPtr create_atom(const chemfiles::Atom &);
             AtomVec get_atoms() const { return _atoms; }
             bool add_bond(BondPtr);
-            BondPtr new_bond(AtomPtr, AtomPtr);
-            BondPtr new_bond(size_t, size_t);
+            bool has_bond(BondPtr);
+            BondPtr create_bond(AtomPtr, AtomPtr);
+            BondPtr create_bond(size_t, size_t);
             BondVec get_bonds() const { return _bonds; }
             size_t get_natoms() const { return _atoms.size(); }
             size_t get_nbonds() const { return _bonds.size(); }
@@ -34,6 +37,9 @@ namespace MolCpp
 
     };
 
-}
+    using TopologyPtr = std::shared_ptr<Topology>;
 
-#endif // TOPOLOGY_H
+    // factory function
+    TopologyPtr create_topology();
+
+}

@@ -15,7 +15,7 @@ void SetBitsOn(bitset & bitset, const std::vector<int> & bit_offsets) {
   }
 }
 
-namespace MolCpp
+namespace molcpp
 {
 
     //! \union _AtomExpr parsmart.h <openbabel/parsmart.h>

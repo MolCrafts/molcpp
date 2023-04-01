@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-namespace MolCpp
+namespace molcpp
 {
 
     void read(const std::string& filename)

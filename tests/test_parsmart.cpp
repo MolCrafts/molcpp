@@ -4,11 +4,11 @@
 TEST(TestParsmart, test_AE_TRUE) {
     std::string s = "[*]";
 
-    MolCpp::SmartsPattern sp;
+    molcpp::SmartsPattern sp;
     bool isValid = sp.Init(s);
     EXPECT_TRUE(isValid);
 
-    MolCpp::Pattern* p = sp.GetPattern();
+    molcpp::Pattern* p = sp.GetPattern();
 
     EXPECT_EQ(p->acount, 1);
     EXPECT_EQ(p->bcount, 0);
@@ -19,11 +19,11 @@ TEST(TestParsmart, test_AE_TRUE) {
 TEST(TestParsmart, test_ccc) {
     std::string s = "ccc";
 
-    MolCpp::SmartsPattern sp;
+    molcpp::SmartsPattern sp;
     bool isValid = sp.Init(s);
     EXPECT_TRUE(isValid);
 
-    MolCpp::Pattern* p = sp.GetPattern();
+    molcpp::Pattern* p = sp.GetPattern();
 
     EXPECT_EQ(p->acount, 3);
     EXPECT_EQ(p->bcount, 2);
@@ -35,11 +35,11 @@ TEST(TestParsmart, test_ccc) {
 
 //     std::string s = "[c1ccccc1]";
 
-//     MolCpp::SmartsPattern sp;
+//     molcpp::SmartsPattern sp;
 //     bool isValid = sp.Init(s);
 //     EXPECT_TRUE(isValid);
 
-//     MolCpp::Pattern* p = sp.GetPattern();
+//     molcpp::Pattern* p = sp.GetPattern();
 
 //     EXPECT_EQ(p->acount, 6);
 //     EXPECT_EQ(p->bcount, 6);

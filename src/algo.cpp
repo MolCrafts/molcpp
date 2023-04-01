@@ -1,6 +1,6 @@
 #include "algo.h"
 
-namespace MolCpp
+namespace molcpp
 {
     // @brief: the number of combinations in a given container
     // @param: v - the container

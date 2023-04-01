@@ -1,72 +1,86 @@
 #include "topology.h"
 
-namespace MolCpp
+namespace molcpp
 {
-
-    Topology::Topology(const chemfiles::Topology& chflTopology) : Graph {}
-    {
-        // copy atoms
-        for (size_t i = 0; i < chflTopology.size(); i++)
-        {
-            this->new_atom(chflTopology[i]);
-        }
-
-        // copy bonds
-        for (size_t i = 0; i < chflTopology.bonds().size(); i++)
-        {
-
-            auto _chflBond = chflTopology.bonds()[i];
-            this->new_bond(_chflBond[0], _chflBond[1]);
-        }
-
-        // register subgraph
-
-
-    }
 
     bool Topology::add_atom(AtomPtr atom)
     {
-        atom->set_local_idx(_atoms.size());
-        _atoms.push_back(atom);
-        add_node(atom);
+        if (has_atom(atom)) return false;
+        else _atoms.push_back(atom);
         return true;
     }
 
-    AtomPtr Topology::new_atom()
+    bool Topology::has_atom(AtomPtr atom)
     {
-        AtomPtr atom = std::make_shared<Atom>();
-        this->add_atom(atom);
-        return atom;
+        return std::find(_atoms.begin(), _atoms.end(), atom) != _atoms.end();
     }
 
-    AtomPtr Topology::new_atom(const chemfiles::Atom &chflAtom)
+    AtomPtr Topology::create_atom()
     {
-        AtomPtr atom = std::make_shared<Atom>(chflAtom);
-        _atoms.push_back(atom);
-        add_node(atom);
+        AtomPtr atom = molcpp::create_atom();  // using atom.h create_atom()
+        add_atom(atom);
         return atom;
     }
 
     bool Topology::add_bond(BondPtr bond)
     {
-        // bond->set_local_idx(_bonds.size());
-        _bonds.push_back(bond);
-        add_edge(bond);
-        return true;
+        if (has_bond(bond))
+        {
+            return false;
+        }
+        else
+        {
+            _bonds.push_back(bond);
+            return true;
+        }
     }
 
-    BondPtr Topology::new_bond(AtomPtr bgn, AtomPtr end)
+    bool Topology::has_bond(BondPtr bond)
     {
-        BondPtr bond = std::make_shared<Bond>(bgn, end);
-        this->add_bond(bond);
-        return bond;
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
+                                    { return *b == *bond; });
+        return results == _bonds.end() ? false : true;
     }
 
-    BondPtr Topology::new_bond(size_t bgn_idx, size_t end_idx)
+    BondPtr Topology::create_bond(AtomPtr itom, AtomPtr jtom)
     {
-        auto bgn = _atoms.at(bgn_idx);
-        auto end = _atoms.at(end_idx);
-        return this->new_bond(bgn, end);
+        BondPtr bond = molcpp::create_bond(itom, jtom);
+        if (add_bond(bond))
+        {
+            itom->add_bond(bond);
+            jtom->add_bond(bond);
+            return bond;
+        }
+        else
+        {
+            LOG_ERROR("Bond already exists");
+            throw std::runtime_error("Bond already exists");
+        }
+    }
+
+    BondPtr Topology::create_bond(size_t itom_index, size_t jtom_index)
+    {
+        return create_bond(_atoms[itom_index], _atoms[jtom_index]);
+    }
+
+    // bool Topology::del_bond(BondPtr bond)
+    // {
+    //     auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
+    //     if (result.has_value())
+    //     {
+    //         _bonds.erase(_bonds.begin() + result.value());
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
+
+    // factory function
+    TopologyPtr create_topology()
+    {
+        return std::make_shared<Topology>();
     }
 
 }

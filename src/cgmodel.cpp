@@ -1,6 +1,6 @@
 #include "cgmodel.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
     namespace cg

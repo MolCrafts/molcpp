@@ -1,29 +1,49 @@
 #include "utils.h"
 #include "atom.h"
+#include "bond.h"
 
-namespace MolCpp
+namespace molcpp
 {
 
+    // test Atom class
     TEST(TestAtom, test_init)
     {
-        auto atom = std::make_shared<Atom>();
-        EXPECT_EQ(atom->get_nbonds(), 0);
-
+        // create an atom and return shared_ptr
+        auto a1 = create_atom();
     }
 
-    TEST(TestAtom, test_crud_bond)
+    TEST(TestAtom, test_nbrs)
     {
-        auto atom = std::make_shared<Atom>();
-        auto atom1 = std::make_shared<Atom>();
-        auto bond = std::make_shared<Bond>(atom, atom1);
-        atom->add_bond(bond);
-        EXPECT_EQ(atom->get_nbonds(), 1);
-        EXPECT_TRUE(atom->has_bond(bond));
-        EXPECT_EQ(atom->get_bonds().size(), 1);
+        auto a1 = create_atom();
+        auto a2 = create_atom();
+        auto a3 = create_atom();
+        auto bond12 = create_bond(a1, a2);
+        auto bond13 = create_bond(a1, a3);
+        auto bond23 = create_bond(a2, a3);
+        a1->add_bond(bond12);
+        a2->add_bond(bond12);
+        a1->add_bond(bond13);
+        a3->add_bond(bond13);
+        a2->add_bond(bond23);
+        a3->add_bond(bond23);
 
-        atom->del_bond(bond);
-        EXPECT_EQ(atom->get_nbonds(), 0);
-        EXPECT_FALSE(atom->has_bond(bond));
+        EXPECT_TRUE(a1->is_nbr(a2));
+        EXPECT_TRUE(a2->is_nbr(a3));
+        EXPECT_TRUE(a3->is_nbr(a1));
+
+        EXPECT_EQ(a1->get_nbrs().size(), 2);
+        EXPECT_EQ(a2->get_nbrs().size(), 2);
+        EXPECT_EQ(a3->get_nbrs().size(), 2);
+
+        a1->del_bond(bond12);
+        a1->del_bond(bond13);
+
+        EXPECT_FALSE(a1->is_nbr(a2));
+        EXPECT_FALSE(a1->is_nbr(a3));
+        EXPECT_EQ(a1->get_nbrs().size(), 0);
+
+
     }
+
 
 }
