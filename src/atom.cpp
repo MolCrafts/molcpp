@@ -4,8 +4,6 @@
 namespace molcpp
 {
 
-    Atom::Atom() {}
-
     bool Atom::add_bond(BondPtr bond)
     {
         if (has_bond(bond))
@@ -27,13 +25,6 @@ namespace molcpp
         return results == _bonds.end() ? false : true;
     }
 
-    bool Atom::is_nbr(AtomPtr atom)
-    {
-        auto nbrs = this->get_nbrs();
-        auto isInNbrs = find_in_container<std::vector<AtomPtr>, AtomPtr>(nbrs, atom).has_value();
-        return isInNbrs;
-    }
-
     bool Atom::del_bond(BondPtr bond)
     {
         auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
@@ -46,6 +37,13 @@ namespace molcpp
         {
             return false;
         }
+    }
+
+    bool Atom::is_nbr(AtomPtr atom)
+    {
+        auto nbrs = this->get_nbrs();
+        auto isInNbrs = find_in_container<std::vector<AtomPtr>, AtomPtr>(nbrs, atom).has_value();
+        return isInNbrs;
     }
 
     std::vector<AtomPtr> Atom::get_nbrs()

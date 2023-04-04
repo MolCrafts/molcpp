@@ -125,5 +125,10 @@ namespace molcpp
             return values;
         }
 
+        value_type& operator[] (const key_type& key)
+        {
+            return m_map[key];
+        }
+
     };
 }

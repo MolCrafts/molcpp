@@ -23,6 +23,19 @@ namespace molcpp
 
         // get topology
         auto chemtopo = chflFrame.topology();
+
+        // get atoms
+        auto natoms = chemtopo.size();
+        std::vector<AtomPtr> atoms(natoms);
+        for (size_t i=0; i<natoms; i++)
+        {
+            auto chflatom = chemtopo[i];
+            auto mpatom = create_atom();
+            
+
+
+            atoms[i] = mpatom;
+        }
         
 
     }

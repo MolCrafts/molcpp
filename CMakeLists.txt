@@ -59,7 +59,7 @@ target_sources(
   src/algo.cpp
   src/atom.cpp
   src/bond.cpp
-  src/topology.cpp
+  # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
   # src/element.cpp

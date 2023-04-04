@@ -1,7 +1,9 @@
 #pragma once
 #include "algo.h"
+#include "property.h"
 #include <vector>
 #include <memory>
+#include "chemfiles.hpp"
 
 namespace molcpp
 {
@@ -14,17 +16,19 @@ namespace molcpp
     class Atom
     {
 
-        public:
-            Atom();
-            bool add_bond(BondPtr);
-            bool del_bond(BondPtr);
-            bool has_bond(BondPtr);
-            bool is_nbr(AtomPtr);
-            std::vector<AtomPtr> get_nbrs();
+    public:
+        Atom() = default;
+        bool add_bond(BondPtr);
+        bool del_bond(BondPtr);
+        bool has_bond(BondPtr);
+        bool is_nbr(AtomPtr);
+        std::vector<AtomPtr> get_nbrs();
 
-        private:
-            std::vector<BondPtr> _bonds; 
+        auto operator[](const std::string &key) const;
+        Property_map<int, std::string, double> properties;
 
+    private:
+        std::vector<BondPtr> _bonds;
     };
 
     // factory function
