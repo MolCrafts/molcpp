@@ -10,7 +10,6 @@ namespace molcpp
 
         chemfiles::Trajectory file(filename);
         chemfiles::Frame frame = file.read();
-        std::cout << "Read " << frame.size() << " atoms" << std::endl;
 
     }
 

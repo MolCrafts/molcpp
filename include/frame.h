@@ -14,6 +14,7 @@ namespace molcpp
     class Frame
     {
         public:
+            Frame() = delete;
             Frame(const chemfiles::Frame&);
             size_t get_natoms() const { return _topology.get_natoms(); }
             size_t get_nbonds() const { return _topology.get_nbonds(); }

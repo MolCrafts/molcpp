@@ -1,7 +1,5 @@
 #pragma once
-
-#include "graph.h"
-#include "forcefield.h"
+#include "atom.h"
 
 namespace molcpp
 {
@@ -9,22 +7,12 @@ namespace molcpp
     namespace cg
     {
 
-        class Atom : protected Node
+        class Atom : public molcpp::Atom
         {
-            public:
-                Atom() : Node {} {}
-
-                bool add_bond(BondPtr);
-                bool has_bond(BondPtr);
-                bool del_edge(BondPtr);
-                AtomVec get_neighbors();
-
-            private:
-                std::string _typename;
-                AtomTypePtr _type;
 
 
-        }
+
+        };
 
     }
 

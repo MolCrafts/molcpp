@@ -19,11 +19,11 @@ namespace molcpp
     Frame::Frame(const chemfiles::Frame& chflFrame): _current_step(chflFrame.step())
     {
 
-        // copy topology
-        _topology = Topology(chflFrame.topology());
+        // get box
 
-        // copy static array
-        _xyz = copy_to_xarray(chflFrame.positions(), {get_natoms(), 3});
+        // get topology
+        auto chemtopo = chflFrame.topology();
+        
 
     }
 
