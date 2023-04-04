@@ -24,6 +24,7 @@ endif()
 add_executable(
     molcpp_test
     test_algo.cpp
+    test_property.cpp
     test_atom.cpp
     test_bond.cpp
     test_topology.cpp

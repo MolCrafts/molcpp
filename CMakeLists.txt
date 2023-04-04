@@ -60,8 +60,8 @@ target_sources(
   src/atom.cpp
   src/bond.cpp
   src/topology.cpp
-  src/frame.cpp
-  src/trajectory.cpp
+  # src/frame.cpp
+  # src/trajectory.cpp
   # src/element.cpp
   # src/cgmodel.cpp
   # src/molecule.cpp
