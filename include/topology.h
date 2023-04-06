@@ -8,15 +8,13 @@
 namespace molcpp
 {
 
-    using AtomVec = std::vector<AtomPtr>;
-    using BondVec = std::vector<BondPtr>;
-
     class Topology
     {
 
         public:
             Topology() = default;
-            // Topology(const chemfiles::Topology& chflTopology);
+            Topology(size_t natoms, size_t nbonds = 0) : _atoms(natoms), _bonds(nbonds) {};
+            Topology(const chemfiles::Topology& chflTopology);
             bool add_atom(AtomPtr);
             bool has_atom(AtomPtr);
             AtomPtr create_atom();
@@ -31,7 +29,7 @@ namespace molcpp
             size_t get_nbonds() const { return _bonds.size(); }
 
         protected:
-            
+
             AtomVec _atoms;
             BondVec _bonds;
 
@@ -41,5 +39,6 @@ namespace molcpp
 
     // factory function
     TopologyPtr create_topology();
+    TopologyPtr create_topology(size_t, size_t);
 
 }

@@ -16,27 +16,8 @@ namespace molcpp
         return xt::adapt(temp_arr, shape);
     }
 
-    Frame::Frame(const chemfiles::Frame& chflFrame): _current_step(chflFrame.step())
+    Frame::Frame(const chemfiles::Frame& chflFrame): _current_step(chflFrame.step()), _topology(chflFrame.topology())
     {
-
-        // get box
-
-        // get topology
-        auto chemtopo = chflFrame.topology();
-
-        // get atoms
-        auto natoms = chemtopo.size();
-        std::vector<AtomPtr> atoms(natoms);
-        for (size_t i=0; i<natoms; i++)
-        {
-            auto chflatom = chemtopo[i];
-            auto mpatom = create_atom();
-            
-
-
-            atoms[i] = mpatom;
-        }
-        
 
     }
 

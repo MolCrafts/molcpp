@@ -2,6 +2,37 @@
 
 namespace molcpp
 {
+    Topology::Topology(const chemfiles::Topology& chflTopology)
+    {
+        _atoms.reserve(chflTopology.size());
+        _bonds.reserve(chflTopology.bonds().size());
+        // get atoms
+        for (auto chflatom : chflTopology)
+        {
+            auto mpatom = create_atom();
+            
+            mpatom->properties["name"] = chflatom.name();
+            mpatom->properties["type"] = chflatom.type();
+            mpatom->properties["mass"] = chflatom.mass();
+            mpatom->properties["charge"] = chflatom.charge();
+            auto full_name = chflatom.full_name();  // std::string
+            if (full_name) mpatom->properties["full_name"] = full_name.value();
+            auto vdw_radius = chflatom.vdw_radius();  // double
+            if (vdw_radius) mpatom->properties["vdw_radius"] = vdw_radius.value();
+            auto covalent_radius = chflatom.covalent_radius();  // double
+            if (covalent_radius) mpatom->properties["covalent_radius"] = covalent_radius.value();
+            auto atomic_number = chflatom.atomic_number();  // uint64_t
+            if (atomic_number) mpatom->properties["atomic_number"] = static_cast<int>(atomic_number.value());
+
+            this->add_atom(mpatom);
+        }
+        // get bonds
+        for (auto chflbond : chflTopology.bonds())
+        {
+            auto mpabond = create_bond(chflbond[0], chflbond[1]);
+            this->add_bond(mpabond);
+        }
+    }
 
     bool Topology::add_atom(AtomPtr atom)
     {
@@ -78,9 +109,15 @@ namespace molcpp
     // }
 
     // factory function
+
     TopologyPtr create_topology()
     {
         return std::make_shared<Topology>();
+    }
+
+    TopologyPtr create_topology(size_t natoms, size_t nbonds = 0)
+    {
+        return std::make_shared<Topology>(natoms, nbonds);
     }
 
 }

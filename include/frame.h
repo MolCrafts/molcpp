@@ -1,5 +1,4 @@
-#ifndef FRAME_H
-#define FRAME_H
+#pragma once
 
 #include <chemfiles.hpp>
 #include <vector>
@@ -31,5 +30,3 @@ namespace molcpp
     };
 
 }
-
-#endif // FRAME_H

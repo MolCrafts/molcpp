@@ -13,6 +13,9 @@ namespace molcpp
     class Bond;
     using BondPtr = std::shared_ptr<Bond>;
 
+    using AtomVec = std::vector<AtomPtr>;
+    using BondVec = std::vector<BondPtr>;
+
     class Atom
     {
 
@@ -24,7 +27,6 @@ namespace molcpp
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
 
-        auto operator[](const std::string &key) const;
         Property_map<int, std::string, double> properties;
 
     private:
