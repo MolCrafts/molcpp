@@ -3,73 +3,102 @@
 
 namespace molcpp
 {
-
+    // data in dict
     template <typename... Ts>
-    class Property
+    class Data
     {
     public:
         using variant_type = std::variant<Ts...>;
 
-        Property() : value_(variant_type{}) {}
+        Data() : _value(variant_type{}) {}
 
         template <typename T>
-        Property(const T &value) : value_(value) {}
+        Data(const T &value) : _value(value) {}
 
         template <typename T>
-        Property<Ts...> &operator=(const T &value)
+        Data<Ts...> &operator=(const T &V)
         {
 
-            value_ = value;
+            _value = V;
             return *this;
         }
 
-        template <typename T>
-        bool operator==(const T &value) const
-        {
-            // return std::visit([&](auto &&arg) { return arg == value; }, value_);
-            return value_ == value;
-        }
-
         template <typename... Us>
-        bool operator==(const Property<Us...>& other) const
+        bool operator==(const Data<Us...> &other) const
         {
-            return value_ == other.value_;
+            if (_value.index() != other.get_variant().index())
+                return false;
+            return _value == other.get_variant();
         }
 
         template <typename T>
         T &get()
         {
-            return std::get<T>(value_);
+            return std::get<T>(_value);
         }
 
         template <typename T>
         const T &get() const
         {
-            return std::get<T>(value_);
+            return std::get<T>(_value);
+        }
+
+        // set
+        void set(const variant_type &V)
+        {
+            _value = V;
         }
 
         template <typename T>
         bool is() const
         {
-            return std::holds_alternative<T>(value_);
+            return std::holds_alternative<T>(_value);
         }
 
-    private:
-        variant_type value_;
+        variant_type _value;
+
+        const auto index() const
+        {
+            return _value.index();
+        }
+
+        variant_type get_variant() const
+        {
+            return _value;
+        }
+
+        // override <<
+        friend std::ostream &operator<<(std::ostream &os, const Data &d)
+        {
+            switch (d.index())
+            {
+            case 0:
+                os << d.get<int>();
+                break;
+            case 1:
+                os << d.get<std::string>();
+                break;
+            }
+            return os;
+        }
     };
 
+    // dict
     template <typename... Ts>
-    class Property_map
+    class Dict
     {
-    public:
+
         using key_type = std::string;
-        using value_type = Property<Ts...>;
+        using value_type = Data<Ts...>;
         using container_type = std::map<key_type, value_type>;
 
     private:
         container_type m_map;
 
     public:
+        Dict() : m_map(){};
+        Dict(const container_type &map) : m_map(map){};
+
         template <typename T>
         void set(const key_type &key, const T &value)
         {
@@ -95,16 +124,6 @@ namespace molcpp
             return it->second.template get<T>();
         }
 
-        template <typename T>
-        const T &get(const key_type &key) const
-        {
-            auto it = m_map.find(key);
-            if (it == m_map.end())
-            {
-                throw std::out_of_range("Key not found");
-            }
-            return it->second.template get<T>();
-        }
         std::vector<key_type> key() const
         {
             std::vector<key_type> keys;
@@ -125,10 +144,30 @@ namespace molcpp
             return values;
         }
 
-        value_type& operator[] (const key_type& key)
+        bool has(const key_type &key) const
+        {
+            return m_map.find(key) != m_map.end();
+        }
+
+        value_type &operator[](const key_type &key)
         {
             return m_map[key];
         }
 
+        // iterator and return key-value pair
+        auto begin() const
+        {
+            return m_map.begin();
+        }
+
+        auto end() const
+        {
+            return m_map.end();
+        }
+
+        container_type get_map() const
+        {
+            return m_map;
+        }
     };
 }
