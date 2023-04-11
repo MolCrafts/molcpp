@@ -3,7 +3,6 @@
 #include "property.h"
 #include <vector>
 #include <memory>
-#include "chemfiles.hpp"
 
 namespace molcpp
 {
@@ -23,9 +22,9 @@ namespace molcpp
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
-
-        auto operator[](const std::string &key) const;
-        Property_map<int, std::string, double> properties;
+        Dict<int, std::string, double>::value_type operator[](const std::string &key);
+    private:
+        Dict<int, std::string, double> properties;
 
     private:
         std::vector<BondPtr> _bonds;

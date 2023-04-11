@@ -65,6 +65,11 @@ namespace molcpp
         return nbrs;
     }
 
+    Dict<int, std::string, double>::value_type Atom::operator[](const std::string &key)
+    {
+        return properties[key];
+    }
+
     AtomPtr create_atom()
     {
         return std::make_shared<Atom>();
