@@ -87,15 +87,10 @@ namespace molcpp
     template <typename... Ts>
     class Dict
     {
-
+    public:
         using key_type = std::string;
         using value_type = Data<Ts...>;
         using container_type = std::map<key_type, value_type>;
-
-    private:
-        container_type m_map;
-
-    public:
         Dict() : m_map(){};
         Dict(const container_type &map) : m_map(map){};
 
@@ -169,5 +164,12 @@ namespace molcpp
         {
             return m_map;
         }
+    
+    private:
+        container_type m_map;
     };
+
+    // pre-defined dict type
+    using AtomPropertyDict = Dict<int, double, std::string>;
+    using AtomProperty = AtomPropertyDict::value_type;
 }

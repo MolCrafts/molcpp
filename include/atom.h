@@ -1,6 +1,6 @@
 #pragma once
 #include "algo.h"
-#include "property.h"
+#include "dict.h"
 #include <vector>
 #include <memory>
 
@@ -25,9 +25,9 @@ namespace molcpp
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
-        Dict<int, std::string, double>::value_type operator[](const std::string &key);
+        AtomProperty& operator[](const std::string &key);
     private:
-        Dict<int, std::string, double> properties;
+        AtomPropertyDict properties;
 
     private:
         std::vector<BondPtr> _bonds;

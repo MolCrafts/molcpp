@@ -65,7 +65,7 @@ namespace molcpp
         return nbrs;
     }
 
-    Dict<int, std::string, double>::value_type Atom::operator[](const std::string &key)
+    AtomProperty& Atom::operator[](const std::string &key)
     {
         return properties[key];
     }

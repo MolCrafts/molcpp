@@ -11,18 +11,18 @@ namespace molcpp
         {
             auto mpatom = create_atom();
             
-            mpatom->properties["name"] = chflatom.name();
-            mpatom->properties["type"] = chflatom.type();
-            mpatom->properties["mass"] = chflatom.mass();
-            mpatom->properties["charge"] = chflatom.charge();
+            (*mpatom)["name"] = chflatom.name();
+            (*mpatom)["type"] = chflatom.type();
+            (*mpatom)["mass"] = chflatom.mass();
+            (*mpatom)["charge"] = chflatom.charge();
             auto full_name = chflatom.full_name();  // std::string
-            if (full_name) mpatom->properties["full_name"] = full_name.value();
+            if (full_name) (*mpatom)["full_name"] = full_name.value();
             auto vdw_radius = chflatom.vdw_radius();  // double
-            if (vdw_radius) mpatom->properties["vdw_radius"] = vdw_radius.value();
+            if (vdw_radius) (*mpatom)["vdw_radius"] = vdw_radius.value();
             auto covalent_radius = chflatom.covalent_radius();  // double
-            if (covalent_radius) mpatom->properties["covalent_radius"] = covalent_radius.value();
+            if (covalent_radius) (*mpatom)["covalent_radius"] = covalent_radius.value();
             auto atomic_number = chflatom.atomic_number();  // uint64_t
-            if (atomic_number) mpatom->properties["atomic_number"] = static_cast<int>(atomic_number.value());
+            if (atomic_number) (*mpatom)["atomic_number"] = static_cast<int>(atomic_number.value());
 
             this->add_atom(mpatom);
         }
