@@ -2,7 +2,7 @@
 
 namespace molcpp
 {
-    Topology::Topology(const chemfiles::Topology& chflTopology)
+    Topology::Topology(const chemfiles::Topology &chflTopology)
     {
         _atoms.reserve(chflTopology.size());
         _bonds.reserve(chflTopology.bonds().size());
@@ -10,19 +10,23 @@ namespace molcpp
         for (auto chflatom : chflTopology)
         {
             auto mpatom = create_atom();
-            
+
             mpatom->properties["name"] = chflatom.name();
             mpatom->properties["type"] = chflatom.type();
             mpatom->properties["mass"] = chflatom.mass();
             mpatom->properties["charge"] = chflatom.charge();
-            auto full_name = chflatom.full_name();  // std::string
-            if (full_name) mpatom->properties["full_name"] = full_name.value();
-            auto vdw_radius = chflatom.vdw_radius();  // double
-            if (vdw_radius) mpatom->properties["vdw_radius"] = vdw_radius.value();
-            auto covalent_radius = chflatom.covalent_radius();  // double
-            if (covalent_radius) mpatom->properties["covalent_radius"] = covalent_radius.value();
-            auto atomic_number = chflatom.atomic_number();  // uint64_t
-            if (atomic_number) mpatom->properties["atomic_number"] = static_cast<int>(atomic_number.value());
+            auto full_name = chflatom.full_name(); // std::string
+            if (full_name)
+                mpatom->properties["full_name"] = full_name.value();
+            auto vdw_radius = chflatom.vdw_radius(); // double
+            if (vdw_radius)
+                mpatom->properties["vdw_radius"] = vdw_radius.value();
+            auto covalent_radius = chflatom.covalent_radius(); // double
+            if (covalent_radius)
+                mpatom->properties["covalent_radius"] = covalent_radius.value();
+            auto atomic_number = chflatom.atomic_number(); // uint64_t
+            if (atomic_number)
+                mpatom->properties["atomic_number"] = static_cast<int>(atomic_number.value());
 
             this->add_atom(mpatom);
         }
@@ -36,8 +40,10 @@ namespace molcpp
 
     bool Topology::add_atom(AtomPtr atom)
     {
-        if (has_atom(atom)) return false;
-        else _atoms.push_back(atom);
+        if (has_atom(atom))
+            return false;
+        else
+            _atoms.push_back(atom);
         return true;
     }
 
@@ -48,7 +54,7 @@ namespace molcpp
 
     AtomPtr Topology::create_atom()
     {
-        AtomPtr atom = molcpp::create_atom();  // using atom.h create_atom()
+        AtomPtr atom = molcpp::create_atom(); // using atom.h create_atom()
         add_atom(atom);
         return atom;
     }
@@ -57,12 +63,21 @@ namespace molcpp
     {
         if (has_bond(bond))
         {
+            LOG_WARNING("Bond already exists");
             return false;
         }
         else
         {
-            _bonds.push_back(bond);
-            return true;
+            if (has_atom(bond->get_itom()) && has_atom(bond->get_jtom()))
+            {
+                _bonds.push_back(bond);
+                return true;
+            }
+            else
+            {
+                LOG_ERROR("Atom not found");
+                throw std::runtime_error("Atom not found");
+            }
         }
     }
 

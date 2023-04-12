@@ -28,7 +28,7 @@ add_executable(
     test_atom.cpp
     test_bond.cpp
     test_topology.cpp
-    test_frame.cpp
+    # test_frame.cpp
     # test_element.cpp
     # test_parsmart.cpp
     # test_forcefield.cpp

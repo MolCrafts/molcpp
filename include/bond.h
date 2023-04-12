@@ -17,7 +17,6 @@ namespace molcpp
             Bond(AtomPtr, AtomPtr);
             AtomPtr get_itom() const;
             AtomPtr get_jtom() const;
-            // operator==
             bool operator==(const Bond &other) const;
 
         private:
