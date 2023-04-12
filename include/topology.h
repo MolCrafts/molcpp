@@ -4,6 +4,7 @@
 #include "bond.h"
 #include "algo.h"
 #include "mplog.h"
+#include "chemfiles.hpp"
 
 namespace molcpp
 {

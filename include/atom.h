@@ -1,9 +1,8 @@
 #pragma once
 #include "algo.h"
-#include "property.h"
+#include "dict.h"
 #include <vector>
 #include <memory>
-#include "chemfiles.hpp"
 
 namespace molcpp
 {
@@ -26,8 +25,9 @@ namespace molcpp
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
-
-        Property_map<int, std::string, double> properties;
+        AtomProperty& operator[](const std::string &key);
+    private:
+        AtomPropertyDict properties;
 
     private:
         std::vector<BondPtr> _bonds;

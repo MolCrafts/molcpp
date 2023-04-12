@@ -65,6 +65,11 @@ namespace molcpp
         return nbrs;
     }
 
+    AtomProperty& Atom::operator[](const std::string &key)
+    {
+        return properties[key];
+    }
+
     AtomPtr create_atom()
     {
         return std::make_shared<Atom>();
