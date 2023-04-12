@@ -67,7 +67,7 @@ namespace molcpp
 
     AtomProperty& Atom::operator[](const std::string &key)
     {
-        return properties[key];
+        return _properties[key];
     }
 
     AtomPtr create_atom()

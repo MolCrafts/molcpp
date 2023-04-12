@@ -27,7 +27,7 @@ namespace molcpp
         std::vector<AtomPtr> get_nbrs();
         AtomProperty& operator[](const std::string &key);
     private:
-        AtomPropertyDict properties;
+        AtomPropertyDict _properties;
 
     private:
         std::vector<BondPtr> _bonds;

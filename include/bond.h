@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "dict.h"
 
 namespace molcpp
 {
@@ -19,10 +20,13 @@ namespace molcpp
             AtomPtr get_jtom() const;
             bool operator==(const Bond &other) const;
 
+            BondProperty& operator[](const std::string &key);
+
         private:
             std::weak_ptr<Atom> _itom;
             std::weak_ptr<Atom> _jtom;
 
+            BondPropertyDict _properties;
     };
 
     // factory function

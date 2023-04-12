@@ -27,6 +27,11 @@ namespace molcpp
 
     }
 
+    BondProperty &Bond::operator[](const std::string &key)
+    {
+        return _properties[key];
+    }
+
     // factory function
     BondPtr create_bond(AtomPtr itom, AtomPtr jtom)
     {

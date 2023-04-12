@@ -172,4 +172,6 @@ namespace molcpp
     // pre-defined dict type
     using AtomPropertyDict = Dict<int, double, std::string>;
     using AtomProperty = AtomPropertyDict::value_type;
+    using BondPropertyDict = Dict<int, double, std::string>;
+    using BondProperty = BondPropertyDict::value_type;
 }
