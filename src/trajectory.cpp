@@ -3,7 +3,7 @@
 namespace molcpp
 {
 
-    explicit Trajectory::Trajectory(std::string path, char mode = 'r', const std::string& format) : _fileHandler(chemfiles::Trajectory(path, mode, format))
+    Trajectory::Trajectory(std::string path, char mode = 'r', const std::string& format = "") : _fileHandler(chemfiles::Trajectory(path, mode, format))
     {
     }
 

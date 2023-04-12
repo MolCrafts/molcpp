@@ -24,11 +24,12 @@ endif()
 add_executable(
     molcpp_test
     test_algo.cpp
-    test_property.cpp
+    test_dict.cpp
     test_atom.cpp
     test_bond.cpp
     test_topology.cpp
-    # test_frame.cpp
+    test_frame.cpp
+    test_trajectory.cpp
     # test_element.cpp
     # test_parsmart.cpp
     # test_forcefield.cpp

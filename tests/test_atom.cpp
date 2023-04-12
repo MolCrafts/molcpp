@@ -10,9 +10,9 @@ namespace molcpp
     {
         // create an atom and return shared_ptr
         auto a1 = create_atom();
-        a1->properties["name"] = "C";
-        a1->properties["mass"] = 12.0;
-        a1->properties["charge"] = 1;
+        (*a1)["name"] = "C";
+        (*a1)["mass"] = 12.0;
+        (*a1)["charge"] = 1;
 
     }
 

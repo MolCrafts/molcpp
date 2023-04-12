@@ -1,5 +1,4 @@
-#ifndef TEST_UTILS_H
-#define TEST_UTILS_H
+#pragma once
 
 #include <gtest/gtest.h>
 #include <chemfiles.hpp>
@@ -7,5 +6,7 @@
 #include <string>
 #include <iostream>
 #include "xtensor/xtensor.hpp"
+#include <filesystem>
 
-#endif  // TEST_UTILS_H
+namespace fs = std::filesystem;
+const fs::path TEST_DATA_DIR = fs::path(__FILE__).parent_path() / "tests-data";
