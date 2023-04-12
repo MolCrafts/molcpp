@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "dict.h"
+#include "itemtype.h"
 
 namespace molcpp
 {
@@ -25,7 +26,7 @@ namespace molcpp
         private:
             std::weak_ptr<Atom> _itom;
             std::weak_ptr<Atom> _jtom;
-
+            BondTypePtr _type;
             BondPropertyDict _properties;
     };
 

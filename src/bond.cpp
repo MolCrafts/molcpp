@@ -29,7 +29,7 @@ namespace molcpp
 
     BondProperty &Bond::operator[](const std::string &key)
     {
-        return _properties[key];
+        return _properties.has(key) ? _properties[key] : (*_type)[key];
     }
 
     // factory function

@@ -1,6 +1,7 @@
 #pragma once
 #include "algo.h"
 #include "dict.h"
+#include "itemtype.h"
 #include <vector>
 #include <memory>
 
@@ -19,17 +20,18 @@ namespace molcpp
     {
 
     public:
-        Atom() = default;
+        Atom();
         bool add_bond(BondPtr);
         bool del_bond(BondPtr);
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
         AtomProperty& operator[](const std::string &key);
-    private:
-        AtomPropertyDict _properties;
+        const std::string& get_type() const;
 
     private:
+        AtomTypePtr _type;
+        AtomPropertyDict _properties;
         std::vector<BondPtr> _bonds;
     };
 

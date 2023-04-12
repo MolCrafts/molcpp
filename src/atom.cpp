@@ -4,6 +4,8 @@
 namespace molcpp
 {
 
+    Atom::Atom() : _type{create_atomtype("")}, _properties{}, _bonds{} {}
+
     bool Atom::add_bond(BondPtr bond)
     {
         if (has_bond(bond))
@@ -65,9 +67,15 @@ namespace molcpp
         return nbrs;
     }
 
+    const std::string& Atom::get_type() const
+    {
+        auto key = "type";
+        return _properties.has(key) ? _properties[key] : _type->get_name();
+    }
+
     AtomProperty& Atom::operator[](const std::string &key)
     {
-        return _properties[key];
+        return _properties.has(key) ? _properties[key] : (*_type)[key];
     }
 
     AtomPtr create_atom()
