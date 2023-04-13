@@ -29,7 +29,7 @@ namespace molcpp
             size_t get_natoms() const { return _atoms.size(); }
             size_t get_nbonds() const { return _bonds.size(); }
 
-        protected:
+        private:
 
             AtomVec _atoms;
             BondVec _bonds;

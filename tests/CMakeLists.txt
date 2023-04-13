@@ -31,6 +31,7 @@ add_executable(
     test_topology.cpp
     test_frame.cpp
     test_trajectory.cpp
+    test_itemtype.cpp
     # test_element.cpp
     # test_parsmart.cpp
     # test_forcefield.cpp

@@ -16,10 +16,10 @@ namespace molcpp
     public:
         ForceField();
         AtomTypePtr def_atomtype(const std::string&);
-        size_t get_natomtypes() { return _atom_type_manager.get_ntypes(); }
+        size_t get_natomtypes();
         std::optional<AtomTypePtr> get_atomtype(const std::string&);
         BondTypePtr def_bondtype(const std::string&, const AtomTypePtr&, const AtomTypePtr&);
-        size_t get_nbondtypes() { return _bond_type_manager.get_ntypes(); }
+        size_t get_nbondtypes();
         std::optional<BondTypePtr> get_bondtype(const std::string&);
         std::optional<BondTypePtr> get_bondtype(const AtomTypePtr&, const AtomTypePtr&);
 

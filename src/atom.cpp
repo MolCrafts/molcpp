@@ -67,10 +67,27 @@ namespace molcpp
         return nbrs;
     }
 
-    const std::string& Atom::get_type() const
+    const std::string& Atom::get_type()
     {
         auto key = "type";
-        return _properties.has(key) ? _properties[key] : _type->get_name();
+        if (_properties.has(key))
+        {
+            return _properties.get<std::string>(key);
+        }
+        else
+        {
+            return _type->get_name();
+        }
+    }
+
+    void Atom::set_atomtype(const AtomTypePtr& type)
+    {
+        _type = type;
+    }
+
+    const AtomTypePtr& Atom::get_atomtype()
+    {
+        return _type;
     }
 
     AtomProperty& Atom::operator[](const std::string &key)

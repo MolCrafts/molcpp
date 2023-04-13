@@ -6,10 +6,10 @@ namespace molcpp
 
     AtomType::AtomType(const std::string &name) : _properties{}
     {
-        _properties["name"] = name
+        _properties["name"] = name;
     };
 
-    const std::string AtomType::get_name() const
+    const std::string& AtomType::get_name() const
     {
         return _properties["name"].get<std::string>();
     }

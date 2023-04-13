@@ -1,5 +1,4 @@
-#ifndef ALGO_H
-#define ALGO_H
+#pragma once
 
 #include <vector>
 #include <algorithm>
@@ -33,6 +32,3 @@ namespace molcpp
         }
     }
 }
-
-
-#endif // ALGO_H

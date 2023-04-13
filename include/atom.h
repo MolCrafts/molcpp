@@ -27,7 +27,9 @@ namespace molcpp
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
         AtomProperty& operator[](const std::string &key);
-        const std::string& get_type() const;
+        const std::string& get_type();
+        void set_atomtype(const AtomTypePtr&);
+        const AtomTypePtr& get_atomtype();
 
     private:
         AtomTypePtr _type;

@@ -1,10 +1,9 @@
-# pragma once
+#pragma once
 #include <string>
 #include <vector>
 #include <memory>
 #include <optional>
 #include "mplog.h"
-#include "topology.h"
 #include "dict.h"
 
 namespace molcpp
@@ -14,7 +13,7 @@ namespace molcpp
     {
         public:
             AtomType(const std::string&);
-            const std::string get_name() const;
+            const std::string& get_name() const;
             bool operator== (const AtomType&) const;
             bool operator!= (const AtomType&) const;
             AtomProperty& operator[](const std::string &key);

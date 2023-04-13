@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include <variant>
 
@@ -29,12 +30,6 @@ namespace molcpp
             if (_value.index() != other.get_variant().index())
                 return false;
             return _value == other.get_variant();
-        }
-
-        template <typename T>
-        T &get()
-        {
-            return std::get<T>(_value);
         }
 
         template <typename T>
@@ -109,7 +104,7 @@ namespace molcpp
         }
 
         template <typename T>
-        T &get(const key_type &key)
+        const T &get(const key_type &key) const
         {
             auto it = m_map.find(key);
             if (it == m_map.end())
@@ -147,6 +142,11 @@ namespace molcpp
         value_type &operator[](const key_type &key)
         {
             return m_map[key];
+        }
+
+        const value_type &operator[](const key_type &key) const
+        {
+            return m_map.at(key);
         }
 
         // iterator and return key-value pair
