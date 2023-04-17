@@ -32,9 +32,9 @@ add_executable(
     test_frame.cpp
     test_trajectory.cpp
     test_itemtype.cpp
+    test_forcefield.cpp
     # test_element.cpp
     # test_parsmart.cpp
-    # test_forcefield.cpp
 )
 
 target_link_libraries(

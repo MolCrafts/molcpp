@@ -9,7 +9,7 @@ namespace molcpp
         _properties["name"] = name;
     };
 
-    const std::string& AtomType::get_name() const
+    const std::string &AtomType::get_name() const
     {
         return _properties["name"].get<std::string>();
     }
@@ -48,7 +48,7 @@ namespace molcpp
         return at1;
     }
 
-    std::optional<AtomTypePtr> AtomTypeManager::get(std::string tname)
+    std::optional<AtomTypePtr> AtomTypeManager::get(const std::string &tname)
     {
         // use std::find to find atomtype
         auto it = std::find_if(_atom_types.begin(), _atom_types.end(), [&tname](const AtomTypePtr &atype)

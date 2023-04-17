@@ -19,6 +19,7 @@ namespace molcpp
         size_t get_natomtypes();
         std::optional<AtomTypePtr> get_atomtype(const std::string&);
         BondTypePtr def_bondtype(const std::string&, const AtomTypePtr&, const AtomTypePtr&);
+        BondTypePtr def_bondtype(const std::string&, const std::string&, const std::string&);
         size_t get_nbondtypes();
         std::optional<BondTypePtr> get_bondtype(const std::string&);
         std::optional<BondTypePtr> get_bondtype(const AtomTypePtr&, const AtomTypePtr&);

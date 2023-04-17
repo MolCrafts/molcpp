@@ -1,31 +1,30 @@
 #include "utils.h"
 #include "forcefield.h"
 
-TEST(TestAtomType, test_init)
+namespace molcpp
 {
 
-    auto at1 = molcpp::AtomType("C");
-    auto at2 = molcpp::AtomType("C");
-    auto at3 = molcpp::AtomType("H");
+    TEST(TestForceField, test_def)
+    {
 
-    EXPECT_EQ(at1, at2);
-    EXPECT_NE(at1, at3);
+        auto ff = ForceField();
+        auto at = ff.def_atomtype("C");
+        (*at)["mass"] = 12.011;
+        auto bt = ff.def_bondtype("C-C", at, at);
+        (*bt)["k"] = 1000.0;
+        (*bt)["r0"] = 1.0;
+    }
 
-}
+    TEST(TestForceField, test_match_atom)
+    {
+        auto ff = ForceField();
+        auto at = ff.def_atomtype("C");
+        (*at)["type"] = "C";
+        (*at)["mass"] = 12.011;
 
-TEST(TestAtomTypeManager, test_init)
-{
-
-    auto avec = molcpp::AtomTypeManager();
-    auto at1 = avec.def("C");
-    EXPECT_EQ(at1->get_name(), "C");
-    EXPECT_EQ(avec.get_ntypes(), 1);
-    auto at2 = avec.def("H");
-    EXPECT_EQ(at2->get_name(), "H");
-    
-}
-
-TEST(TestForceField, test_def)
-{
-
+        auto atom1 = create_atom();
+        bool isMatch = ff.match_atom(atom1);
+        EXPECT_TRUE(isMatch);
+        EXPECT_EQ((*atom1)["mass"].get<double>(), 12.011);
+    }
 }

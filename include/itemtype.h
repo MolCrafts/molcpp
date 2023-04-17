@@ -38,7 +38,7 @@ namespace molcpp
             /// @brief get a atomtype by its name
             /// @param  const std::string&
             /// @return AtomType
-            std::optional<AtomTypePtr> get(std::string);
+            std::optional<AtomTypePtr> get(const std::string&);
             size_t get_ntypes() const { return _atom_types.size(); }
 
 
