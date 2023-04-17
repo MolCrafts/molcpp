@@ -23,6 +23,7 @@ namespace molcpp
         (*at)["mass"] = 12.011;
 
         auto atom1 = create_atom();
+        atom1->set_type("C");
         bool isMatch = ff.match_atom(atom1);
         EXPECT_TRUE(isMatch);
         EXPECT_EQ((*atom1)["mass"].get<double>(), 12.011);

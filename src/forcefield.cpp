@@ -58,7 +58,6 @@ namespace molcpp
     bool ForceField::match_atom(const AtomPtr atom)
     {
         auto at = atom->get_type();
-        std::cout << at << std::endl;
         auto atomtype = get_atomtype(at);
         if (atomtype.has_value())
         {

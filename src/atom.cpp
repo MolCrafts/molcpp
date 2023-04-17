@@ -69,15 +69,19 @@ namespace molcpp
 
     const std::string& Atom::get_type()
     {
-        auto key = "type";
-        if (_properties.has(key))
+        if (_properties.has("type"))
         {
-            return _properties.get<std::string>(key);
+            return _properties.get<std::string>("type");
         }
         else
         {
             return _type->get_name();
         }
+    }
+
+    void Atom::set_type(const std::string& type)
+    {
+        _properties.set("type", type);
     }
 
     void Atom::set_atomtype(const AtomTypePtr& type)
@@ -93,6 +97,17 @@ namespace molcpp
     AtomProperty& Atom::operator[](const std::string &key)
     {
         return _properties.has(key) ? _properties[key] : (*_type)[key];
+    }
+
+    AtomProperty& Atom::get(const std::string &key)
+    {
+        return _properties.has(key) ? _properties[key] : (*_type)[key];
+    }
+
+    AtomProperty& Atom::set(const std::string &key, const AtomProperty &value)
+    {
+        _properties.set(key, value);
+        return _properties[key];
     }
 
     AtomPtr create_atom()
