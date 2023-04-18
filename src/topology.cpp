@@ -10,19 +10,15 @@ namespace molcpp
         for (auto chflatom : chflTopology)
         {
             auto mpatom = create_atom();
-            
-            (*mpatom)["name"] = chflatom.name();
-            (*mpatom)["type"] = chflatom.type();
-            (*mpatom)["mass"] = chflatom.mass();
-            (*mpatom)["charge"] = chflatom.charge();
-            auto full_name = chflatom.full_name();  // std::string
-            if (full_name) (*mpatom)["full_name"] = full_name.value();
-            auto vdw_radius = chflatom.vdw_radius();  // double
-            if (vdw_radius) (*mpatom)["vdw_radius"] = vdw_radius.value();
-            auto covalent_radius = chflatom.covalent_radius();  // double
-            if (covalent_radius) (*mpatom)["covalent_radius"] = covalent_radius.value();
-            auto atomic_number = chflatom.atomic_number();  // uint64_t
-            if (atomic_number) (*mpatom)["atomic_number"] = static_cast<int>(atomic_number.value());
+    
+            mpatom->set("name", chflatom.name());
+            mpatom->set("type", chflatom.type());
+            mpatom->set("mass", chflatom.mass());
+            mpatom->set("charge", chflatom.charge());
+            if (chflatom.full_name()) mpatom->set("full_name", chflatom.full_name().value());
+            if (chflatom.vdw_radius()) mpatom->set("vdw_radius", chflatom.vdw_radius().value());
+            if (chflatom.covalent_radius()) mpatom->set("covalent_radius", chflatom.covalent_radius().value());
+            if (chflatom.atomic_number()) mpatom->set("atomic_number", static_cast<int>(chflatom.atomic_number().value()));
 
             this->add_atom(mpatom);
         }
@@ -50,7 +46,7 @@ namespace molcpp
 
     AtomPtr Topology::create_atom()
     {
-        AtomPtr atom = molcpp::create_atom(); // using atom.h create_atom()
+        AtomPtr atom = molcpp::create_atom();
         add_atom(atom);
         return atom;
     }

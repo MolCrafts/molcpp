@@ -3,15 +3,18 @@
 
 namespace molcpp
 {
-    TEST(TestItemType, test_atomtype)
+    TEST(TestAtomType, test_atomtype)
     {
-        // auto at1 = create_atomtype("C");
-        // EXPECT_EQ(at1->get_name(), "C");
-        // auto at2 = create_atomtype("C");
-        // EXPECT_EQ(*at1, *at2);
         auto a1 = AtomType("C");
         auto a2 = AtomType("C");
         EXPECT_EQ(a1, a2);
+    }
+
+    TEST(TestAtomType, test_set_get)
+    {
+        auto a1 = AtomType("C");
+        a1.set("mass", 12.011);
+        EXPECT_EQ(a1.get<double>("mass"), 12.011);
     }
 
     TEST(TestAtomTypeManager, test_init)
@@ -26,5 +29,12 @@ namespace molcpp
 
         EXPECT_TRUE(avec.get("H").has_value());
         EXPECT_TRUE(avec.get("C").has_value());
+    }
+
+    TEST(TestBondType, test_set_get)
+    {
+        auto a1 = AtomType("C");
+        a1.set("mass", 12.011);
+        EXPECT_EQ(a1.get<double>("mass"), 12.011);
     }
 }

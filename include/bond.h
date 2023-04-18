@@ -25,6 +25,13 @@ namespace molcpp
             bool operator==(const Bond &other) const;
 
             BondProperty& operator[](const std::string &key);
+            void set(const std::string &key, const BondProperty &value);
+            template<typename T>
+            T get(const std::string &key) const
+            {
+                if (_properties.has(key)) return _properties.get<T>(key);
+                else return _type->get<T>(key);
+            }
 
         private:
             std::weak_ptr<Atom> _itom;

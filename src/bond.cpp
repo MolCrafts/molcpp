@@ -47,6 +47,11 @@ namespace molcpp
         return _properties.has(key) ? _properties[key] : (*_type)[key];
     }
 
+    void Bond::set(const std::string &key, const BondProperty &value)
+    {
+        _properties.set(key, value);
+    }
+
     // factory function
     BondPtr create_bond(AtomPtr itom, AtomPtr jtom)
     {

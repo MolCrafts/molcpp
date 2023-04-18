@@ -17,6 +17,13 @@ namespace molcpp
             bool operator== (const AtomType&) const;
             bool operator!= (const AtomType&) const;
             AtomProperty& operator[](const std::string &key);
+            void set(const std::string& key, const AtomProperty& value);
+            template<typename T>
+            T get(const std::string& key)
+            {
+                if (_properties.has(key)) return _properties.get<T>(key);
+                else throw std::runtime_error("AtomType::get: key not found");
+            };
             
         private:
             AtomPropertyDict _properties;
@@ -58,6 +65,13 @@ namespace molcpp
 
             bool operator== (const BondType&) const;
             BondProperty& operator[](const std::string &key);
+            void set(const std::string& key, const BondProperty& value);
+            template<typename T>
+            T get(const std::string& key)
+            {
+                if (_properties.has(key)) return _properties.get<T>(key);
+                else throw std::runtime_error("BondType::get: key not found");
+            };
 
         private:
             std::string _name;

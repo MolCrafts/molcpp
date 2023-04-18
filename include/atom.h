@@ -20,15 +20,20 @@ namespace molcpp
     {
 
     public:
-        Atom(const std::string&);
+        Atom();
+        Atom(const AtomTypePtr&);
         bool add_bond(BondPtr);
         bool del_bond(BondPtr);
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
-        AtomProperty& operator[](const std::string &key);
-        AtomProperty& get(const std::string &key);
-        AtomProperty& set(const std::string &key, const AtomProperty &value);
+        template<typename T>
+        T get(const std::string& key)
+        {
+            if (_properties.has(key)) return _properties.get<T>(key);
+            else return _type->get<T>(key);
+        };
+        void set(const std::string& key, const AtomProperty& value);
         const std::string& get_typename();
         void set_type(const std::string&);
         void set_type(const AtomTypePtr&);
@@ -41,6 +46,7 @@ namespace molcpp
     };
 
     // factory function
-    AtomPtr create_atom(const std::string& type = "none");
+    AtomPtr create_atom();
+    AtomPtr create_atom(const AtomTypePtr& type);
 
 }

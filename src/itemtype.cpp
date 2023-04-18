@@ -36,6 +36,11 @@ namespace molcpp
         return _properties[key];
     }
 
+    void AtomType::set(const std::string &key, const AtomProperty &value)
+    {
+        _properties.set(key, value);
+    }
+
     AtomTypePtr create_atomtype(const std::string &name)
     {
         return std::make_shared<AtomType>(name);
@@ -74,6 +79,11 @@ namespace molcpp
     BondProperty &BondType::operator[](const std::string &key)
     {
         return _properties[key];
+    }
+
+    void BondType::set(const std::string &key, const BondProperty &value)
+    {
+        _properties.set(key, value);
     }
 
     BondTypeManager::BondTypeManager() : _bond_types{}
