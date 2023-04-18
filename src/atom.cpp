@@ -4,7 +4,7 @@
 namespace molcpp
 {
 
-    Atom::Atom() : _type{create_atomtype("")}, _properties{}, _bonds{} {}
+    Atom::Atom(const std::string& type) : _type{create_atomtype(type)}, _properties{}, _bonds{} {}
 
     bool Atom::add_bond(BondPtr bond)
     {
@@ -67,7 +67,7 @@ namespace molcpp
         return nbrs;
     }
 
-    const std::string& Atom::get_type()
+    const std::string& Atom::get_typename()
     {
         if (_properties.has("type"))
         {
@@ -84,12 +84,12 @@ namespace molcpp
         _properties.set("type", type);
     }
 
-    void Atom::set_atomtype(const AtomTypePtr& type)
+    void Atom::set_type(const AtomTypePtr& type)
     {
         _type = type;
     }
 
-    const AtomTypePtr& Atom::get_atomtype()
+    const AtomTypePtr& Atom::get_type()
     {
         return _type;
     }
@@ -110,9 +110,9 @@ namespace molcpp
         return _properties[key];
     }
 
-    AtomPtr create_atom()
+    AtomPtr create_atom(const std::string& type)
     {
-        return std::make_shared<Atom>();
+        return std::make_shared<Atom>(type);
     }
 
 }

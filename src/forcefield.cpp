@@ -55,13 +55,29 @@ namespace molcpp
         return _bond_type_manager.get_ntypes();
     }
 
-    bool ForceField::match_atom(const AtomPtr atom)
+    bool ForceField::match_atom(const AtomPtr& atom)
     {
-        auto at = atom->get_type();
+        auto at = atom->get_typename();
         auto atomtype = get_atomtype(at);
         if (atomtype.has_value())
         {
-            atom->set_atomtype(atomtype.value());
+            atom->set_type(atomtype.value());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool ForceField::match_bond(const BondPtr& bond)
+    {
+        auto it = bond->get_itom()->get_type();
+        auto jt = bond->get_jtom()->get_type();
+        auto bondtype = get_bondtype(it, jt);
+        if (bondtype.has_value())
+        {
+            bond->set_type(bondtype.value());
             return true;
         }
         else

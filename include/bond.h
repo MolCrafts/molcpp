@@ -19,6 +19,9 @@ namespace molcpp
             Bond(AtomPtr, AtomPtr);
             AtomPtr get_itom() const;
             AtomPtr get_jtom() const;
+            BondTypePtr get_bondtype() const;
+            void set_type(const BondTypePtr&);
+            void set_type(const std::string&);
             bool operator==(const Bond &other) const;
 
             BondProperty& operator[](const std::string &key);

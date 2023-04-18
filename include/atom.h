@@ -20,7 +20,7 @@ namespace molcpp
     {
 
     public:
-        Atom();
+        Atom(const std::string&);
         bool add_bond(BondPtr);
         bool del_bond(BondPtr);
         bool has_bond(BondPtr);
@@ -29,10 +29,10 @@ namespace molcpp
         AtomProperty& operator[](const std::string &key);
         AtomProperty& get(const std::string &key);
         AtomProperty& set(const std::string &key, const AtomProperty &value);
-        const std::string& get_type();
+        const std::string& get_typename();
         void set_type(const std::string&);
-        void set_atomtype(const AtomTypePtr&);
-        const AtomTypePtr& get_atomtype();
+        void set_type(const AtomTypePtr&);
+        const AtomTypePtr& get_type();
 
     private:
         AtomTypePtr _type;
@@ -41,6 +41,6 @@ namespace molcpp
     };
 
     // factory function
-    AtomPtr create_atom();
+    AtomPtr create_atom(const std::string& type = "none");
 
 }

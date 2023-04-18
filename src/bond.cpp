@@ -16,6 +16,21 @@ namespace molcpp
         return _jtom.lock();
     }
 
+    BondTypePtr Bond::get_bondtype() const
+    {
+        return _type;
+    }
+
+    void Bond::set_type(const BondTypePtr &type)
+    {
+        _type = type;
+    }
+
+    void Bond::set_type(const std::string &type)
+    {
+        _properties.set("type", type);
+    }
+
     bool Bond::operator==(const Bond &other) const
     {
         auto itom = get_itom();

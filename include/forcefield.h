@@ -24,7 +24,8 @@ namespace molcpp
         std::optional<BondTypePtr> get_bondtype(const std::string&);
         std::optional<BondTypePtr> get_bondtype(const AtomTypePtr&, const AtomTypePtr&);
 
-        bool match_atom(const AtomPtr);
+        bool match_atom(const AtomPtr&);
+        bool match_bond(const BondPtr&);
 
     private:
         AtomTypeManager _atom_type_manager;
