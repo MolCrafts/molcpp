@@ -97,6 +97,18 @@ namespace molcpp
         return _type;
     }
 
+    AtomProperty& Atom::operator [] (const std::string& key)
+    {
+        if (_properties.has(key))
+        {
+            return _properties[key];
+        }
+        else
+        {
+            return (*_type)[key];
+        }
+    }
+
     void Atom::set(const std::string &key, const AtomProperty &value)
     {
         _properties.set(key, value);

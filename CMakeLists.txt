@@ -57,14 +57,14 @@ target_sources(
   molcpp
   PRIVATE
   src/algo.cpp
-  src/element.cpp
-  src/atom.cpp
-  src/bond.cpp
-  src/topology.cpp
-  src/frame.cpp
-  src/trajectory.cpp
   src/itemtype.cpp
-  src/forcefield.cpp
+  # src/element.cpp
+  # src/atom.cpp
+  # src/bond.cpp
+  # src/topology.cpp
+  # src/frame.cpp
+  # src/trajectory.cpp
+  # src/forcefield.cpp
 )
 
 target_link_libraries(

@@ -12,7 +12,7 @@ namespace molcpp
 
     public:
         Trajectory() = delete;
-        explicit Trajectory(std::string, char, const std::string &);
+        explicit Trajectory(const std::string&, char, const std::string &);
 
         Frame read();
         Frame read_step(size_t step);

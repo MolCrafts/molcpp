@@ -25,7 +25,7 @@ namespace molcpp
         // get bonds
         for (auto chflbond : chflTopology.bonds())
         {
-            auto mpabond = create_bond(chflbond[0], chflbond[1]);
+            auto mpabond = new_bond(chflbond[0], chflbond[1]);
             this->add_bond(mpabond);
         }
     }
@@ -44,7 +44,7 @@ namespace molcpp
         return std::find(_atoms.begin(), _atoms.end(), atom) != _atoms.end();
     }
 
-    AtomPtr Topology::create_atom()
+    AtomPtr Topology::new_atom()
     {
         AtomPtr atom = molcpp::create_atom();
         add_atom(atom);
@@ -80,7 +80,7 @@ namespace molcpp
         return results == _bonds.end() ? false : true;
     }
 
-    BondPtr Topology::create_bond(AtomPtr itom, AtomPtr jtom)
+    BondPtr Topology::new_bond(AtomPtr itom, AtomPtr jtom)
     {
         BondPtr bond = molcpp::create_bond(itom, jtom);
         if (add_bond(bond))
@@ -96,7 +96,7 @@ namespace molcpp
         }
     }
 
-    BondPtr Topology::create_bond(size_t itom_index, size_t jtom_index)
+    BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
         return create_bond(_atoms[itom_index], _atoms[jtom_index]);
     }

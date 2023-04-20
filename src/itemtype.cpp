@@ -76,6 +76,11 @@ namespace molcpp
             return false;
     }
 
+    bool BondType::operator!=(const BondType &other) const
+    {
+        return !operator==(other);
+    }
+
     BondProperty &BondType::operator[](const std::string &key)
     {
         return _properties[key];

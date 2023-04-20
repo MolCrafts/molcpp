@@ -64,6 +64,7 @@ namespace molcpp
             std::string get_name() const { return _name; }
 
             bool operator== (const BondType&) const;
+            bool operator!= (const BondType&) const;
             BondProperty& operator[](const std::string &key);
             void set(const std::string& key, const BondProperty& value);
             template<typename T>

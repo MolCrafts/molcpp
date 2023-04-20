@@ -27,6 +27,7 @@ namespace molcpp
         bool has_bond(BondPtr);
         bool is_nbr(AtomPtr);
         std::vector<AtomPtr> get_nbrs();
+        AtomProperty& operator [] (const std::string&);
         template<typename T>
         T get(const std::string& key)
         {
