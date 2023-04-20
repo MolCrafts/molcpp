@@ -9,6 +9,9 @@
 namespace molcpp
 {
 
+    class Topology;
+    using TopoVec = std::vector<Topology>;
+
     class Topology
     {
 
@@ -33,6 +36,7 @@ namespace molcpp
 
             AtomVec _atoms;
             BondVec _bonds;
+            TopoVec _topos;
 
     };
 
