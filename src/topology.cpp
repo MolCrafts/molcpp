@@ -10,7 +10,7 @@ namespace molcpp
     Topology::Topology(const chemfiles::Topology &chflTopology)
     {
         _atoms.reserve(chflTopology.size());
-        // _bonds.reserve(chflTopology.bonds().size());
+        _bonds.reserve(chflTopology.bonds().size());
         // get atoms
         for (auto chflatom : chflTopology)
         {
@@ -28,11 +28,11 @@ namespace molcpp
             this->add_atom(mpatom);
         }
         // get bonds
-        // for (auto chflbond : chflTopology.bonds())
-        // {
-        //     auto mpabond = new_bond(chflbond[0], chflbond[1]);
-        //     this->add_bond(mpabond);
-        // }
+        for (auto chflbond : chflTopology.bonds())
+        {
+            auto mpabond = new_bond(chflbond[0], chflbond[1]);
+            this->add_bond(mpabond);
+        }
     }
 
     bool Topology::add_atom(AtomPtr atom)
@@ -102,7 +102,7 @@ namespace molcpp
 
     BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
-        return create_bond(_atoms[itom_index], _atoms[jtom_index]);
+        return new_bond(_atoms[itom_index], _atoms[jtom_index]);
     }
 
     // bool Topology::del_bond(BondPtr bond)

@@ -40,6 +40,7 @@ target_link_libraries(
     GTest::gtest_main
     molcpp
 )
+
 message(STATUS "debug build.")
 target_compile_options(molcpp_test
     PRIVATE

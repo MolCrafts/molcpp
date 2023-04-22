@@ -25,6 +25,7 @@ else()
     COMMAND git submodule update --init --recursive external/chemfiles
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+  set(BUILD_SHARED_LIBS ON)
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 endif()
 
@@ -62,9 +63,9 @@ target_sources(
   src/atom.cpp
   src/bond.cpp
   src/topology.cpp
-  # src/frame.cpp
-  # src/trajectory.cpp
-  # src/forcefield.cpp
+  src/frame.cpp
+  src/trajectory.cpp
+  src/forcefield.cpp
 )
 
 target_link_libraries(

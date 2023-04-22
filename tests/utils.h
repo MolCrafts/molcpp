@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include "xtensor/xtensor.hpp"
+#include <xtensor/xtensor.hpp>
 #include <filesystem>
 
 namespace fs = std::filesystem;
