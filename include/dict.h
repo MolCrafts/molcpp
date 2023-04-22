@@ -38,7 +38,6 @@ namespace molcpp
             return std::get<T>(_value);
         }
 
-        // set
         void set(const variant_type &V)
         {
             _value = V;

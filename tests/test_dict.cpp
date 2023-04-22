@@ -36,7 +36,7 @@ namespace molcpp
         EXPECT_EQ(d.get<double>(), 3.14);
     }
 
-    TEST(TestDic, SetAndGet)
+    TEST(TestDict, SetAndGet)
     {
         Dict<int, double> d;
         d.set("int", 42);
@@ -44,6 +44,10 @@ namespace molcpp
 
         EXPECT_EQ(d.get<int>("int"), 42);
         EXPECT_EQ(d.get<double>("double"), 3.14);
+
+        // test double set
+        d.set("double", 1.11);
+        EXPECT_EQ(d.get<double>("double"), 1.11);
     }
 
     TEST(TestDict, OutOfRange)

@@ -16,7 +16,7 @@ endif()
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
-find_package(chemfiles)
+find_package(chemfiles QUIET)
 if(chemfiles_FOUND)
   message(STATUS "Chemfiles installed")
 else()
@@ -28,7 +28,7 @@ else()
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 endif()
 
-find_package(xtensor)
+find_package(xtensor QUIET)
 if(xtensor_FOUND)
   message(STATUS "xtensor installed")
 else()
@@ -58,10 +58,10 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
-  # src/element.cpp
-  # src/atom.cpp
-  # src/bond.cpp
-  # src/topology.cpp
+  src/element.cpp
+  src/atom.cpp
+  src/bond.cpp
+  src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
   # src/forcefield.cpp
@@ -75,17 +75,16 @@ target_link_libraries(
   xtensor
 )
 
-
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-  message(STATUS "Debug build.")
+  message(STATUS "Compile molcpp and its testcases in debug mode")
   target_compile_options(molcpp
       PUBLIC
-          -Wall
           -g
   )
   enable_testing()
   add_subdirectory(tests)
+# For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
   target_compile_options(molcpp

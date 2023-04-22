@@ -2,10 +2,15 @@
 
 namespace molcpp
 {
+    Topology::Topology(size_t natoms, size_t nbonds = 0) : _atoms(natoms), _bonds(nbonds) 
+    {
+
+    }
+
     Topology::Topology(const chemfiles::Topology &chflTopology)
     {
         _atoms.reserve(chflTopology.size());
-        _bonds.reserve(chflTopology.bonds().size());
+        // _bonds.reserve(chflTopology.bonds().size());
         // get atoms
         for (auto chflatom : chflTopology)
         {
@@ -23,11 +28,11 @@ namespace molcpp
             this->add_atom(mpatom);
         }
         // get bonds
-        for (auto chflbond : chflTopology.bonds())
-        {
-            auto mpabond = new_bond(chflbond[0], chflbond[1]);
-            this->add_bond(mpabond);
-        }
+        // for (auto chflbond : chflTopology.bonds())
+        // {
+        //     auto mpabond = new_bond(chflbond[0], chflbond[1]);
+        //     this->add_bond(mpabond);
+        // }
     }
 
     bool Topology::add_atom(AtomPtr atom)
@@ -47,8 +52,8 @@ namespace molcpp
     AtomPtr Topology::new_atom()
     {
         AtomPtr atom = molcpp::create_atom();
-        add_atom(atom);
-        return atom;
+        if (add_atom(atom)) return atom;
+        else throw std::runtime_error("Atom already exists");
     }
 
     bool Topology::add_bond(BondPtr bond)
@@ -91,7 +96,6 @@ namespace molcpp
         }
         else
         {
-            LOG_ERROR("Bond already exists");
             throw std::runtime_error("Bond already exists");
         }
     }
@@ -125,6 +129,11 @@ namespace molcpp
     TopologyPtr create_topology(size_t natoms, size_t nbonds = 0)
     {
         return std::make_shared<Topology>(natoms, nbonds);
+    }
+
+    TopologyPtr create_topology(const chemfiles::Topology &chflTopology)
+    {
+        return std::make_shared<Topology>(chflTopology);
     }
 
 }

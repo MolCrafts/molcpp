@@ -14,7 +14,7 @@ namespace molcpp
 
         public:
             Topology() = default;
-            Topology(size_t natoms, size_t nbonds = 0) : _atoms(natoms), _bonds(nbonds) {};
+            Topology(size_t, size_t);
             Topology(const chemfiles::Topology& chflTopology);
             bool add_atom(AtomPtr);
             bool has_atom(AtomPtr);
@@ -38,8 +38,9 @@ namespace molcpp
 
     using TopologyPtr = std::shared_ptr<Topology>;
 
-    // factory function
+    // // factory function
     TopologyPtr create_topology();
     TopologyPtr create_topology(size_t, size_t);
+    TopologyPtr create_topology(const chemfiles::Topology &);
 
 }

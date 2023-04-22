@@ -23,18 +23,16 @@ endif()
 
 add_executable(
     molcpp_test
-    # test_algo.cpp
+    test_algo.cpp
     test_itemtype.cpp
-    # test_dict.cpp
-    # test_itemtype.cpp
-    # test_atom.cpp
-    # test_bond.cpp
-    # test_topology.cpp
-    # test_frame.cpp
-    # test_trajectory.cpp
+    test_dict.cpp
+    test_atom.cpp
+    test_bond.cpp
+    test_topology.cpp
+    test_frame.cpp
+    test_trajectory.cpp
     # test_forcefield.cpp
     # test_element.cpp
-    # test_parsmart.cpp
 )
 
 target_link_libraries(
@@ -42,11 +40,9 @@ target_link_libraries(
     GTest::gtest_main
     molcpp
 )
-
+message(STATUS "debug build.")
 target_compile_options(molcpp_test
     PRIVATE
-        -O0
-        -Wall
         -g
 )
 
