@@ -13,12 +13,24 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
+if(MOLCPP_BUILD_SHARED)
+  add_library(molcpp SHARED)
+else()
+  add_library(molcpp STATIC)
+  set(POSITION_INDEPENDENT_CODE ON)
+endif()
+
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 find_package(chemfiles QUIET)
 if(chemfiles_FOUND)
   message(STATUS "Chemfiles installed")
+  target_include_directories(
+    molcpp
+    PUBLIC
+    ${chemfiles_INCLUDE_DIRS}      
+  )
 else()
   message(STATUS "Chemfiles not installed, compile from source code")
   execute_process(
@@ -32,6 +44,11 @@ endif()
 find_package(xtensor QUIET)
 if(xtensor_FOUND)
   message(STATUS "xtensor installed")
+  target_include_directories(
+    molcpp
+    PUBLIC
+    ${xtensor_INCLUDE_DIRS}
+  )
 else()
   message(STATUS "xtensor not installed, compile from source code")
   execute_process(
@@ -45,8 +62,6 @@ else()
   add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
   add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
 endif()
-
-add_library(molcpp SHARED)
 
 target_include_directories(
   molcpp
