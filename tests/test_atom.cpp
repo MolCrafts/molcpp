@@ -16,25 +16,27 @@ namespace molcpp
     TEST(TestAtom, test_set_get)
     {
         auto a1 = create_atom();
-        a1->set("name", "C");
-        a1->set("mass", 12.0);
-        a1->set("charge", 1);
-        // (*a1)["name"] = "C";
-        // (*a1)["mass"] = 12.0;
-        // (*a1)["charge"] = 1;
 
-        // EXPECT_EQ((*a1)["name"].get<std::string>(), "C");
-        // EXPECT_EQ((*a1)["mass"].get<double>(), 12.0);
-        // EXPECT_EQ((*a1)["charge"].get<int>(), 1);
+        a1->set("name", "H");
+        a1->set("mass", 1.008);
+        a1->set("charge", 0);
 
-        // a1->set("name", "H");
-        // a1->set("mass", 1.008);
-        // a1->set("charge", 0);
+        EXPECT_EQ(a1->get<std::string>("name"), "H");
+        EXPECT_EQ(a1->get<double>("mass"), 1.008);
+        EXPECT_EQ(a1->get<int>("charge"), 0);
 
-        // EXPECT_EQ(a1->get("name").get<std::string>(), "H");
-        // EXPECT_EQ(a1->get("mass").get<double>(), 1.008);
-        // EXPECT_EQ(a1->get("charge").get<int>(), 0);
+    }
 
+    TEST(TestAtom, test_set_get_item)
+    {
+        auto a1 = create_atom();
+        (*a1)["name"] = "C";
+        (*a1)["mass"] = 12.0;
+        (*a1)["charge"] = 1;
+
+        EXPECT_EQ((*a1)["name"].get<std::string>(), "C");
+        EXPECT_EQ((*a1)["mass"].get<double>(), 12.0);
+        EXPECT_EQ((*a1)["charge"].get<int>(), 1);
     }
 
     TEST(TestAtom, test_nbrs)
