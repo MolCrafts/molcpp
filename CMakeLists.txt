@@ -58,13 +58,13 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
+  src/forcefield.cpp
   # src/element.cpp
   # src/atom.cpp
   # src/bond.cpp
   # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
-  # src/forcefield.cpp
 )
 
 target_link_libraries(
@@ -74,7 +74,6 @@ target_link_libraries(
   xtl
   xtensor
 )
-
 
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
