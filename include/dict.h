@@ -7,8 +7,8 @@ namespace molcpp
 {
     /**
      * @brief The class template Data represents a type-safe union. An instance of Data at any given time holds a value of one of its alternative types
-     * 
-     * @tparam Ts 
+     *
+     * @tparam Ts
      */
     template <typename... Ts>
     class Data
@@ -18,25 +18,25 @@ namespace molcpp
 
         /**
          * @brief Construct a new Data object
-         * 
+         *
          */
         Data() : _value(variant_type{}) {}
 
         /**
          * @brief Construct a new Data object with value
-         * 
-         * @tparam T 
-         * @param value 
+         *
+         * @tparam T
+         * @param value
          */
         template <typename T>
         Data(const T &value) : _value(value) {}
 
         /**
          * @brief Assignment operator
-         * 
-         * @tparam T 
-         * @param V 
-         * @return Data<Ts...>& 
+         *
+         * @tparam T
+         * @param V
+         * @return Data<Ts...>&
          */
         template <typename T>
         Data<Ts...> &operator=(const T &V)
@@ -48,25 +48,25 @@ namespace molcpp
 
         /**
          * @brief Equality operator
-         * 
-         * @tparam Us 
-         * @param other 
-         * @return true 
-         * @return false 
+         *
+         * @tparam Us
+         * @param other
+         * @return true
+         * @return false
          */
         template <typename... Us>
         bool operator==(const Data<Us...> &other) const
         {
-            if (_value.index() != other.get_variant().index())
+            if (_value.index() != other.get_raw().index())
                 return false;
-            return _value == other.get_variant();
+            return _value == other.get_raw();
         }
 
         /**
          * @brief Get a typed value object
-         * 
-         * @tparam T 
-         * @return const T& 
+         *
+         * @tparam T
+         * @return const T&
          */
         template <typename T>
         const T &get() const
@@ -76,8 +76,8 @@ namespace molcpp
 
         /**
          * @brief Set any type of value
-         * 
-         * @param V 
+         *
+         * @param V
          */
         void set(const variant_type &V)
         {
@@ -86,10 +86,10 @@ namespace molcpp
 
         /**
          * @brief Check if the value is of type T
-         * 
-         * @tparam T 
-         * @return true 
-         * @return false 
+         *
+         * @tparam T
+         * @return true
+         * @return false
          */
         template <typename T>
         bool is() const
@@ -97,11 +97,10 @@ namespace molcpp
             return std::holds_alternative<T>(_value);
         }
 
-        // variant_type _value;
         /**
          * @brief Returns the zero-based index of the alternative that is currently held by the variant.
          * For Data<int, double>(3.14), the index is 1.
-         * @return const auto 
+         * @return const auto
          */
         const size_t index() const
         {
@@ -111,7 +110,7 @@ namespace molcpp
         /**
          * @brief Get the variant object
          * Obtain internal std:: variant variables, which can be manipulated but cannot be modified
-         * @return variant_type 
+         * @return variant_type
          */
         variant_type get_raw() const
         {
@@ -120,10 +119,10 @@ namespace molcpp
 
         /**
          * @brief For print Data object
-         * 
-         * @param os 
-         * @param d 
-         * @return std::ostream& 
+         *
+         * @param os
+         * @param d
+         * @return std::ostream&
          */
         friend std::ostream &operator<<(std::ostream &os, const Data &d)
         {
@@ -138,12 +137,15 @@ namespace molcpp
             }
             return os;
         }
+
+    private:
+        variant_type _value;
     };
 
     /**
      * @brief The class template Dict represents a map for Data. An instance of Dict at any given time holds a set of string-Data<Ts...> pairs
-     * 
-     * @tparam Ts 
+     *
+     * @tparam Ts
      */
     template <typename... Ts>
     class Dict
@@ -155,20 +157,20 @@ namespace molcpp
 
         /**
          * @brief Construct a new Dict object
-         * 
+         *
          */
         Dict() : m_map(){};
 
         /**
          * @brief Construct a new Dict object
-         * 
-         * @param map 
+         *
+         * @param map
          */
         Dict(const container_type &map) : m_map(map){};
 
         /**
          * @brief Return the number of elements in the container
-         * 
+         *
          * @return size_t
          */
         size_t size() const
@@ -178,10 +180,10 @@ namespace molcpp
 
         /**
          * @brief Set a value for a key
-         * 
-         * @tparam T 
-         * @param key 
-         * @param value 
+         *
+         * @tparam T
+         * @param key
+         * @param value
          */
         template <typename T>
         void set(const key_type &key, const T &value)
@@ -190,11 +192,11 @@ namespace molcpp
         }
 
         /**
-         * @brief 
-         * 
-         * @tparam T 
-         * @param key 
-         * @return const T& 
+         * @brief Get a typed value for a key
+         *
+         * @tparam T
+         * @param key
+         * @return const T&
          */
         template <typename T>
         const T &get(const key_type &key) const
@@ -202,12 +204,17 @@ namespace molcpp
             auto it = m_map.find(key);
             if (it == m_map.end())
             {
-                throw std::out_of_range("Key not found");
+                throw KeyError("KeyError: " + key);
             }
             return it->second.template get<T>();
         }
 
-        std::vector<key_type> key() const
+        /**
+         * @brief Return a list of keys
+         *
+         * @return std::vector<key_type>
+         */
+        std::vector<key_type> keys() const
         {
             std::vector<key_type> keys;
             for (const auto &pair : m_map)
@@ -217,7 +224,12 @@ namespace molcpp
             return keys;
         }
 
-        std::vector<value_type> value() const
+        /**
+         * @brief Return a list of values
+         *
+         * @return std::vector<value_type>
+         */
+        std::vector<value_type> values() const
         {
             std::vector<value_type> values;
             for (const auto &pair : m_map)
@@ -227,37 +239,70 @@ namespace molcpp
             return values;
         }
 
+        /**
+         * @brief Check if the key exists
+         *
+         * @param key
+         * @return true
+         * @return false
+         */
         bool has(const key_type &key) const
         {
             return m_map.find(key) != m_map.end();
         }
 
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return value_type&
+         */
         value_type &operator[](const key_type &key)
         {
             return m_map[key];
         }
 
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return const value_type&
+         */
         const value_type &operator[](const key_type &key) const
         {
             return m_map.at(key);
         }
 
-        // iterator and return key-value pair
+        /**
+         * @brief Returns a read/write iterator that points to the first pair in the map
+         *
+         * @return auto
+         */
         auto begin() const
         {
             return m_map.begin();
         }
 
+        /**
+         * @brief Returns a read/write iterator that points one past the last pair in the map
+         *
+         * @return auto
+         */
         auto end() const
         {
             return m_map.end();
         }
 
+        /**
+         * @brief Get the map object
+         *
+         * @return container_type
+         */
         container_type get_map() const
         {
             return m_map;
         }
-    
+
     private:
         container_type m_map;
     };
