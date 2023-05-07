@@ -76,10 +76,12 @@ namespace molcpp
         {
             return _properties.get<std::string>("type");
         }
-        else
+        else if (_type != nullptr)
         {
             return _type->get_name();
         }
+
+        else throw KeyError("Atom has no type");
     }
 
     void Atom::set_type(const std::string& type)

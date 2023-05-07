@@ -20,23 +20,102 @@ namespace molcpp
     {
 
     public:
+        /**
+         * @brief Construct a new Atom object
+         * 
+         */
         Atom();
+
+        /**
+         * @brief Construct a new Atom object
+         * 
+         */
         Atom(const AtomTypePtr&);
+
+        /**
+         * @brief add a connected bond 
+         * 
+         * @return true 
+         * @return false 
+         * @note if the bond is already connected, return false
+         */
         bool add_bond(BondPtr);
+
+        /**
+         * @brief delete a connected bond 
+         * 
+         * @return true 
+         * @return false 
+         */
         bool del_bond(BondPtr);
+
+        /**
+         * @brief check if the atom has a connected bond 
+         * 
+         * @return true 
+         * @return false 
+         */
         bool has_bond(BondPtr);
+
+        /**
+         * @brief check if the atom is a neighbor of the given atom 
+         * 
+         * @return true 
+         * @return false 
+         */
         bool is_nbr(AtomPtr);
+        
+        /**
+         * @brief Get a list of connected atoms 
+         * 
+         * @return std::vector<AtomPtr> 
+         */
         std::vector<AtomPtr> get_nbrs();
+
+        /**
+         * @brief Get a property by key 
+         * 
+         * @tparam T 
+         * @param key 
+         * @return T 
+         */
         template<typename T>
         T get(const std::string& key)
         {
             if (_properties.has(key)) return _properties.get<T>(key);
             else return _type->get<T>(key);
         };
+        /**
+         * @brief 
+         * 
+         * @param key 
+         * @param value 
+         */
         void set(const std::string& key, const AtomProperty& value);
+        /**
+         * @brief Get the typename of this atom
+         * 
+         * @return const std::string& 
+         */
         const std::string& get_typename();
+
+        /**
+         * @brief Set the type object
+         * 
+         */
         void set_type(const std::string&);
+        
+        /**
+         * @brief Set the atomtype
+         * 
+         */
         void set_type(const AtomTypePtr&);
+        
+        /**
+         * @brief Get the atomtype
+         * 
+         * @return const AtomTypePtr& 
+         */
         const AtomTypePtr& get_type();
 
     private:

@@ -8,9 +8,9 @@ namespace molcpp
     // test Atom class
     TEST(TestAtom, test_init)
     {
-        // create an atom and return shared_ptr
+        auto a0 = Atom();
         auto a1 = create_atom();
-
+        auto a2 = create_atomtype("C");
     }
 
     TEST(TestAtom, test_set_get)
@@ -19,22 +19,10 @@ namespace molcpp
         a1->set("name", "C");
         a1->set("mass", 12.0);
         a1->set("charge", 1);
-        // (*a1)["name"] = "C";
-        // (*a1)["mass"] = 12.0;
-        // (*a1)["charge"] = 1;
 
-        // EXPECT_EQ((*a1)["name"].get<std::string>(), "C");
-        // EXPECT_EQ((*a1)["mass"].get<double>(), 12.0);
-        // EXPECT_EQ((*a1)["charge"].get<int>(), 1);
-
-        // a1->set("name", "H");
-        // a1->set("mass", 1.008);
-        // a1->set("charge", 0);
-
-        // EXPECT_EQ(a1->get("name").get<std::string>(), "H");
-        // EXPECT_EQ(a1->get("mass").get<double>(), 1.008);
-        // EXPECT_EQ(a1->get("charge").get<int>(), 0);
-
+        EXPECT_EQ(a1->get<std::string>("name"), "C");
+        EXPECT_EQ(a1->get<double>("mass"), 12.0);
+        EXPECT_EQ(a1->get<int>("charge"), 1);
     }
 
     TEST(TestAtom, test_nbrs)
@@ -66,9 +54,34 @@ namespace molcpp
         EXPECT_FALSE(a1->is_nbr(a2));
         EXPECT_FALSE(a1->is_nbr(a3));
         EXPECT_EQ(a1->get_nbrs().size(), 0);
-
-
     }
 
+    TEST(TestAtom, test_has_bond)
+    {
+        auto a1 = create_atom();
+        auto a2 = create_atom();
+        auto b1 = create_bond(a1, a2);
+
+        a1->add_bond(b1);
+        EXPECT_TRUE(a1->has_bond(b1));
+    }
+
+    TEST(TestAtom, test_typename)
+    {
+        auto a1 = create_atom();
+        EXPECT_EQ(a1->get_typename(), "");
+    }
+
+    TEST(TestAtom, test_set_type)
+    {
+        auto a1 = create_atom();
+        a1->set_type("C");
+        EXPECT_EQ(a1->get_typename(), "C");
+        EXPECT_EQ(a1->get_type()->get_name(), "C");
+
+        auto at1 = create_atomtype("H");
+        a1->set_type(at1);
+        EXPECT_EQ(a1->get_typename(), "H");
+    }
 
 }
