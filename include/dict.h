@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <variant>
+#include "mperror.h"
 
 namespace molcpp
 {

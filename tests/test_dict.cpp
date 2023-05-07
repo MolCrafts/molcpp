@@ -109,10 +109,10 @@ namespace molcpp
         EXPECT_EQ(d.get<double>("double"), 3.14);
     }
 
-    TEST(TestDict, OutOfRange)
+    TEST(TestDict, test_key_out_found)
     {
         Dict<int, double> map;
-        EXPECT_THROW(map.get<int>("not_found"), std::out_of_range);
+        EXPECT_THROW(map.get<int>("not_found"), KeyError);
     }
 
     TEST(TestDict, Key)
