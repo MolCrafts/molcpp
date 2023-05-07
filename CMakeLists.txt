@@ -57,13 +57,13 @@ target_sources(
   molcpp
   PRIVATE
   src/algo.cpp
+  src/itemtype.cpp
   # src/element.cpp
   # src/atom.cpp
   # src/bond.cpp
   # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
-  # src/itemtype.cpp
   # src/forcefield.cpp
 )
 
@@ -83,8 +83,8 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
       PUBLIC
           -Wall
           -g
+          -ftest-coverage
   )
-  enable_testing()
   add_subdirectory(tests)
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")

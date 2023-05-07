@@ -1,5 +1,6 @@
 message(STATUS "Building tests")
-
+include(CTest)
+enable_testing()
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -25,7 +26,7 @@ add_executable(
     molcpp_test
     test_algo.cpp
     test_dict.cpp
-    # test_itemtype.cpp
+    test_itemtype.cpp
     # test_atom.cpp
     # test_bond.cpp
     # test_topology.cpp
@@ -52,3 +53,5 @@ target_compile_options(molcpp_test
 
 include(GoogleTest)
 gtest_discover_tests(molcpp_test)
+
+set(CTEST_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test-results)

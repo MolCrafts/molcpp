@@ -100,7 +100,7 @@ namespace molcpp
         /**
          * @brief Returns the zero-based index of the alternative that is currently held by the variant.
          * For Data<int, double>(3.14), the index is 1.
-         * @return const auto
+         * @return const size_t
          */
         const size_t index() const
         {
@@ -307,9 +307,4 @@ namespace molcpp
         container_type m_map;
     };
 
-    // pre-defined dict type
-    using AtomPropertyDict = Dict<int, double, std::string>;
-    using AtomProperty = AtomPropertyDict::value_type;
-    using BondPropertyDict = Dict<int, double, std::string>;
-    using BondProperty = BondPropertyDict::value_type;
 }

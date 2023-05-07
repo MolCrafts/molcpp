@@ -14,7 +14,7 @@ namespace molcpp
         return _properties["name"].get<std::string>();
     }
 
-    bool AtomType::operator==(const AtomType &other) const
+    bool AtomType::equal_to(const AtomType &other) const
     {
         if (other.get_name() == get_name())
             return true;
@@ -22,16 +22,30 @@ namespace molcpp
             return false;
     }
 
+    bool AtomType::equal_to(const AtomTypePtr &other) const
+    {
+        if (other->get_name() == this->get_name())
+            return true;
+        else
+            return false;
+    }
+
+    bool AtomType::operator==(const AtomType &other) const
+    {
+        return equal_to(other);
+    }
+
     bool AtomType::operator!=(const AtomType &other) const
     {
-        return !operator==(other);
+        return !equal_to(other);
     }
 
-    AtomTypeManager::AtomTypeManager() : _atom_types{}
+    AtomPropertyDict::value_type &AtomType::operator[](const AtomPropertyDict::key_type &key)
     {
+        return _properties[key];
     }
 
-    AtomProperty &AtomType::operator[](const std::string &key)
+    const AtomPropertyDict::value_type &AtomType::operator[](const AtomPropertyDict::key_type &key) const
     {
         return _properties[key];
     }
@@ -44,6 +58,10 @@ namespace molcpp
     AtomTypePtr create_atomtype(const std::string &name)
     {
         return std::make_shared<AtomType>(name);
+    }
+
+    AtomTypeManager::AtomTypeManager() : _atom_types{}
+    {
     }
 
     AtomTypePtr AtomTypeManager::def(const std::string &name)
@@ -63,12 +81,34 @@ namespace molcpp
             return *it;
         else
         {
-            LOG_ERROR("AtomType " << tname << " not found.");
+            LOG_INFO("AtomType " << tname << " not found.");
             return std::nullopt;
         }
     }
 
-    bool BondType::operator==(const BondType &other) const
+    size_t AtomTypeManager::get_ntypes() const
+    {
+        return _atom_types.size();
+    }
+
+    BondType::BondType(const std::string &name, const AtomTypePtr &_itype, const AtomTypePtr &_jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
+
+    AtomTypePtr BondType::get_itype() const
+    {
+        return _itomtype.lock();
+    }
+
+    AtomTypePtr BondType::get_jtype() const
+    {
+        return _jtomtype.lock();
+    }
+
+    std::string BondType::get_name() const
+    {
+        return _name;
+    }
+
+    bool BondType::equal_to(const BondType &other) const
     {
         if (other.get_name() == _name)
             return true;
@@ -76,7 +116,30 @@ namespace molcpp
             return false;
     }
 
-    BondProperty &BondType::operator[](const std::string &key)
+    bool BondType::equal_to(const BondTypePtr &other) const
+    {
+        if (other->get_name() == _name)
+            return true;
+        else
+            return false;
+    }
+
+    bool BondType::operator==(const BondType &other) const
+    {
+        return equal_to(other);
+    }
+
+    bool BondType::operator!=(const BondType &other) const
+    {
+        return !equal_to(other);
+    }
+
+    BondPropertyDict::value_type &BondType::operator[](const BondPropertyDict::key_type &key)
+    {
+        return _properties[key];
+    }
+
+    const BondPropertyDict::value_type &BondType::operator[](const BondPropertyDict::key_type &key) const
     {
         return _properties[key];
     }
@@ -86,13 +149,13 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    BondTypeManager::BondTypeManager() : _bond_types{}
-    {
-    }
-
     BondTypePtr create_bondtype(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
     {
         return std::make_shared<BondType>(name, itype, jtype);
+    }
+
+    BondTypeManager::BondTypeManager() : _bond_types{}
+    {
     }
 
     BondTypePtr BondTypeManager::def(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
@@ -100,12 +163,14 @@ namespace molcpp
         auto bondtype = this->get(name);
         if (bondtype.has_value())
         {
-            LOG_ERROR("BondType " << name << " already exists.");
-            throw std::runtime_error("BondType already exists.");
+            throw KeyError("BondType " + name + " already exists.");
         }
-        auto bt = create_bondtype(name, itype, jtype);
-        _bond_types.push_back(bt);
-        return bt;
+        else
+        {
+            auto bt = create_bondtype(name, itype, jtype);
+            _bond_types.push_back(bt);
+            return bt;
+        }
     }
 
     std::optional<BondTypePtr> BondTypeManager::get(const std::string &tname)
@@ -117,7 +182,7 @@ namespace molcpp
             return *it;
         else
         {
-            LOG_ERROR("BondType " << tname << " not found.");
+            LOG_INFO("BondType " << tname << " not found.");
             return std::nullopt;
         }
     }
@@ -131,9 +196,14 @@ namespace molcpp
             return *it;
         else
         {
-            LOG_ERROR("BondType " << itype->get_name() << "-" << jtype->get_name() << " not found.");
+            LOG_INFO("BondType " << itype->get_name() << "-" << jtype->get_name() << " not found.");
             return std::nullopt;
         }
+    }
+
+    size_t BondTypeManager::get_ntypes() const
+    {
+        return _bond_types.size();
     }
 
 }

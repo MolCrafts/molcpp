@@ -9,92 +9,296 @@
 namespace molcpp
 {
 
+    // pre-defined dict type
+    using AtomPropertyDict = Dict<int, double, std::string>;
+    using AtomProperty = AtomPropertyDict::value_type;
+    using BondPropertyDict = Dict<int, double, std::string>;
+    using BondProperty = BondPropertyDict::value_type;
+    class AtomType;
+    using AtomTypePtr = std::shared_ptr<AtomType>;
+    class BondType;
+    using BondTypePtr = std::shared_ptr<BondType>;
+
     class AtomType
     {
-        public:
-            AtomType(const std::string&);
-            const std::string& get_name() const;
-            bool operator== (const AtomType&) const;
-            bool operator!= (const AtomType&) const;
-            AtomProperty& operator[](const std::string &key);
-            void set(const std::string& key, const AtomProperty& value);
-            template<typename T>
-            T get(const std::string& key)
-            {
-                if (_properties.has(key)) return _properties.get<T>(key);
-                else throw std::runtime_error("AtomType::get: key not found");
-            };
-            
-        private:
-            AtomPropertyDict _properties;
+    public:
+        /**
+         * @brief Construct a new Atom Type object
+         *
+         */
+        AtomType(const std::string &);
+
+        /**
+         * @brief Get the name of the AtomType
+         *
+         * @return const std::string&
+         */
+        const std::string &get_name() const;
+
+        /**
+         * @brief Compare two AtomType
+         *
+         * @param other
+         * @return true
+         * @return false
+         */
+        bool equal_to(const AtomType &other) const;
+
+        /**
+         * @brief Compare two AtomType with names
+         *
+         * @param other
+         * @return true
+         * @return false
+         */
+        bool equal_to(const AtomTypePtr &other) const;
+
+        /**
+         * @brief Compare two AtomType with names
+         *
+         * @return true
+         * @return false
+         */
+        bool operator==(const AtomType &) const;
+
+        /**
+         * @brief Compare two AtomType with names
+         *
+         * @return true
+         * @return false
+         */
+        bool operator!=(const AtomType &) const;
+
+        /**
+         * @brief Set the Atom Property
+         *
+         * @param key
+         * @param value
+         */
+        void set(const std::string &key, const AtomProperty &value);
+
+        /**
+         * @brief Get the Atom Property
+         *
+         * @tparam T
+         * @param key
+         * @return T
+         */
+        template <typename T>
+        T get(const std::string &key)
+        {
+            if (_properties.has(key))
+                return _properties.get<T>(key);
+            else
+                throw std::runtime_error("AtomType::get: key not found");
+        };
+
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return value_type&
+         */
+        AtomPropertyDict::value_type &operator[](const AtomPropertyDict::key_type &key);
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return const value_type&
+         */
+        const AtomPropertyDict::value_type &operator[](const AtomPropertyDict::key_type &key) const;
+
+    private:
+        AtomPropertyDict _properties;
     };
 
-    using AtomTypePtr = std::shared_ptr<AtomType>;
-
-    AtomTypePtr create_atomtype(const std::string&);
+    AtomTypePtr create_atomtype(const std::string &);
 
     class AtomTypeManager
     {
 
-        public:
-            AtomTypeManager();
-            /// @brief define a atomtype by its name
-            /// @param  const std::string&
-            /// @return true if success else false
-            AtomTypePtr def(const std::string&);
-            /// @brief get a atomtype by its name
-            /// @param  const std::string&
-            /// @return AtomType
-            std::optional<AtomTypePtr> get(const std::string&);
-            size_t get_ntypes() const { return _atom_types.size(); }
+    public:
+        /**
+         * @brief Construct a new Atom Type Manager object
+         * 
+         */
+        AtomTypeManager();
 
+        /**
+         * @brief Define a new AtomType
+         * 
+         * @return AtomTypePtr 
+         */
+        AtomTypePtr def(const std::string &);
 
-        private:
-            std::vector<AtomTypePtr> _atom_types;
+        /**
+         * @brief Get the AtomType by name
+         * 
+         * @return std::optional<AtomTypePtr> 
+         */
+        std::optional<AtomTypePtr> get(const std::string &);
 
+        /**
+         * @brief Get the number of defined atomtypes
+         * 
+         * @return size_t 
+         */
+        size_t get_ntypes() const;
+
+    private:
+        std::vector<AtomTypePtr> _atom_types;
     };
 
     class BondType
     {
-        public:
-            BondType(const std::string& name, const AtomTypePtr& _itype, const AtomTypePtr& _jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
+    public:
+        /**
+         * @brief Construct a new Bond Type object
+         * 
+         * @param name 
+         * @param _itype 
+         * @param _jtype 
+         */
+        BondType(const std::string &name, const AtomTypePtr &_itype, const AtomTypePtr &_jtype);
 
-            AtomTypePtr get_itype() const { return _itomtype.lock(); }
-            AtomTypePtr get_jtype() const { return _jtomtype.lock(); }
-            std::string get_name() const { return _name; }
+        /**
+         * @brief Get the itype object
+         * 
+         * @return AtomTypePtr 
+         */
+        AtomTypePtr get_itype() const;
 
-            bool operator== (const BondType&) const;
-            BondProperty& operator[](const std::string &key);
-            void set(const std::string& key, const BondProperty& value);
-            template<typename T>
-            T get(const std::string& key)
-            {
-                if (_properties.has(key)) return _properties.get<T>(key);
-                else throw std::runtime_error("BondType::get: key not found");
-            };
+        /**
+         * @brief Get the jtype object
+         * 
+         * @return AtomTypePtr 
+         */
+        AtomTypePtr get_jtype() const;
 
-        private:
-            std::string _name;
-            std::weak_ptr<AtomType> _itomtype, _jtomtype;
-            BondPropertyDict _properties;
+        /**
+         * @brief Get the name object
+         * 
+         * @return std::string 
+         */
+        std::string get_name() const;
 
+        /**
+         * @brief Compare two BondType
+         * 
+         * @param other 
+         * @return true 
+         * @return false 
+         */
+        bool equal_to(const BondType &other) const;
+        bool equal_to(const BondTypePtr &other) const;
+
+        /**
+         * @brief Compare two BondType
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool operator==(const BondType &) const;
+
+        /**
+         * @brief Compare two BondType
+         * 
+         * @return true 
+         * @return false 
+         */
+
+        bool operator!=(const BondType &) const;
+
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return value_type&
+         */
+        BondPropertyDict::value_type &operator[](const BondPropertyDict::key_type &key);
+
+        /**
+         * @brief Get a value raw value for a key
+         *
+         * @param key
+         * @return const value_type&
+         */
+        const BondPropertyDict::value_type &operator[](const BondPropertyDict::key_type &key) const;
+
+        /**
+         * @brief 
+         * 
+         * @param key 
+         * @param value 
+         */
+        void set(const std::string &key, const BondProperty &value);
+
+        /**
+         * @brief 
+         * 
+         * @tparam T 
+         * @param key 
+         * @return T 
+         */
+        template <typename T>
+        T get(const std::string &key)
+        {
+            if (_properties.has(key))
+                return _properties.get<T>(key);
+            else
+                throw std::runtime_error("BondType::get: key not found");
+        };
+
+    private:
+        std::string _name;  // name of the bondtype
+        std::weak_ptr<AtomType> _itomtype, _jtomtype;  // weak pointer to atomtype in both ends
+        BondPropertyDict _properties;  // properties of the bondtype
     };
 
-    using BondTypePtr = std::shared_ptr<BondType>;
-
-    BondTypePtr create_bondtype(const std::string&, const AtomTypePtr&, const AtomTypePtr&);
+    BondTypePtr create_bondtype(const std::string &, const AtomTypePtr &, const AtomTypePtr &);
 
     class BondTypeManager
     {
-        public:
-            BondTypeManager();
-            std::optional<BondTypePtr> get(const std::string& tname);
-            std::optional<BondTypePtr> get(const AtomTypePtr& itype, const AtomTypePtr& jtype);
-            BondTypePtr def(const std::string&, const AtomTypePtr&, const AtomTypePtr&);
-            size_t get_ntypes() const { return _bond_types.size(); }
+    public:
+        /**
+         * @brief Construct a new Bond Type Manager object
+         * 
+         */
+        BondTypeManager();
 
-        private:
-            std::vector<BondTypePtr> _bond_types;
+        /**
+         * @brief Define a new BondType
+         * 
+         * @return BondTypePtr 
+         */
+        BondTypePtr def(const std::string &, const AtomTypePtr &, const AtomTypePtr &);
+
+        /**
+         * @brief Get the BondType by name
+         * 
+         * @param tname 
+         * @return std::optional<BondTypePtr> 
+         */
+        std::optional<BondTypePtr> get(const std::string &tname);
+
+        /**
+         * @brief Get the BondType by AtomTypes
+         * 
+         * @param itype 
+         * @param jtype 
+         * @return std::optional<BondTypePtr> 
+         */
+        std::optional<BondTypePtr> get(const AtomTypePtr &itype, const AtomTypePtr &jtype);
+
+        /**
+         * @brief Get the ntypes object
+         * 
+         * @return size_t 
+         */
+        size_t get_ntypes() const;
+
+    private:
+        std::vector<BondTypePtr> _bond_types;
     };
 
 }
