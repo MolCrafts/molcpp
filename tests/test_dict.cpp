@@ -3,21 +3,24 @@
 
 namespace molcpp
 {
-    TEST(TestData, DefaultConstructor)
+    TEST(TestData, test_default_constructor)
     {
         Data<int, double> d;
         EXPECT_TRUE(d.is<int>());
+        EXPECT_TRUE(d.is<double>());
         EXPECT_EQ(d.get<int>(), 0);
+        EXPECT_EQ(d.get<double>(), 0.0);
     }
 
-    TEST(TestData, ValueConstructor)
+    TEST(TestData, test_constructor)
     {
         Data<int, double> d(3.14);
+        EXPECT_FALSE(d.is<int>());
         EXPECT_TRUE(d.is<double>());
         EXPECT_EQ(d.get<double>(), 3.14);
     }
 
-    TEST(TestData, AssignmentOperator)
+    TEST(TestData, test_assigment_op)
     {
         Data<int, double> d;
         d = 42;
@@ -29,14 +32,74 @@ namespace molcpp
         EXPECT_EQ(d.get<double>(), 2.718);
     }
 
-    TEST(TestData, Get)
+    TEST(TestData, test_equality_op)
+    {
+        Data<int, double> d1(3.14);
+        Data<int, double> d2(3.14);
+        Data<int, double> d3(2.718);
+
+        EXPECT_TRUE(d1 == d2);
+        EXPECT_FALSE(d1 == d3);
+    }
+
+    TEST(TestData, test_get)
     {
         Data<int, double> d(3.14);
         EXPECT_THROW(d.get<int>(), std::bad_variant_access);
         EXPECT_EQ(d.get<double>(), 3.14);
     }
 
-    TEST(TestDic, SetAndGet)
+    TEST(TestData, test_set)
+    {
+        Data<int, double> d;
+        d.set(42);
+        EXPECT_TRUE(d.is<int>());
+        EXPECT_EQ(d.get<int>(), 42);
+
+        d.set(2.718);
+        EXPECT_TRUE(d.is<double>());
+        EXPECT_EQ(d.get<double>(), 2.718);
+    }
+
+    TEST(TestData, test_is)
+    {
+        Data<int, double> d;
+        EXPECT_TRUE(d.is<int>());
+        EXPECT_TRUE(d.is<double>());
+        EXPECT_FALSE(d.is<std::string>());
+    }
+
+    TEST(TestData, test_get_index)
+    {
+        Data<int, double> d;
+        EXPECT_EQ(d.index(), 0);
+        d.set(3.14);
+        EXPECT_EQ(d.index(), 1);
+    }
+
+    TEST(TestData, test_get_raw)
+    {
+        Data<int, double> d;
+        EXPECT_EQ(d.get_raw().index(), 0);
+        d.set(3.14);
+        EXPECT_EQ(d.get_raw().index(), 1);
+    }
+
+    TEST(TestDict, test_default_constructor)
+    {
+        Dict<int, double> d;
+        EXPECT_EQ(d.size(), 0);
+    }
+
+    TEST(TestDict, test_constructor)
+    {
+        Dict<int, double> d({{"int", 42}, {"double", 3.14}});
+        EXPECT_EQ(d.size(), 2);
+        EXPECT_EQ(d.get<int>("int"), 42);
+        EXPECT_EQ(d.get<double>("double"), 3.14);
+    }
+
+    TEST(TestDict, test_set_get)
     {
         Dict<int, double> d;
         d.set("int", 42);
