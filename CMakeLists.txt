@@ -59,9 +59,9 @@ target_sources(
   src/algo.cpp
   src/itemtype.cpp
   src/atom.cpp
+  src/bond.cpp
   src/forcefield.cpp
   # src/element.cpp
-  # src/bond.cpp
   # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp

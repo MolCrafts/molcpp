@@ -100,12 +100,6 @@ namespace molcpp
         const std::string& get_typename();
 
         /**
-         * @brief Set the type object
-         * 
-         */
-        void set_type(const std::string&);
-        
-        /**
          * @brief Set the atomtype
          * 
          */
@@ -118,10 +112,41 @@ namespace molcpp
          */
         const AtomTypePtr& get_type();
 
+        /**
+         * @brief 
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool equal_to(const Atom&) const;
+
+        /**
+         * @brief 
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool equal_to(const AtomPtr&) const;
+
+        /**
+         * @brief 
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool operator==(const Atom&) const;
+
+        /**
+         * @brief Get id of this atom
+         * 
+         */
+        const size_t get_id() const;
+
     private:
         AtomTypePtr _type;
         AtomPropertyDict _properties;
         std::vector<BondPtr> _bonds;
+        size_t _id;
     };
 
     // factory function

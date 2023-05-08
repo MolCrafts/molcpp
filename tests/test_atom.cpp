@@ -69,19 +69,30 @@ namespace molcpp
     TEST(TestAtom, test_typename)
     {
         auto a1 = create_atom();
-        EXPECT_EQ(a1->get_typename(), "");
+        EXPECT_THROW(a1->get_typename(), KeyError);
     }
 
     TEST(TestAtom, test_set_type)
     {
         auto a1 = create_atom();
-        a1->set_type("C");
-        EXPECT_EQ(a1->get_typename(), "C");
-        EXPECT_EQ(a1->get_type()->get_name(), "C");
-
         auto at1 = create_atomtype("H");
         a1->set_type(at1);
         EXPECT_EQ(a1->get_typename(), "H");
     }
 
+    TEST(TestAtom, test_equality)
+    {
+        auto a1 = create_atom();
+        auto a2 = create_atom();
+
+        EXPECT_TRUE(a1->equal_to(a1));
+        EXPECT_FALSE(a1->equal_to(a2));
+
+        auto a3 = Atom();
+        auto a4 = Atom();
+        EXPECT_TRUE(a3.equal_to(a3));
+        EXPECT_FALSE(a3.equal_to(a4));
+        EXPECT_TRUE(a3 == a3);
+        EXPECT_FALSE(a3 == a4);
+    }
 }

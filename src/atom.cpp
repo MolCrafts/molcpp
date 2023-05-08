@@ -3,9 +3,13 @@
 
 namespace molcpp
 {
-    Atom::Atom() : _type{nullptr}, _properties{}, _bonds{} {}
+    Atom::Atom() : _type{nullptr}, _properties{}, _bonds{}
+    {
+        _id = reinterpret_cast<size_t>(this);
+    }
 
-    Atom::Atom(const AtomTypePtr& type) : _type{type}, _properties{}, _bonds{} {
+    Atom::Atom(const AtomTypePtr &type) : _type{type}, _properties{}, _bonds{}
+    {
         _properties.set("type", type->get_name());
     }
 
@@ -24,9 +28,8 @@ namespace molcpp
 
     bool Atom::has_bond(BondPtr bond)
     {
-        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b) {
-            return *b == *bond;
-        });
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
+                                    { return *b == *bond; });
         return results == _bonds.end() ? false : true;
     }
 
@@ -70,31 +73,23 @@ namespace molcpp
         return nbrs;
     }
 
-    const std::string& Atom::get_typename()
+    const std::string &Atom::get_typename()
     {
-        if (_properties.has("type"))
-        {
-            return _properties.get<std::string>("type");
-        }
-        else if (_type != nullptr)
+        if (_type != nullptr)
         {
             return _type->get_name();
         }
 
-        else throw KeyError("Atom has no type");
+        else
+            throw KeyError("Atom has no type");
     }
 
-    void Atom::set_type(const std::string& type)
-    {
-        _properties.set("type", type);
-    }
-
-    void Atom::set_type(const AtomTypePtr& type)
+    void Atom::set_type(const AtomTypePtr &type)
     {
         _type = type;
     }
 
-    const AtomTypePtr& Atom::get_type()
+    const AtomTypePtr &Atom::get_type()
     {
         return _type;
     }
@@ -104,13 +99,34 @@ namespace molcpp
         _properties.set(key, value);
     }
 
+    bool Atom::equal_to(const Atom &other) const
+    {
+        return get_id() == other.get_id();
+    }
+
+    bool Atom::equal_to(const AtomPtr &other) const
+    {
+        return get_id() == other->get_id();
+    }
+
+    bool Atom::operator==(const Atom &other) const
+    {
+        return equal_to(other);
+    }
+
+    const size_t Atom::get_id() const
+    {
+        return _id;
+    }
+
     AtomPtr create_atom()
     {
         return std::make_shared<Atom>();
     }
 
-    AtomPtr create_atom(const AtomTypePtr& type)
+    AtomPtr create_atom(const AtomTypePtr &type)
     {
         return std::make_shared<Atom>(type);
     }
+
 }
