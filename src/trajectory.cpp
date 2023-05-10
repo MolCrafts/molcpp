@@ -7,26 +7,31 @@ namespace molcpp
     {
     }
 
-    Frame Trajectory::read()
-    {
-        chemfiles::Frame frame = _fileHandler.read();
-        return Frame(frame);
-    }
+    // Frame Trajectory::read()
+    // {
+    //     chemfiles::Frame frame = _fileHandler.read();
+    //     return Frame(frame);
+    // }
 
-    Frame Trajectory::read_step(size_t step)
-    {
-        chemfiles::Frame frame = _fileHandler.read_step(step);
-        return Frame(frame);
-    }
+    // Frame Trajectory::read_step(size_t step)
+    // {
+    //     chemfiles::Frame frame = _fileHandler.read_step(step);
+    //     return Frame(frame);
+    // }
 
     void Trajectory::close()
     {
         _fileHandler.close();
     }
 
-    bool Trajectory::done()
+    bool Trajectory::done() const
     {
         return _fileHandler.done();
+    }
+
+    size_t Trajectory::get_nsteps() const 
+    {
+        return _fileHandler.nsteps();
     }
 
 }

@@ -32,8 +32,7 @@ add_executable(
     test_bond.cpp
     test_topology.cpp
     # test_frame.cpp
-    # test_trajectory.cpp
-    # test_itemtype.cpp
+    test_trajectory.cpp
     # test_element.cpp
     # test_parsmart.cpp
 )

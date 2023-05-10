@@ -16,19 +16,21 @@ endif()
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
-find_package(chemfiles)
+find_package(chemfiles QUIET)
 if(chemfiles_FOUND)
   message(STATUS "Chemfiles installed")
 else()
   message(STATUS "Chemfiles not installed, compile from source code")
+  message(STATUS "git submodule update...")
   execute_process(
     COMMAND git submodule update --init --recursive external/chemfiles
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
+  set(BUILD_SHARED_LIBS ON)
 endif()
-
-find_package(xtensor)
+  
+find_package(xtensor QUIET)
 if(xtensor_FOUND)
   message(STATUS "xtensor installed")
 else()
@@ -36,16 +38,19 @@ else()
   execute_process(
     COMMAND git submodule update --init --recursive external/xtl
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-  execute_process(
-    COMMAND git submodule update --init --recursive external/xtensor
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-  add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
-  add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
+    )
+    execute_process(
+      COMMAND git submodule update --init --recursive external/xtensor
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+      add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
+      add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
 endif()
-
-add_library(molcpp SHARED)
+      
+add_library(molcpp STATIC)
+      
+set_target_properties(chemfiles PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(molcpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_include_directories(
   molcpp
@@ -64,7 +69,7 @@ target_sources(
   src/topology.cpp
   # src/element.cpp
   # src/frame.cpp
-  # src/trajectory.cpp
+  src/trajectory.cpp
 )
 
 target_link_libraries(
