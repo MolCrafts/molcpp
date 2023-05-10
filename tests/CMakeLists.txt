@@ -27,10 +27,10 @@ add_executable(
     test_algo.cpp
     test_dict.cpp
     test_itemtype.cpp
+    test_forcefield.cpp
     test_atom.cpp
     test_bond.cpp
-    test_forcefield.cpp
-    # test_topology.cpp
+    test_topology.cpp
     # test_frame.cpp
     # test_trajectory.cpp
     # test_itemtype.cpp

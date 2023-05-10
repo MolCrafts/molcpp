@@ -2,32 +2,36 @@
 
 namespace molcpp
 {
-    Topology::Topology(const chemfiles::Topology &chflTopology)
-    {
-        _atoms.reserve(chflTopology.size());
-        _bonds.reserve(chflTopology.bonds().size());
-        // get atoms
-        for (auto chflatom : chflTopology)
-        {
-            auto mpatom = create_atom();
+    // Topology::Topology(const chemfiles::Topology &chflTopology)
+    // {
+    //     _atoms.reserve(chflTopology.size());
+    //     _bonds.reserve(chflTopology.bonds().size());
+    //     // get atoms
+    //     for (auto chflatom : chflTopology)
+    //     {
+    //         auto mpatom = create_atom();
     
-            mpatom->set("name", chflatom.name());
-            mpatom->set("type", chflatom.type());
-            mpatom->set("mass", chflatom.mass());
-            mpatom->set("charge", chflatom.charge());
-            if (chflatom.full_name()) mpatom->set("full_name", chflatom.full_name().value());
-            if (chflatom.vdw_radius()) mpatom->set("vdw_radius", chflatom.vdw_radius().value());
-            if (chflatom.covalent_radius()) mpatom->set("covalent_radius", chflatom.covalent_radius().value());
-            if (chflatom.atomic_number()) mpatom->set("atomic_number", static_cast<int>(chflatom.atomic_number().value()));
+    //         mpatom->set("name", chflatom.name());
+    //         mpatom->set("type", chflatom.type());
+    //         mpatom->set("mass", chflatom.mass());
+    //         mpatom->set("charge", chflatom.charge());
+    //         if (chflatom.full_name()) mpatom->set("full_name", chflatom.full_name().value());
+    //         if (chflatom.vdw_radius()) mpatom->set("vdw_radius", chflatom.vdw_radius().value());
+    //         if (chflatom.covalent_radius()) mpatom->set("covalent_radius", chflatom.covalent_radius().value());
+    //         if (chflatom.atomic_number()) mpatom->set("atomic_number", static_cast<int>(chflatom.atomic_number().value()));
 
-            this->add_atom(mpatom);
-        }
-        // get bonds
-        for (auto chflbond : chflTopology.bonds())
-        {
-            auto mpabond = create_bond(chflbond[0], chflbond[1]);
-            this->add_bond(mpabond);
-        }
+    //         this->add_atom(mpatom);
+    //     }
+    //     // get bonds
+    //     for (auto chflbond : chflTopology.bonds())
+    //     {
+    //         auto mpabond = create_bond(chflbond[0], chflbond[1]);
+    //         this->add_bond(mpabond);
+    //     }
+    // }
+
+    Topology::Topology()
+    {
     }
 
     bool Topology::add_atom(AtomPtr atom)
@@ -49,6 +53,20 @@ namespace molcpp
         AtomPtr atom = molcpp::create_atom();
         add_atom(atom);
         return atom;
+    }
+
+    bool Topology::del_atom(AtomPtr atom)
+    {
+        auto result = find_in_container<std::vector<AtomPtr>, AtomPtr>(_atoms, atom);
+        if (result.has_value())
+        {
+            _atoms.erase(_atoms.begin() + result.value());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     bool Topology::add_bond(BondPtr bond)
@@ -91,8 +109,7 @@ namespace molcpp
         }
         else
         {
-            LOG_ERROR("Bond already exists");
-            throw std::runtime_error("Bond already exists");
+            throw KeyError("Bond already exists");
         }
     }
 
@@ -101,30 +118,39 @@ namespace molcpp
         return create_bond(_atoms[itom_index], _atoms[jtom_index]);
     }
 
-    // bool Topology::del_bond(BondPtr bond)
-    // {
-    //     auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
-    //     if (result.has_value())
-    //     {
-    //         _bonds.erase(_bonds.begin() + result.value());
-    //         return true;
-    //     }
-    //     else
-    //     {
-    //         return false;
-    //     }
-    // }
+    bool Topology::del_bond(BondPtr bond)
+    {
+        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
+        if (result.has_value())
+        {
+            _bonds.erase(_bonds.begin() + result.value());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool Topology::del_bond(const AtomPtr& itom, const AtomPtr& jtom)
+    {
+        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, create_bond(itom, jtom));
+        if (result.has_value())
+        {
+            _bonds.erase(_bonds.begin() + result.value());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     // factory function
 
     TopologyPtr create_topology()
     {
         return std::make_shared<Topology>();
-    }
-
-    TopologyPtr create_topology(size_t natoms, size_t nbonds = 0)
-    {
-        return std::make_shared<Topology>(natoms, nbonds);
     }
 
 }

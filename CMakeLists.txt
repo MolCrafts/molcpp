@@ -58,11 +58,11 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
+  src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
-  src/forcefield.cpp
+  src/topology.cpp
   # src/element.cpp
-  # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
 )

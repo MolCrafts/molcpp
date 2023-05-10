@@ -16,21 +16,120 @@ namespace molcpp
     {
 
         public:
-            Topology() = default;
-            Topology(size_t natoms, size_t nbonds = 0) : _atoms(natoms), _bonds(nbonds) {};
-            Topology(const chemfiles::Topology& chflTopology);
+
+            /**
+             * @brief Construct a new Topology object
+             * 
+             */
+            Topology();
+            
+            /**
+             * @brief Construct a new Topology from Chemfiles' Topology
+             * 
+             * @param natoms 
+             * @param nbonds 
+             */
+            // Topology(const chemfiles::Topology& chflTopology);
+            
+            /**
+             * @brief Add an exsit atom to the topology
+             * 
+             * @return true 
+             * @return false 
+             */
             bool add_atom(AtomPtr);
+            
+            /**
+             * @brief check if the topology has an atom
+             * 
+             * @return true 
+             * @return false 
+             */
             bool has_atom(AtomPtr);
+
+            /**
+             * @brief 
+             * 
+             */
+            bool del_atom(AtomPtr);
+            
+            /**
+             * @brief Create a 
+             * 
+             * @return AtomPtr 
+             */
             AtomPtr create_atom();
             // AtomPtr create_atom(const chemfiles::Atom &);
+            
+            /**
+             * @brief Get the atoms object
+             * 
+             * @return AtomVec 
+             */
             AtomVec get_atoms() const { return _atoms; }
+            
+            /**
+             * @brief 
+             * 
+             * @return true 
+             * @return false 
+             */
             bool add_bond(BondPtr);
+            
+            /**
+             * @brief 
+             * 
+             * @return true 
+             * @return false 
+             */
             bool has_bond(BondPtr);
+            
+            /**
+             * @brief Create a bond object
+             * 
+             * @return BondPtr 
+             */
             BondPtr create_bond(AtomPtr, AtomPtr);
+            
+            /**
+             * @brief Create a bond object
+             * 
+             * @return BondPtr 
+             */
             BondPtr create_bond(size_t, size_t);
+
+            /**
+             * @brief Get the bonds object
+             * 
+             * @return BondVec 
+             */
             BondVec get_bonds() const { return _bonds; }
+
+            /**
+             * @brief Get the natoms object
+             * 
+             * @return size_t 
+             */
             size_t get_natoms() const { return _atoms.size(); }
+
+            /**
+             * @brief Get the nbonds object
+             * 
+             * @return size_t 
+             */
             size_t get_nbonds() const { return _bonds.size(); }
+
+            /**
+             * @brief 
+             * 
+             */
+            bool del_bond(BondPtr);
+
+            /**
+             * @brief 
+             * 
+             */
+            bool del_bond(const AtomPtr&, const AtomPtr& );
 
         private:
 
@@ -44,6 +143,5 @@ namespace molcpp
 
     // factory function
     TopologyPtr create_topology();
-    TopologyPtr create_topology(size_t, size_t);
 
 }
