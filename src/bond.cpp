@@ -65,7 +65,7 @@ namespace molcpp
     }
 
     // factory function
-    BondPtr create_bond(AtomPtr itom, AtomPtr jtom)
+    BondPtr new_bond(AtomPtr itom, AtomPtr jtom)
     {
         return std::make_shared<Bond>(itom, jtom);
     }

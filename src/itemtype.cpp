@@ -55,7 +55,7 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    AtomTypePtr create_atomtype(const std::string &name)
+    AtomTypePtr new_atomtype(const std::string &name)
     {
         return std::make_shared<AtomType>(name);
     }
@@ -149,7 +149,7 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    BondTypePtr create_bondtype(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
+    BondTypePtr new_bondtype(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
     {
         return std::make_shared<BondType>(name, itype, jtype);
     }
@@ -167,7 +167,7 @@ namespace molcpp
         }
         else
         {
-            auto bt = create_bondtype(name, itype, jtype);
+            auto bt = new_bondtype(name, itype, jtype);
             _bond_types.push_back(bt);
             return bt;
         }

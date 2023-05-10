@@ -9,13 +9,13 @@ namespace molcpp
     TEST(TestAtom, test_init)
     {
         auto a0 = Atom();
-        auto a1 = create_atom();
-        auto a2 = create_atomtype("C");
+        auto a1 = new_atom();
+        auto a2 = new_atomtype("C");
     }
 
     TEST(TestAtom, test_set_get)
     {
-        auto a1 = create_atom();
+        auto a1 = new_atom();
         a1->set("name", "C");
         a1->set("mass", 12.0);
         a1->set("charge", 1);
@@ -27,12 +27,12 @@ namespace molcpp
 
     TEST(TestAtom, test_nbrs)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto a3 = create_atom();
-        auto bond12 = create_bond(a1, a2);
-        auto bond13 = create_bond(a1, a3);
-        auto bond23 = create_bond(a2, a3);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto a3 = new_atom();
+        auto bond12 = new_bond(a1, a2);
+        auto bond13 = new_bond(a1, a3);
+        auto bond23 = new_bond(a2, a3);
         a1->add_bond(bond12);
         a2->add_bond(bond12);
         a1->add_bond(bond13);
@@ -58,9 +58,9 @@ namespace molcpp
 
     TEST(TestAtom, test_has_bond)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto b1 = create_bond(a1, a2);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto b1 = new_bond(a1, a2);
 
         a1->add_bond(b1);
         EXPECT_TRUE(a1->has_bond(b1));
@@ -68,22 +68,22 @@ namespace molcpp
 
     TEST(TestAtom, test_typename)
     {
-        auto a1 = create_atom();
+        auto a1 = new_atom();
         EXPECT_THROW(a1->get_typename(), KeyError);
     }
 
     TEST(TestAtom, test_set_type)
     {
-        auto a1 = create_atom();
-        auto at1 = create_atomtype("H");
+        auto a1 = new_atom();
+        auto at1 = new_atomtype("H");
         a1->set_type(at1);
         EXPECT_EQ(a1->get_typename(), "H");
     }
 
     TEST(TestAtom, test_equality)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
+        auto a1 = new_atom();
+        auto a2 = new_atom();
 
         EXPECT_TRUE(a1->equal_to(a1));
         EXPECT_FALSE(a1->equal_to(a2));

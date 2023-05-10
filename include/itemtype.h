@@ -112,7 +112,7 @@ namespace molcpp
         AtomPropertyDict _properties;
     };
 
-    AtomTypePtr create_atomtype(const std::string &);
+    AtomTypePtr new_atomtype(const std::string &);
 
     class AtomTypeManager
     {
@@ -255,7 +255,7 @@ namespace molcpp
         BondPropertyDict _properties;  // properties of the bondtype
     };
 
-    BondTypePtr create_bondtype(const std::string &, const AtomTypePtr &, const AtomTypePtr &);
+    BondTypePtr new_bondtype(const std::string &, const AtomTypePtr &, const AtomTypePtr &);
 
     class BondTypeManager
     {

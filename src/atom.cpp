@@ -119,12 +119,12 @@ namespace molcpp
         return _id;
     }
 
-    AtomPtr create_atom()
+    AtomPtr new_atom()
     {
         return std::make_shared<Atom>();
     }
 
-    AtomPtr create_atom(const AtomTypePtr &type)
+    AtomPtr new_atom(const AtomTypePtr &type)
     {
         return std::make_shared<Atom>(type);
     }

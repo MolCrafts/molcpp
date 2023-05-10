@@ -8,16 +8,16 @@ namespace molcpp{
     // test case for Bond class
     TEST(TestBond, test_init)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto b1 = create_bond(a1, a2);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto b1 = new_bond(a1, a2);
     }
 
     TEST(TestBond, test_get_ends)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto b1 = create_bond(a1, a2);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto b1 = new_bond(a1, a2);
 
         EXPECT_EQ(b1->get_itom(), a1);
         EXPECT_EQ(b1->get_jtom(), a2);
@@ -25,12 +25,12 @@ namespace molcpp{
 
     TEST(TestBond, test_bondtype)
     {
-        auto at = create_atomtype("C");
-        auto a1 = create_atom(at);
-        auto a2 = create_atom(at);
-        auto b1 = create_bond(a1, a2);
+        auto at = new_atomtype("C");
+        auto a1 = new_atom(at);
+        auto a2 = new_atom(at);
+        auto b1 = new_bond(a1, a2);
 
-        auto bt = create_bondtype("C-C", a1->get_type(), a2->get_type());
+        auto bt = new_bondtype("C-C", a1->get_type(), a2->get_type());
         b1->set_type(bt);
 
         EXPECT_EQ(b1->get_bondtype(), bt);
@@ -40,11 +40,11 @@ namespace molcpp{
 
     TEST(TestBond, test_equlity)
     {            
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto b1 = create_bond(a1, a2);
-        auto b2 = create_bond(a1, a2);
-        auto b3 = create_bond(a2, a1);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto b1 = new_bond(a1, a2);
+        auto b2 = new_bond(a1, a2);
+        auto b3 = new_bond(a2, a1);
 
         EXPECT_TRUE(*b1 == *b2);
         EXPECT_TRUE(*b1 == *b3);
@@ -53,9 +53,9 @@ namespace molcpp{
 
     TEST(TestBond, test_set_get)
     {
-        auto a1 = create_atom();
-        auto a2 = create_atom();
-        auto b1 = create_bond(a1, a2);
+        auto a1 = new_atom();
+        auto a2 = new_atom();
+        auto b1 = new_bond(a1, a2);
 
         b1->set("order", 1);
         b1->set("length", 1.0);

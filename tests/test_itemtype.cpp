@@ -20,7 +20,7 @@ namespace molcpp
     {
         auto a1 = AtomType("C");
         AtomType& a2 = a1;
-        auto a3 = create_atomtype("H");
+        auto a3 = new_atomtype("H");
         EXPECT_TRUE(a1.equal_to(a2));
         EXPECT_FALSE(a1.equal_to(*a3));
         EXPECT_TRUE(a1 == a2);
@@ -57,8 +57,8 @@ namespace molcpp
 
     TEST(TestBondType, test_constructor)
     {
-        auto a1 = create_atomtype("C");
-        auto a2 = create_atomtype("H");
+        auto a1 = new_atomtype("C");
+        auto a2 = new_atomtype("H");
         auto b1 = BondType("C-H", a1, a2);
         EXPECT_EQ(b1.get_name(), "C-H");
 
@@ -69,8 +69,8 @@ namespace molcpp
 
     TEST(TestBondType, test_equal_to)
     {
-        auto a1 = create_atomtype("C");
-        auto a2 = create_atomtype("H");
+        auto a1 = new_atomtype("C");
+        auto a2 = new_atomtype("H");
         auto b1 = BondType("C-H", a1, a2);
         auto b2 = BondType("C-H", a1, a2);
         auto b3 = BondType("C-H", a2, a1);
@@ -82,8 +82,8 @@ namespace molcpp
 
     TEST(TestBondType, test_set_get)
     {
-        auto a1 = create_atomtype("C");
-        auto a2 = create_atomtype("H");
+        auto a1 = new_atomtype("C");
+        auto a2 = new_atomtype("H");
         auto b1 = BondType("C-H", a1, a2);
         b1.set("k", 100.0);
         EXPECT_EQ(b1.get<double>("k"), 100.0);
@@ -100,8 +100,8 @@ namespace molcpp
     TEST(TestBondTypeManager, test_set_get)
     {
         auto bvec = molcpp::BondTypeManager();
-        auto a1 = create_atomtype("C");
-        auto a2 = create_atomtype("H");
+        auto a1 = new_atomtype("C");
+        auto a2 = new_atomtype("H");
         auto b1 = bvec.def("C-H", a1, a2);
         EXPECT_EQ(bvec.get_ntypes(), 1);
         EXPECT_EQ(bvec.get("C-H"), b1);

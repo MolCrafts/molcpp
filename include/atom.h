@@ -150,7 +150,7 @@ namespace molcpp
     };
 
     // factory function
-    AtomPtr create_atom();
-    AtomPtr create_atom(const AtomTypePtr& type);
+    AtomPtr new_atom();
+    AtomPtr new_atom(const AtomTypePtr& type);
 
 }

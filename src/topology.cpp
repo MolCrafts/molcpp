@@ -9,7 +9,7 @@ namespace molcpp
     //     // get atoms
     //     for (auto chflatom : chflTopology)
     //     {
-    //         auto mpatom = create_atom();
+    //         auto mpatom = new_atom();
     
     //         mpatom->set("name", chflatom.name());
     //         mpatom->set("type", chflatom.type());
@@ -25,7 +25,7 @@ namespace molcpp
     //     // get bonds
     //     for (auto chflbond : chflTopology.bonds())
     //     {
-    //         auto mpabond = create_bond(chflbond[0], chflbond[1]);
+    //         auto mpabond = new_bond(chflbond[0], chflbond[1]);
     //         this->add_bond(mpabond);
     //     }
     // }
@@ -48,9 +48,9 @@ namespace molcpp
         return std::find(_atoms.begin(), _atoms.end(), atom) != _atoms.end();
     }
 
-    AtomPtr Topology::create_atom()
+    AtomPtr Topology::new_atom()
     {
-        AtomPtr atom = molcpp::create_atom();
+        AtomPtr atom = molcpp::new_atom();
         add_atom(atom);
         return atom;
     }
@@ -98,9 +98,9 @@ namespace molcpp
         return results == _bonds.end() ? false : true;
     }
 
-    BondPtr Topology::create_bond(AtomPtr itom, AtomPtr jtom)
+    BondPtr Topology::new_bond(AtomPtr itom, AtomPtr jtom)
     {
-        BondPtr bond = molcpp::create_bond(itom, jtom);
+        BondPtr bond = molcpp::new_bond(itom, jtom);
         if (add_bond(bond))
         {
             itom->add_bond(bond);
@@ -113,9 +113,9 @@ namespace molcpp
         }
     }
 
-    BondPtr Topology::create_bond(size_t itom_index, size_t jtom_index)
+    BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
-        return create_bond(_atoms[itom_index], _atoms[jtom_index]);
+        return new_bond(_atoms[itom_index], _atoms[jtom_index]);
     }
 
     bool Topology::del_bond(BondPtr bond)
@@ -134,7 +134,7 @@ namespace molcpp
 
     bool Topology::del_bond(const AtomPtr& itom, const AtomPtr& jtom)
     {
-        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, create_bond(itom, jtom));
+        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, new_bond(itom, jtom));
         if (result.has_value())
         {
             _bonds.erase(_bonds.begin() + result.value());
@@ -148,7 +148,7 @@ namespace molcpp
 
     // factory function
 
-    TopologyPtr create_topology()
+    TopologyPtr new_topology()
     {
         return std::make_shared<Topology>();
     }

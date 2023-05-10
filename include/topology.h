@@ -58,8 +58,8 @@ namespace molcpp
              * 
              * @return AtomPtr 
              */
-            AtomPtr create_atom();
-            // AtomPtr create_atom(const chemfiles::Atom &);
+            AtomPtr new_atom();
+            // AtomPtr new_atom(const chemfiles::Atom &);
             
             /**
              * @brief Get the atoms object
@@ -89,14 +89,14 @@ namespace molcpp
              * 
              * @return BondPtr 
              */
-            BondPtr create_bond(AtomPtr, AtomPtr);
+            BondPtr new_bond(AtomPtr, AtomPtr);
             
             /**
              * @brief Create a bond object
              * 
              * @return BondPtr 
              */
-            BondPtr create_bond(size_t, size_t);
+            BondPtr new_bond(size_t, size_t);
 
             /**
              * @brief Get the bonds object
@@ -142,6 +142,6 @@ namespace molcpp
     using TopologyPtr = std::shared_ptr<Topology>;
 
     // factory function
-    TopologyPtr create_topology();
+    TopologyPtr new_topology();
 
 }

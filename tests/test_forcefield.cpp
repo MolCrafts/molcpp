@@ -30,7 +30,7 @@ namespace molcpp
     //     auto at = ff.def_atomtype("C");
     //     at->set("mass", 12.011);
 
-    //     auto atom1 = create_atom();
+    //     auto atom1 = new_atom();
     //     atom1->set_type("C");
     //     bool isMatch = ff.match_atom(atom1);
     //     EXPECT_TRUE(isMatch);
@@ -47,9 +47,9 @@ namespace molcpp
     //     bt->set("k", 1000.0);
     //     bt->set("r0", 1.0);
 
-    //     auto atom1 = create_atom(at);
-    //     auto atom2 = create_atom(at);
-    //     auto bond = create_bond(atom1, atom2);
+    //     auto atom1 = new_atom(at);
+    //     auto atom2 = new_atom(at);
+    //     auto bond = new_bond(atom1, atom2);
 
     //     bool isMatch = ff.match_bond(bond);
     //     EXPECT_TRUE(isMatch);

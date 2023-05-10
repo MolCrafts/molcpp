@@ -112,6 +112,6 @@ namespace molcpp
     };
 
     // factory function
-    BondPtr create_bond(AtomPtr, AtomPtr);
+    BondPtr new_bond(AtomPtr, AtomPtr);
 
 }
