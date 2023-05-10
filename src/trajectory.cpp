@@ -19,6 +19,11 @@ namespace molcpp
     //     return Frame(frame);
     // }
 
+    const std::string& Trajectory::path() const
+    {
+        return _fileHandler.path();
+    }
+
     void Trajectory::close()
     {
         _fileHandler.close();
