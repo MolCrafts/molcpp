@@ -35,23 +35,25 @@ namespace molcpp
 
     bool Atom::del_bond(BondPtr bond)
     {
-        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
-        if (result.has_value())
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
+                                    { return *b == *bond; });
+        if (results == _bonds.end())
         {
-            _bonds.erase(_bonds.begin() + result.value());
-            return true;
+            return false;
         }
         else
         {
-            return false;
+            _bonds.erase(results);
+            return true;
         }
     }
 
     bool Atom::is_nbr(AtomPtr atom)
     {
         auto nbrs = this->get_nbrs();
-        auto isInNbrs = find_in_container<std::vector<AtomPtr>, AtomPtr>(nbrs, atom).has_value();
-        return isInNbrs;
+        auto results = std::find_if(nbrs.begin(), nbrs.end(), [atom](AtomPtr a)
+                                    { return *a == *atom; });
+        return results == nbrs.end() ? false : true;
     }
 
     std::vector<AtomPtr> Atom::get_nbrs()

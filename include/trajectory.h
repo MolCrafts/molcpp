@@ -3,11 +3,10 @@
 #include <chemfiles.hpp>
 #include <string>
 #include "frame.h"
+#include "algo.h"
 
 namespace molcpp
 {
-
-    using FrameVec = std::vector<FramePtr>;
 
     class Trajectory
     {
@@ -41,14 +40,14 @@ namespace molcpp
          * 
          * @return FramePtr& 
          */
-        FramePtr& get_step(size_t) const;
+        FramePtr& get_step(size_t);
         
         /**
          * @brief Get a frame with its index in vector
          * 
          * @return FramePtr& 
          */
-        FramePtr& get_by_index(size_t) const;
+        FramePtr& get_by_index(size_t);
 
         /**
          * @brief Get the read-only std::vector<FramePtr>
@@ -61,13 +60,13 @@ namespace molcpp
          * @brief Opon a Chemfiles::Trajectory
          * 
          */
-        void open(std::string, char, const std::string &);
+        // void open(std::string, char, const std::string &);
 
         /**
          * @brief Write frames in this trajectory to a file
          * 
          */
-        void write();
+        // void write();
 
         // --- Chemfiles Trajectory Handlers ---
         /**
@@ -82,13 +81,13 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        bool is_open();
+        // bool is_open();
         
         /**
          * @brief Close a Chemfiles::Trajectory
          * 
          */
-        void close();
+        // void close();
         
         /**
          * @brief Check if all the frames in this trajectory have been read, i.e. if the last read frame is the last frame of the trajectory
@@ -96,24 +95,28 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        bool done() const;
+        // bool done() const;
 
         /**
          * @brief Get the path of Chemfiles::Trajectory handled
          * 
          * @return const std::string& 
          */
-        const std::string &get_path() const;
+        // const std::string &get_path() const;
 
         // Frame read();
         // Frame read_step(size_t step);
 
     private:
-        chemfiles::Trajectory _ChemTrajHandler;
         bool _is_open;
+        chemfiles::Trajectory _ChemTrajHandler;
         FrameVec _frames;
 
         // TODO: cache for frames converted from chemfiles
     };
+
+    using TrajectoryPtr = std::shared_ptr<Trajectory>;
+
+    TrajectoryPtr new_trajectory();
 
 }

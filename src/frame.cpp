@@ -34,10 +34,13 @@ namespace molcpp
         return _topology;
     }
 
-    void Frame::set_topology(TopologyPtr topology)
+    void Frame::set_topology(const TopologyPtr& topology)
     {
         _topology = topology;
     }
 
-
+    FramePtr new_frame()
+    {
+        return std::make_shared<Frame>();
+    }
 }

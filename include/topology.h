@@ -1,10 +1,10 @@
 #pragma once
 
+#include <chemfiles.hpp>
 #include "atom.h"
 #include "bond.h"
 #include "algo.h"
 #include "mplog.h"
-#include "chemfiles.hpp"
 
 namespace molcpp
 {
@@ -97,6 +97,14 @@ namespace molcpp
              * @return BondPtr 
              */
             BondPtr new_bond(size_t, size_t);
+
+            /**
+             * @brief Get the bond object
+             * 
+             * @return const BondPtr 
+             */
+            const BondPtr get_bond(const AtomPtr&, const AtomPtr&) const;
+
 
             /**
              * @brief Get the bonds object

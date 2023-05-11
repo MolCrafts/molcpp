@@ -85,9 +85,9 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   message(STATUS "Debug build.")
   target_compile_options(molcpp
       PUBLIC
+          -O0
           -Wall
           -g
-          -ftest-coverage
   )
   add_subdirectory(tests)
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
@@ -96,8 +96,6 @@ elseif(CMAKE_BUILD_TYPE MATCHES "Release")
       PUBLIC
           -O3
   )
-  # install(TARGETS molcpp DESTINATION lib)
-  # install(DIRECTORY include/ DESTINATION include)
 else()
   message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()

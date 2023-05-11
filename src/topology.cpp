@@ -10,7 +10,7 @@ namespace molcpp
     //     for (auto chflatom : chflTopology)
     //     {
     //         auto mpatom = new_atom();
-    
+
     //         mpatom->set("name", chflatom.name());
     //         mpatom->set("type", chflatom.type());
     //         mpatom->set("mass", chflatom.mass());
@@ -57,10 +57,9 @@ namespace molcpp
 
     bool Topology::del_atom(AtomPtr atom)
     {
-        auto result = find_in_container<std::vector<AtomPtr>, AtomPtr>(_atoms, atom);
-        if (result.has_value())
+        if (has_atom(atom))
         {
-            _atoms.erase(_atoms.begin() + result.value());
+            _atoms.erase(std::find(_atoms.begin(), _atoms.end(), atom));
             return true;
         }
         else
@@ -118,26 +117,40 @@ namespace molcpp
         return new_bond(_atoms[itom_index], _atoms[jtom_index]);
     }
 
-    bool Topology::del_bond(BondPtr bond)
+    const BondPtr Topology::get_bond(const AtomPtr &itom, const AtomPtr &jtom) const
     {
-        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
-        if (result.has_value())
+        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](BondPtr bond)
+                                   { return bond->get_itom() == itom && bond->get_jtom() == jtom; });
+        if (result != _bonds.end())
         {
-            _bonds.erase(_bonds.begin() + result.value());
-            return true;
+            return *result;
         }
         else
         {
-            return false;
+            throw KeyError("Bond not found");
         }
     }
 
-    bool Topology::del_bond(const AtomPtr& itom, const AtomPtr& jtom)
+    bool Topology::del_bond(BondPtr bond)
     {
-        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, new_bond(itom, jtom));
-        if (result.has_value())
+        auto result = std::find(_bonds.begin(), _bonds.end(), bond);
+        if (result != _bonds.end())
         {
-            _bonds.erase(_bonds.begin() + result.value());
+
+            _bonds.erase(result);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    bool Topology::del_bond(const AtomPtr &itom, const AtomPtr &jtom)
+    {
+        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](BondPtr bond)
+                                   { return bond->get_itom() == itom && bond->get_jtom() == jtom; });
+        if (result != _bonds.end())
+        {
+            _bonds.erase(result);
             return true;
         }
         else

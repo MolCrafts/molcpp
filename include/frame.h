@@ -50,7 +50,7 @@ namespace molcpp
              * @brief Set the timestep object
              * 
              */
-            void set_timestep();
+            void set_timestep(size_t);
 
             /**
              * @brief Get the topology object
@@ -63,7 +63,7 @@ namespace molcpp
              * @brief Set the topology object
              * 
              */
-            void set_topology();
+            void set_topology(const TopologyPtr& topology);
 
         private:
             size_t _timestep;
@@ -71,5 +71,8 @@ namespace molcpp
     };
 
     using FramePtr = std::shared_ptr<Frame>;
+    using FrameVec = std::vector<FramePtr>;
+
+    FramePtr new_frame();
 
 }
