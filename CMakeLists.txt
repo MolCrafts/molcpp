@@ -68,7 +68,7 @@ target_sources(
   src/bond.cpp
   src/topology.cpp
   # src/element.cpp
-  # src/frame.cpp
+  src/frame.cpp
   src/trajectory.cpp
 )
 

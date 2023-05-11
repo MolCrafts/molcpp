@@ -23,15 +23,51 @@ namespace molcpp
              * @brief Construct a new Frame from Chemfiles::Frame
              * 
              */
-            Frame(const chemfiles::Frame&);
+            // Frame(const chemfiles::Frame&);
+            
+            /**
+             * @brief Get the natoms object
+             * 
+             * @return size_t 
+             */
             size_t get_natoms() const;
+
+            /**
+             * @brief Get the nbonds object
+             * 
+             * @return size_t 
+             */
             size_t get_nbonds() const;
+
+            /**
+             * @brief Get the timestep object
+             * 
+             * @return size_t 
+             */
             size_t get_timestep() const; 
-            Topology& get_topology();
+
+            /**
+             * @brief Set the timestep object
+             * 
+             */
+            void set_timestep();
+
+            /**
+             * @brief Get the topology object
+             * 
+             * @return Topology& 
+             */
+            const TopologyPtr& get_topology() const;
+
+            /**
+             * @brief Set the topology object
+             * 
+             */
+            void set_topology();
 
         private:
             size_t _timestep;
-            Topology _topology;
+            TopologyPtr _topology;
     };
 
     using FramePtr = std::shared_ptr<Frame>;
