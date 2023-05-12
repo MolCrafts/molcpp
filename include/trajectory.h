@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chemfiles.hpp>
 #include <string>
 #include "frame.h"
 #include "algo.h"
@@ -68,13 +67,6 @@ namespace molcpp
          */
         // void write();
 
-        // --- Chemfiles Trajectory Handlers ---
-        /**
-         * @brief Construct a Trajectory from Chemfiles::Trajectory
-         * 
-         */
-        explicit Trajectory(std::string, char, const std::string &);
-        
         /**
          * @brief If open a Chemfiles::Trajectory
          * 
@@ -109,7 +101,6 @@ namespace molcpp
 
     private:
         bool _is_open;
-        chemfiles::Trajectory _ChemTrajHandler;
         FrameVec _frames;
 
         // TODO: cache for frames converted from chemfiles

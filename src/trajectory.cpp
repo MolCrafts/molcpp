@@ -7,20 +7,6 @@ namespace molcpp
         _is_open = false;
     }
 
-    explicit Trajectory::Trajectory(std::string, char, const std::string &)
-    {
-        _is_open = true;
-        // _frames.reserve(traj.nsteps());
-        // for (size_t i = 0; i < traj.nsteps(); ++i)
-        // {
-        //     auto frame = new_frame();
-        //     frame->set_timestep(i);
-        //     frame->set_topology(new_topology());
-        //     traj.read(frame->get_timestep(), *frame);
-        //     _frames.push_back(frame);
-        // }
-    }
-
     bool Trajectory::add_frame(const FramePtr& frame)
     {
         _frames.push_back(frame);
