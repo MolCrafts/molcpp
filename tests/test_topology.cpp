@@ -68,4 +68,20 @@ namespace molcpp
         EXPECT_EQ(topology->get_nbonds(), 0);
     }
 
+    TEST(TestTopology, test_from_chemfiles)
+    {
+        auto frame = chemfiles::Frame(chemfiles::UnitCell({10, 10, 10}));
+        frame.add_atom(chemfiles::Atom("H"), {1, 0, 0});
+        frame.add_atom(chemfiles::Atom("O"), {0, 0, 0});
+        frame.add_atom(chemfiles::Atom("H"), {0, 1, 0});
+
+        frame.add_bond(0, 1);
+        frame.add_bond(2, 1);
+
+        auto topo = new_topology(frame.topology());
+
+        EXPECT_EQ(topo->get_natoms(), 3);
+        EXPECT_EQ(topo->get_nbonds(), 2);
+    }
+
 }

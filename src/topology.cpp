@@ -2,34 +2,6 @@
 
 namespace molcpp
 {
-    // Topology::Topology(const chemfiles::Topology &chflTopology)
-    // {
-    //     _atoms.reserve(chflTopology.size());
-    //     _bonds.reserve(chflTopology.bonds().size());
-    //     // get atoms
-    //     for (auto chflatom : chflTopology)
-    //     {
-    //         auto mpatom = new_atom();
-
-    //         mpatom->set("name", chflatom.name());
-    //         mpatom->set("type", chflatom.type());
-    //         mpatom->set("mass", chflatom.mass());
-    //         mpatom->set("charge", chflatom.charge());
-    //         if (chflatom.full_name()) mpatom->set("full_name", chflatom.full_name().value());
-    //         if (chflatom.vdw_radius()) mpatom->set("vdw_radius", chflatom.vdw_radius().value());
-    //         if (chflatom.covalent_radius()) mpatom->set("covalent_radius", chflatom.covalent_radius().value());
-    //         if (chflatom.atomic_number()) mpatom->set("atomic_number", static_cast<int>(chflatom.atomic_number().value()));
-
-    //         this->add_atom(mpatom);
-    //     }
-    //     // get bonds
-    //     for (auto chflbond : chflTopology.bonds())
-    //     {
-    //         auto mpabond = new_bond(chflbond[0], chflbond[1]);
-    //         this->add_bond(mpabond);
-    //     }
-    // }
-
     Topology::Topology()
     {
     }
@@ -164,6 +136,26 @@ namespace molcpp
     TopologyPtr new_topology()
     {
         return std::make_shared<Topology>();
+    }
+
+    TopologyPtr new_topology(const chemfiles::Topology& chflTopo)
+    {
+        auto topo = new_topology();
+        for (auto chflAtom : chflTopo)
+        {
+            auto atom = new_atom(chflAtom);
+            topo->add_atom(atom);
+        }
+
+        auto atoms = topo->get_atoms();
+        for (auto chflBond: chflTopo.bonds())
+        {
+            auto at0 = atoms[chflBond[0]];
+            auto at1 = atoms[chflBond[1]];   
+            auto bond = new_bond(at0, at1);
+            topo->add_bond(bond);
+        }
+        return topo;
     }
 
 }

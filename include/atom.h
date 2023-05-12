@@ -4,6 +4,7 @@
 #include "itemtype.h"
 #include <vector>
 #include <memory>
+#include <chemfiles.hpp>
 
 namespace molcpp
 {
@@ -25,12 +26,6 @@ namespace molcpp
          * 
          */
         Atom();
-
-        /**
-         * @brief Construct a new Atom object
-         * 
-         */
-        Atom(const AtomTypePtr&);
 
         /**
          * @brief add a connected bond 
@@ -92,12 +87,6 @@ namespace molcpp
          * @param value 
          */
         void set(const std::string& key, const AtomProperty& value);
-        /**
-         * @brief Get the typename of this atom
-         * 
-         * @return const std::string& 
-         */
-        const std::string& get_typename();
 
         /**
          * @brief Set the atomtype
@@ -152,5 +141,6 @@ namespace molcpp
     // factory function
     AtomPtr new_atom();
     AtomPtr new_atom(const AtomTypePtr& type);
+    AtomPtr new_atom(const chemfiles::Atom& chflAtom);
 
 }

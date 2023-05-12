@@ -10,7 +10,6 @@ namespace molcpp
     {
         auto a0 = Atom();
         auto a1 = new_atom();
-        auto a2 = new_atomtype("C");
     }
 
     TEST(TestAtom, test_set_get)
@@ -66,20 +65,6 @@ namespace molcpp
         EXPECT_TRUE(a1->has_bond(b1));
     }
 
-    TEST(TestAtom, test_typename)
-    {
-        auto a1 = new_atom();
-        EXPECT_THROW(a1->get_typename(), KeyError);
-    }
-
-    TEST(TestAtom, test_set_type)
-    {
-        auto a1 = new_atom();
-        auto at1 = new_atomtype("H");
-        a1->set_type(at1);
-        EXPECT_EQ(a1->get_typename(), "H");
-    }
-
     TEST(TestAtom, test_equality)
     {
         auto a1 = new_atom();
@@ -94,5 +79,19 @@ namespace molcpp
         EXPECT_FALSE(a3.equal_to(a4));
         EXPECT_TRUE(a3 == a3);
         EXPECT_FALSE(a3 == a4);
+    }
+
+    TEST(TestAtom, test_from_chemfiles)
+    {
+        auto chflAtom = chemfiles::Atom("tAtom", "C");
+        chflAtom.set_mass(12.0);
+        chflAtom.set_charge(1.0);
+        chflAtom.set("full_name", "testAtom");
+        auto atom = new_atom(chflAtom);
+        EXPECT_EQ(atom->get<std::string>("name"), "tAtom");
+        EXPECT_EQ(atom->get<std::string>("type"), "C");
+        EXPECT_EQ(atom->get<double>("mass"), 12.0);
+        EXPECT_EQ(atom->get<double>("charge"), 1.0);
+        EXPECT_EQ(atom->get<std::string>("full_name"), "testAtom");
     }
 }

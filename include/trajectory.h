@@ -1,5 +1,5 @@
 #pragma once
-
+#include <chemfiles.hpp>
 #include <string>
 #include "frame.h"
 #include "algo.h"
@@ -60,6 +60,7 @@ namespace molcpp
          * 
          */
         // void open(std::string, char, const std::string &);
+        void load(std::string, char, const std::string&);
 
         /**
          * @brief Write frames in this trajectory to a file
@@ -100,14 +101,13 @@ namespace molcpp
         // Frame read_step(size_t step);
 
     private:
-        bool _is_open;
         FrameVec _frames;
-
         // TODO: cache for frames converted from chemfiles
     };
 
     using TrajectoryPtr = std::shared_ptr<Trajectory>;
 
     TrajectoryPtr new_trajectory();
+    TrajectoryPtr new_trajectory(chemfiles::Trajectory&);
 
 }

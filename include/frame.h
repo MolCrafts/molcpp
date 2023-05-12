@@ -74,5 +74,6 @@ namespace molcpp
     using FrameVec = std::vector<FramePtr>;
 
     FramePtr new_frame();
+    FramePtr new_frame(const chemfiles::Frame&);
 
 }

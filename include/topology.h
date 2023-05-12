@@ -151,5 +151,5 @@ namespace molcpp
 
     // factory function
     TopologyPtr new_topology();
-
+    TopologyPtr new_topology(const chemfiles::Topology& chflTopology);
 }

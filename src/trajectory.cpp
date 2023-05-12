@@ -4,7 +4,7 @@ namespace molcpp
 {
     Trajectory::Trajectory()
     {
-        _is_open = false;
+
     }
 
     bool Trajectory::add_frame(const FramePtr& frame)
@@ -49,17 +49,19 @@ namespace molcpp
         return _frames;
     }
 
-    // void Trajectory::open(std::string path, char mode, const std::string &format)
-    // {
-    //     if (_is_open)
-    //     {
-    //         throw IOError("Trajectory is already open");
-    //     }
-    //     else
-    //     {
-    //         _is_open = true;
-    //     }
-    // }
+    void Trajectory::load(std::string path, char mode, const std::string &format)
+    {
+        auto _traj = chemfiles::Trajectory(path, mode, format);
+        auto _nsteps = _traj.nsteps();
+
+        for (size_t i = 0; i < _nsteps; i++)
+        {
+            auto _frame = _traj.read();
+            auto _frame_ptr = new_frame(_frame);
+            _frames.push_back(_frame_ptr);
+        }
+
+    }
 
     // void Trajectory::write()
     // {
@@ -69,6 +71,22 @@ namespace molcpp
     TrajectoryPtr new_trajectory()
     {
         return std::make_shared<Trajectory>();
+    }
+
+    TrajectoryPtr new_trajectory(chemfiles::Trajectory& chflTraj)
+    {
+        auto _traj = new_trajectory();
+        auto _nsteps = chflTraj.nsteps();
+
+        for (size_t i = 0; i < _nsteps; i++)
+        {
+            auto _frame = chflTraj.read();
+            auto _frame_ptr = new_frame(_frame);
+            _traj->add_frame(_frame_ptr);
+        }
+
+        if (chflTraj.done()) chflTraj.close();
+        return _traj;
     }
 
 }

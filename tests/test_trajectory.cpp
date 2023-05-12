@@ -42,18 +42,18 @@ namespace molcpp{
         EXPECT_EQ(traj->get_by_index(1)->get_timestep(), 199);
     }
 
-    // TEST(TestTrajectory, test_load_single_frame)
-    // {
-    //     auto traj = Trajectory( TEST_DATA_DIR / "xyz/methane.xyz", 'r', "XYZ");
-    //     EXPECT_EQ(traj.get_nsteps(), 1);
-    //     traj.close();
-    // }
+    TEST(TestTrajectory, test_load_single_frame)
+    {
+        auto _traj = chemfiles::Trajectory( TEST_DATA_DIR / "xyz/methane.xyz", 'r', "XYZ");
+        auto traj = new_trajectory(_traj);
+        EXPECT_EQ(traj->get_nsteps(), 1);
+    }
 
-    // TEST(TestTrajectory, test_load_multiple_frame)
-    // {
-    //     auto traj = Trajectory( TEST_DATA_DIR / "lammps/polymer.lammpstrj", 'r', "LAMMPS");
-    //     EXPECT_EQ(traj.get_nsteps(), 42);
-    //     traj.close();
-    // }
+    TEST(TestTrajectory, test_load_multiple_frame)
+    {
+        auto _traj = chemfiles::Trajectory( TEST_DATA_DIR / "lammps/polymer.lammpstrj", 'r', "LAMMPS");
+        auto traj = new_trajectory(_traj);
+        EXPECT_EQ(traj->get_nsteps(), 42);
+    }
 
 }

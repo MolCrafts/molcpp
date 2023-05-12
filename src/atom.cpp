@@ -8,11 +8,6 @@ namespace molcpp
         _id = reinterpret_cast<size_t>(this);
     }
 
-    Atom::Atom(const AtomTypePtr &type) : _type{type}, _properties{}, _bonds{}
-    {
-        _properties.set("type", type->get_name());
-    }
-
     bool Atom::add_bond(BondPtr bond)
     {
         if (has_bond(bond))
@@ -75,17 +70,6 @@ namespace molcpp
         return nbrs;
     }
 
-    const std::string &Atom::get_typename()
-    {
-        if (_type != nullptr)
-        {
-            return _type->get_name();
-        }
-
-        else
-            throw KeyError("Atom has no type");
-    }
-
     void Atom::set_type(const AtomTypePtr &type)
     {
         _type = type;
@@ -128,7 +112,37 @@ namespace molcpp
 
     AtomPtr new_atom(const AtomTypePtr &type)
     {
-        return std::make_shared<Atom>(type);
+        auto atom = new_atom();
+        atom->set_type(type);
+        return atom;
+    }
+
+    AtomPtr new_atom(const chemfiles::Atom& chflAtom)
+    {
+
+        auto atom = new_atom();
+        atom->set("name", chflAtom.name());
+        atom->set("type", chflAtom.type());
+        atom->set("mass", chflAtom.mass());
+        atom->set("charge", chflAtom.charge());
+        if (chflAtom.properties())
+        {
+            for (auto prop : *chflAtom.properties())
+            {
+                if (prop.second.kind() == chemfiles::Property::Kind::BOOL)
+                atom->set(prop.first, prop.second.as_bool());
+                else if (prop.second.kind() == chemfiles::Property::Kind::DOUBLE)
+                atom->set(prop.first, prop.second.as_double());
+                else if (prop.second.kind() == chemfiles::Property::Kind::STRING)
+                atom->set(prop.first, prop.second.as_string());
+                // else if (prop.second.kind() == chemfiles::Property::Kind::VECTOR3D)
+                // atom->set(prop.first, prop.second.as_vector3d());
+                else throw std::runtime_error("Unsupported property type");
+            }
+        }
+        
+        return atom;
+
     }
 
 }

@@ -43,4 +43,13 @@ namespace molcpp
     {
         return std::make_shared<Frame>();
     }
+
+    FramePtr new_frame(const chemfiles::Frame& cfhlFrame)
+    {
+        auto _frame = new_frame();
+        _frame->set_timestep(cfhlFrame.step());
+        // _frame->set_cell(new_cell(cfhlFrame.cell());
+        _frame->set_topology(new_topology(cfhlFrame.topology()));
+        return _frame;
+    }
 }
