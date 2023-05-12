@@ -20,7 +20,7 @@ else()
   message(STATUS "Test data already downloaded, skipping...")
 endif()
 
-enable_testing()
+# enable_testing()
 add_executable(
   molcpp_test
   test_algo.cpp

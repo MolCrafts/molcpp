@@ -89,6 +89,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
           -Wall
           -g
   )
+  enable_testing()  # enable_testing must at top cmakelists
   add_subdirectory(tests)
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
