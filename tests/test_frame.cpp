@@ -31,6 +31,7 @@ namespace molcpp
         auto frame = new_frame(_frame);
         EXPECT_EQ(frame->get_natoms(), 3);
         EXPECT_EQ(frame->get_nbonds(), 2);
+        EXPECT_EQ(frame->get<std::string>("name"),  xt::xarray<std::string>({"H", "O", "H"}));
     }
 
 }
