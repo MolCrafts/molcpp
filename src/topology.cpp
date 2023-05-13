@@ -131,6 +131,17 @@ namespace molcpp
         }
     }
 
+    void Topology::set(const std::string& key, const xt::xarray<AtomProperty>& value)
+    {
+        if (value.size() != get_natoms()) 
+            throw ValueError("The size of the value array must be equal to the number of atoms");
+
+        for (size_t i = 0; i < get_natoms(); i++)
+        {
+            _atoms[i]->set(key, value[i]);
+        }
+    }
+
     // factory function
 
     TopologyPtr new_topology()

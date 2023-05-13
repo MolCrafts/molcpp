@@ -5,6 +5,8 @@
 #include "bond.h"
 #include "algo.h"
 #include "mplog.h"
+#include "xtensor/xarray.hpp"
+#include "xtensor/xadapt.hpp"
 
 namespace molcpp
 {
@@ -138,6 +140,19 @@ namespace molcpp
              * 
              */
             bool del_bond(const AtomPtr&, const AtomPtr& );
+
+            template<typename T>
+            xt::xarray<T> get(const std::string& name) const
+            {
+                xt::xarray<T> arr = xt::empty<T>({get_natoms()});
+                for (size_t i = 0; i < get_natoms(); ++i)
+                {
+                    arr[i] = _atoms[i]->get<T>(name);
+                }
+                return arr;
+            }
+
+            void set(const std::string&, const xt::xarray<AtomProperty>&);
 
         private:
 

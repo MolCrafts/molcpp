@@ -39,6 +39,11 @@ namespace molcpp
         _topology = topology;
     }
 
+    void Frame::set(const std::string& key, const xt::xarray<AtomProperty> &value)
+    {
+        _topology->set(key, value);
+    }
+
     FramePtr new_frame()
     {
         return std::make_shared<Frame>();

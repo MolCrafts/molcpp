@@ -5,7 +5,6 @@ namespace molcpp
 {
     Atom::Atom() : _type{nullptr}, _properties{}, _bonds{}
     {
-        _id = reinterpret_cast<size_t>(this);
     }
 
     bool Atom::add_bond(BondPtr bond)

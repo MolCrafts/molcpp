@@ -2,8 +2,6 @@
 
 #include <chemfiles.hpp>
 #include <vector>
-#include "xtensor/xarray.hpp"
-#include "xtensor/xadapt.hpp"
 #include "atom.h"
 #include "topology.h"
 #include "itemtype.h"
@@ -76,14 +74,10 @@ namespace molcpp
         template <typename T>
         xt::xarray<T> get(const std::string &key)
         {
-            std::vector<T> _tmp;
-            auto atoms = _topology->get_atoms();
-            for(size_t i = 0; i < get_natoms(); i++)
-            {
-                _tmp.push_back(atoms[i]->get<T>(key));
-            }
-            return xt::adapt(_tmp);
+            return _topology->get<T>(key);
         };
+
+        void set(const std::string&, const xt::xarray<AtomProperty>&);
 
     private:
         size_t _timestep;

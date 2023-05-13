@@ -21,6 +21,23 @@ namespace molcpp
         std::string m_message;
     };
 
+    class ValueError : public std::exception
+    {
+    public:
+        ValueError(const std::string &message) : m_message(message)
+        {
+            LOG_ERROR(m_message);
+        }
+
+        const char *what() const noexcept override
+        {
+            return m_message.c_str();
+        }
+
+    private:
+        std::string m_message;
+    };
+
     class IndexError : public std::exception
     {
     public:
@@ -50,6 +67,7 @@ namespace molcpp
         {
             return m_message.c_str();
         }
+
     private:
         std::string m_message;
     };
