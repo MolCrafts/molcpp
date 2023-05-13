@@ -5,8 +5,9 @@
 #include "bond.h"
 #include "algo.h"
 #include "mplog.h"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xadapt.hpp"
+#include <xtensor/xarray.hpp>
+#include <xtensor/xadapt.hpp>
+#include <xtensor/xview.hpp>
 
 namespace molcpp
 {
@@ -153,6 +154,10 @@ namespace molcpp
             }
 
             void set(const std::string&, const xt::xarray<AtomProperty>&);
+
+            void set_positions(const xt::xarray<double>&);
+
+            const xt::xarray<double> get_positions() const;
 
         private:
 

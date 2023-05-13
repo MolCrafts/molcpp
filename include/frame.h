@@ -79,6 +79,10 @@ namespace molcpp
 
         void set(const std::string&, const xt::xarray<AtomProperty>&);
 
+        void set_positions(const xt::xarray<double>&);
+
+        const xt::xarray<double> get_positions() const;
+
     private:
         size_t _timestep;
         TopologyPtr _topology;

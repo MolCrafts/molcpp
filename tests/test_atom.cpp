@@ -94,4 +94,11 @@ namespace molcpp
         EXPECT_EQ(atom->get<double>("charge"), 1.0);
         EXPECT_EQ(atom->get<std::string>("full_name"), "testAtom");
     }
+
+    TEST(TestAtom, test_pos)
+    {
+        auto atom = new_atom();
+        atom->set_position({1.0, 2.0, 3.0});
+        EXPECT_EQ(atom->get_position(), xt::xarray<double>({1.0, 2.0, 3.0}));
+    }
 }

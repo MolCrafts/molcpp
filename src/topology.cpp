@@ -142,6 +142,29 @@ namespace molcpp
         }
     }
 
+    void Topology::set_positions(const xt::xarray<double>& positions)
+    {
+        if (positions.size() != get_natoms()) 
+            throw ValueError("The size of the positions array must be equal to the number of atoms");
+
+        for (size_t i = 0; i < get_natoms(); i++)
+        {
+            _atoms[i]->set_position(positions[i]);
+        }
+    }
+
+    const xt::xarray<double> Topology::get_positions() const
+    {
+        auto natoms = get_natoms();
+        xt::xarray<double> positions = xt::zeros<double>({natoms * 3});
+        positions.reshape({natoms, 3});
+        for (size_t i = 0; i < natoms; i++)
+        {
+            xt::view(positions, i, xt::all()) = _atoms[i]->get_position();
+        }
+        return positions;
+    }
+
     // factory function
 
     TopologyPtr new_topology()

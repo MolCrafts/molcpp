@@ -104,6 +104,16 @@ namespace molcpp
         return _id;
     }
 
+    void Atom::set_position(const xt::xarray<double> &pos)
+    {
+        _pos = pos;
+    }
+
+    const xt::xarray<double>& Atom::get_position() const
+    {
+        return _pos;
+    }
+
     AtomPtr new_atom()
     {
         return std::make_shared<Atom>();

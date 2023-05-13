@@ -2,6 +2,7 @@
 #include "algo.h"
 #include "dict.h"
 #include "itemtype.h"
+#include "xtensor/xarray.hpp"
 #include <vector>
 #include <memory>
 #include <chemfiles.hpp>
@@ -131,11 +132,16 @@ namespace molcpp
          */
         const size_t get_id() const;
 
+        void set_position(const xt::xarray<double>& pos);
+
+        const xt::xarray<double>& get_position() const;
+
     private:
         AtomTypePtr _type;
         AtomPropertyDict _properties;
         std::vector<BondPtr> _bonds;
         size_t _id;
+        xt::xarray<double> _pos; 
     };
 
     // factory function

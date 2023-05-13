@@ -44,6 +44,16 @@ namespace molcpp
         _topology->set(key, value);
     }
 
+    void Frame::set_positions(const xt::xarray<double>& positions)
+    {
+        _topology->set_positions(positions);
+    }
+
+    const xt::xarray<double> Frame::get_positions() const
+    {
+        return _topology->get_positions();
+    }
+
     FramePtr new_frame()
     {
         return std::make_shared<Frame>();
