@@ -76,11 +76,13 @@ namespace molcpp
          * @return T 
          */
         template<typename T>
-        T get(const std::string& key)
+        T get(const std::string& key, T _default = T())
         {
             if (_properties.has(key)) return _properties.get<T>(key);
-            else return _type->get<T>(key);
+            else if(_type->has(key)) return _type->get<T>(key);
+            else return _default;
         };
+
         /**
          * @brief 
          * 
@@ -148,5 +150,7 @@ namespace molcpp
     AtomPtr new_atom();
     AtomPtr new_atom(const AtomTypePtr& type);
     AtomPtr new_atom(const chemfiles::Atom& chflAtom);
+
+    chemfiles::Atom save_atom(const AtomPtr& atom);
 
 }

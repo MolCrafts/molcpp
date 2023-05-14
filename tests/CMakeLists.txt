@@ -32,7 +32,7 @@ add_executable(
   test_topology.cpp
   test_frame.cpp
   test_trajectory.cpp
-
+  test_cell.cpp
   # test_element.cpp
 )
 

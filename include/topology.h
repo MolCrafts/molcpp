@@ -14,6 +14,7 @@ namespace molcpp
 
     class Topology;
     using TopoVec = std::vector<Topology>;
+    using BondConnect = std::vector<std::vector<size_t>>;
 
     class Topology
     {
@@ -102,12 +103,19 @@ namespace molcpp
             BondPtr new_bond(size_t, size_t);
 
             /**
+             * @brief 
+             * 
+             */
+            void connect(size_t, size_t);
+
+            // TODO: connect(size_t, size_t, size_t) etc.
+
+            /**
              * @brief Get the bond object
              * 
              * @return const BondPtr 
              */
             const BondPtr get_bond(const AtomPtr&, const AtomPtr&) const;
-
 
             /**
              * @brief Get the bonds object
@@ -164,6 +172,8 @@ namespace molcpp
             AtomVec _atoms;
             BondVec _bonds;
             TopoVec _topos;
+
+            BondConnect _bondConnect;
 
     };
 

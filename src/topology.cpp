@@ -74,6 +74,15 @@ namespace molcpp
         BondPtr bond = molcpp::new_bond(itom, jtom);
         if (add_bond(bond))
         {
+            // find itom and jtom index in _atoms
+            size_t itom_index = std::distance(std::find(_atoms.begin(), _atoms.end(), itom), _atoms.begin());
+            size_t jtom_index = std::distance(std::find(_atoms.begin(), _atoms.end(), jtom), _atoms.begin());
+            // Check itom or jtom not in _atoms
+            if (itom_index == _atoms.size() || jtom_index == _atoms.size())
+            {
+                throw KeyError("Atom not found");
+            }
+            connect(itom_index, jtom_index);
             itom->add_bond(bond);
             jtom->add_bond(bond);
             return bond;
@@ -86,7 +95,13 @@ namespace molcpp
 
     BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
-        return new_bond(_atoms[itom_index], _atoms[jtom_index]);
+        auto BondPtr = new_bond(_atoms[itom_index], _atoms[jtom_index]);
+        return BondPtr;
+    }
+
+    void Topology::connect(size_t i, size_t j)
+    {
+        _bondConnect.push_back({i, j});
     }
 
     const BondPtr Topology::get_bond(const AtomPtr &itom, const AtomPtr &jtom) const
@@ -192,10 +207,19 @@ namespace molcpp
         return topo;
     }
 
-    TopologyPtr new_topology(const std::string& filename)
+    chemfiles::Topology save_topology(const TopologyPtr& topo)
     {
-        // auto chflTopo = chemfiles::Trajectory(filename).read().topology();
-        // return new_topology(chflTopo);
+        chemfiles::Topology chflTopo;
+        for (auto atom: topo->get_atoms())
+        {
+            chflTopo.add_atom(save_atom(atom));
+        }
+
+        // for (auto bond: topo->get_bonds())
+        // {
+        //     chflTopo.add_bond(bond->get_itom()->get_id(), bond->get_jtom()->get_id());
+        // }
+        return chflTopo;
     }
 
 }

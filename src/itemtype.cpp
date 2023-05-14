@@ -55,6 +55,11 @@ namespace molcpp
         _properties.set(key, value);
     }
 
+    bool AtomType::has(const std::string &key) const
+    {
+        return _properties.has(key);
+    }
+
     AtomTypePtr new_atomtype(const std::string &name)
     {
         return std::make_shared<AtomType>(name);

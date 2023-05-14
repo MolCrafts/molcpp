@@ -94,6 +94,12 @@ namespace molcpp
         };
 
         /**
+         * @brief Check if has
+         * 
+         */
+        bool has(const std::string& key) const;
+
+        /**
          * @brief Get a value raw value for a key
          *
          * @param key

@@ -95,7 +95,7 @@ namespace molcpp
         auto _frames = traj->get_frames();
         for (auto _frame : _frames)
         {
-            chflFrame = save_frame(_frame);
+            auto chflFrame = save_frame(_frame);
             _traj.write(chflFrame);
         }
         return _traj;

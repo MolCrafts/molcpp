@@ -154,4 +154,15 @@ namespace molcpp
 
     }
 
+    // save_atom
+    chemfiles::Atom save_atom(const AtomPtr &atom)
+    {
+        chemfiles::Atom chflAtom(atom->get<std::string>("name", ""));
+        chflAtom.set_charge(atom->get<double>("charge", 0.0));
+        chflAtom.set_mass(atom->get<double>("mass", 0.0));
+        chflAtom.set_type(atom->get<std::string>("type", ""));
+
+        return chflAtom;
+    }
+
 }
