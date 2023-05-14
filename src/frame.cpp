@@ -67,4 +67,13 @@ namespace molcpp
         _frame->set_topology(new_topology(cfhlFrame.topology()));
         return _frame;
     }
+
+    chemfiles::Frame save_frame(const FramePtr& frame)
+    {
+        chemfiles::Frame cfhlFrame;
+        cfhlFrame.set_step(frame->get_timestep());
+        // cfhlFrame.set_cell(save_cell(frame->get_cell()));
+        cfhlFrame.set_topology(save_topology(frame->get_topology()));
+        return cfhlFrame;
+    }
 }

@@ -94,4 +94,6 @@ namespace molcpp
     FramePtr new_frame();
     FramePtr new_frame(const chemfiles::Frame &);
 
+    chemfiles::Frame save_frame(const FramePtr &);
+
 }

@@ -192,4 +192,10 @@ namespace molcpp
         return topo;
     }
 
+    TopologyPtr new_topology(const std::string& filename)
+    {
+        // auto chflTopo = chemfiles::Trajectory(filename).read().topology();
+        // return new_topology(chflTopo);
+    }
+
 }

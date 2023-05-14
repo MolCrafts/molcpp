@@ -89,4 +89,16 @@ namespace molcpp
         return _traj;
     }
 
+    chemfiles::Trajectory save_trajectory(TrajectoryPtr traj, std::string path, char mode, const std::string &format)
+    {
+        auto _traj = chemfiles::Trajectory(path, mode, format);
+        auto _frames = traj->get_frames();
+        for (auto _frame : _frames)
+        {
+            chflFrame = save_frame(_frame);
+            _traj.write(chflFrame);
+        }
+        return _traj;
+    }
+
 }

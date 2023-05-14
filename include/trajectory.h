@@ -110,4 +110,6 @@ namespace molcpp
     TrajectoryPtr new_trajectory();
     TrajectoryPtr new_trajectory(chemfiles::Trajectory&);
 
+    chemfiles::Trajectory save_trajectory(TrajectoryPtr, std::string, char, const std::string&);
+
 }
