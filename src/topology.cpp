@@ -2,7 +2,7 @@
 
 namespace molcpp
 {
-    Topology::Topology()
+    Topology::Topology() : _atoms{}, _bonds{}, _bondConnect{}
     {
     }
 
@@ -40,6 +40,11 @@ namespace molcpp
         }
     }
 
+    const AtomVec& Topology::get_atoms() const
+    {
+        return _atoms;
+    }
+
     bool Topology::add_bond(BondPtr bond)
     {
         if (has_bond(bond))
@@ -56,8 +61,7 @@ namespace molcpp
             }
             else
             {
-                LOG_ERROR("Atom not found");
-                throw std::runtime_error("Atom not found");
+                throw KeyError("Atom not found");
             }
         }
     }

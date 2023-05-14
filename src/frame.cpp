@@ -2,12 +2,10 @@
 
 namespace molcpp
 {
-    Frame::Frame() : _timestep(0), _topology(nullptr)
+    Frame::Frame() : _timestep(0), _topology(new_topology())
     {
 
     }
-
-    // Frame(const chemfiles::Frame&)
 
     size_t Frame::get_natoms() const
     {
@@ -57,6 +55,11 @@ namespace molcpp
     void Frame::set_cell(Cell cell)
     {
         _cell = cell;
+    }
+
+    void Frame::set_cell(Vector3D lengths, Vector3D tilts)
+    {
+        _cell = Cell(lengths, tilts);
     }
 
     Cell Frame::get_cell() const

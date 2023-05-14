@@ -70,7 +70,7 @@ namespace molcpp
              * 
              * @return AtomVec 
              */
-            AtomVec get_atoms() const { return _atoms; }
+            const AtomVec& get_atoms() const;
             
             /**
              * @brief 
@@ -107,9 +107,6 @@ namespace molcpp
              * 
              */
             void connect(size_t, size_t);
-
-            
-
             // TODO: connect(size_t, size_t, size_t) etc.
 
             /**

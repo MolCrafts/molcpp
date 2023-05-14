@@ -31,7 +31,24 @@ namespace molcpp
         auto frame = new_frame(_frame);
         EXPECT_EQ(frame->get_natoms(), 3);
         EXPECT_EQ(frame->get_nbonds(), 2);
-        EXPECT_EQ(frame->get<std::string>("name"),  xt::xarray<std::string>({"H", "O", "H"}));
+        EXPECT_EQ(frame->get<std::string>("name"), xt::xarray<std::string>({"H", "O", "H"}));
+    }
+
+    TEST(TestFrame, test_to_chemfiles)
+    {
+        auto frame = new_frame();
+        auto topo = frame->get_topology();
+        topo->new_atom();
+        topo->new_atom();
+        topo->new_atom();
+        topo->new_bond(0, 1);
+        topo->new_bond(1, 2);
+        EXPECT_EQ(frame->get_natoms(), 3);
+        EXPECT_EQ(frame->get_nbonds(), 2);
+        frame->set_cell(Cell({2, 2, 2}, {1, 1, 1}));
+        auto chflFrame = to_chemfiles(frame);
+        EXPECT_EQ(chflFrame.size(), 3);
+        EXPECT_EQ(chflFrame.topology().bonds().size(), 2);
     }
 
 }

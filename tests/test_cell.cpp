@@ -44,12 +44,13 @@ namespace molcpp
         chemfiles::UnitCell chem_cell = to_chemfiles(cell);
         auto expected_lengths = chemfiles::Vector3D(2, 2, 2);
         auto expected_angles = chemfiles::Vector3D(60, 60, 60);
-        
-        EXPECT_FLOAT_EQ(chem_cell.lengths()[0], expected_lengths[0]);
-        EXPECT_FLOAT_EQ(chem_cell.lengths()[1], expected_lengths[1]);
-        EXPECT_FLOAT_EQ(chem_cell.lengths()[2], expected_lengths[2]);
-        EXPECT_FLOAT_EQ(chem_cell.angles()[0], expected_angles[0]);
-        EXPECT_FLOAT_EQ(chem_cell.angles()[1], expected_angles[1]);
-        EXPECT_FLOAT_EQ(chem_cell.angles()[2], expected_angles[2]);
+        auto lengths = chem_cell.lengths();
+        auto angles = chem_cell.angles();
+        EXPECT_FLOAT_EQ(lengths[0], expected_lengths[0]);
+        EXPECT_FLOAT_EQ(lengths[1], expected_lengths[1]);
+        EXPECT_FLOAT_EQ(lengths[2], expected_lengths[2]);
+        EXPECT_FLOAT_EQ(angles[0], expected_angles[0]);
+        EXPECT_FLOAT_EQ(angles[1], expected_angles[1]);
+        EXPECT_FLOAT_EQ(angles[2], expected_angles[2]);
     }
 }
