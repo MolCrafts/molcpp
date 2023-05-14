@@ -71,4 +71,21 @@ namespace molcpp
     private:
         std::string m_message;
     };
+
+    class NotImplementedError : public std::exception
+    {
+    public:
+        NotImplementedError(const std::string &message) : m_message(message)
+        {
+            LOG_ERROR(m_message);
+        }
+
+        const char *what() const noexcept override
+        {
+            return m_message.c_str();
+        }
+    private:
+        std::string m_message;
+    };
+
 }

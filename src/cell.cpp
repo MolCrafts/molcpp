@@ -68,11 +68,12 @@ namespace molcpp
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
         {
             auto _inv_mat = get_inverse();
-            auto reciprocal_vecs = xt::linalg::dot(_inv_mat, positions);
+            auto reciprocal_vecs = xt::linalg::dot(_inv_mat, xt::transpose(positions));
             auto wrapped_reci_vecs = reciprocal_vecs - xt::floor(reciprocal_vecs);
             auto real_r = xt::linalg::dot(_matrix, wrapped_reci_vecs);
-            return real_r;
+            return xt::transpose(real_r);
         }
+        else throw NotImplementedError("Only PBC = P is implemented");
     }
 
 }

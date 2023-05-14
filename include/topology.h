@@ -108,6 +108,8 @@ namespace molcpp
              */
             void connect(size_t, size_t);
 
+            
+
             // TODO: connect(size_t, size_t, size_t) etc.
 
             /**
