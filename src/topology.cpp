@@ -180,10 +180,9 @@ namespace molcpp
 
     const xt::xarray<double> Topology::get_positions() const
     {
-        auto natoms = get_natoms();
-        xt::xarray<double> positions = xt::zeros<double>({natoms * 3});
-        positions.reshape({natoms, 3});
-        for (size_t i = 0; i < natoms; i++)
+        int natoms = get_natoms();
+        xt::xarray<double> positions = xt::zeros<double>({natoms, 3});
+        for (int i = 0; i < natoms; i++)
         {
             xt::view(positions, i, xt::all()) = _atoms[i]->get_position();
         }

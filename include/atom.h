@@ -26,7 +26,7 @@ namespace molcpp
          * @brief Construct a new Atom object
          * 
          */
-        Atom(const std::string& name = "");
+        Atom(const std::string& name = "", xt::xarray<double>pos = {0, 0, 0});
 
         /**
          * @brief add a connected bond 

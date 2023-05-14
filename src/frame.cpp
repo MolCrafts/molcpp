@@ -72,21 +72,32 @@ namespace molcpp
         return std::make_shared<Frame>();
     }
 
-    FramePtr new_frame(const chemfiles::Frame& cfhlFrame)
+    FramePtr new_frame(const chemfiles::Frame& chflFrame)
     {
         auto _frame = new_frame();
-        _frame->set_timestep(cfhlFrame.step());
-        // _frame->set_cell(new_cell(cfhlFrame.cell());
-        _frame->set_topology(new_topology(cfhlFrame.topology()));
+        _frame->set_timestep(chflFrame.step());
+        // _frame->set_cell(new_cell(chflFrame.cell());
+        _frame->set_topology(new_topology(chflFrame.topology()));
+        int natoms = chflFrame.size();
+        auto positions = xt::adapt((double*)chflFrame.positions().data(), {natoms, 3});
+        _frame->set_positions(positions);
         return _frame;
     }
 
     chemfiles::Frame to_chemfiles(const FramePtr& frame)
     {
-        chemfiles::Frame cfhlFrame;
-        cfhlFrame.set_step(frame->get_timestep());
-        cfhlFrame.set_cell(to_chemfiles(frame->get_cell()));
-        cfhlFrame.set_topology(to_chemfiles(frame->get_topology()));
-        return cfhlFrame;
+        chemfiles::Frame chflFrame;
+        auto chflTopo = to_chemfiles(frame->get_topology());
+        chflFrame.set_step(frame->get_timestep());
+        chflFrame.set_cell(to_chemfiles(frame->get_cell()));
+        chflFrame.set_topology(chflTopo);
+        for (size_t i = 0; i < chflTopo.size(); i++)
+        {   
+            auto chflAtom = chflTopo[i];
+            // auto& [x, y, z] = frame->get_positions()(i);
+            
+            // chflFrame.add_atom(chflAtom, {x, y, z});
+        }
+        return chflFrame;
     }
 }

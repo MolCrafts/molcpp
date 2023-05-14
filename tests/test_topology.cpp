@@ -109,4 +109,17 @@ namespace molcpp
         EXPECT_EQ(topo->get_nbonds(), 2);
     }
 
+    TEST(TestTopology, test_get_positions)
+    {
+        auto topo = new_topology();
+        topo->new_atom("H");
+        topo->new_atom("C");
+        auto positions = topo->get_positions();
+
+        EXPECT_EQ(positions.shape()[0], 2);
+        EXPECT_EQ(positions.shape()[1], 3);
+        // EXPECT_EQ(positions[0], xt::xarray<double>({0, 0, 0}));
+
+    }
+
 }

@@ -32,23 +32,24 @@ namespace molcpp
         EXPECT_EQ(frame->get_natoms(), 3);
         EXPECT_EQ(frame->get_nbonds(), 2);
         EXPECT_EQ(frame->get<std::string>("name"), xt::xarray<std::string>({"H", "O", "H"}));
+        EXPECT_EQ(frame->get_positions(), xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
     }
 
-    // TEST(TestFrame, test_to_chemfiles)
-    // {
-    //     auto frame = new_frame();
-    //     auto topo = frame->get_topology();
-    //     topo->new_atom();
-    //     topo->new_atom();
-    //     topo->new_atom();
-    //     EXPECT_EQ(frame->get_natoms(), 3);
-    //     topo->new_bond(0, 1);
-    //     topo->new_bond(0, 2);
-    //     EXPECT_EQ(frame->get_nbonds(), 2);
-    //     frame->set_cell(Cell({2, 2, 2}, {1, 1, 1}));
-    //     auto chflFrame = to_chemfiles(frame);
-    //     EXPECT_EQ(chflFrame.size(), 3);
-    //     EXPECT_EQ(chflFrame.topology().bonds().size(), 2);
-    // }
+    TEST(TestFrame, test_to_chemfiles)
+    {
+        auto frame = new_frame();
+        auto topo = frame->get_topology();
+        topo->new_atom();
+        topo->new_atom();
+        topo->new_atom();
+        EXPECT_EQ(frame->get_natoms(), 3);
+        topo->new_bond(0, 1);
+        topo->new_bond(0, 2);
+        EXPECT_EQ(frame->get_nbonds(), 2);
+        frame->set_cell(Cell({2, 2, 2}, {1, 1, 1}));
+        auto chflFrame = to_chemfiles(frame);
+        EXPECT_EQ(chflFrame.size(), 3);
+        EXPECT_EQ(chflFrame.topology().bonds().size(), 2);
+    }
 
 }
