@@ -207,18 +207,19 @@ namespace molcpp
         return topo;
     }
 
-    chemfiles::Topology save_topology(const TopologyPtr& topo)
+    chemfiles::Topology to_chemfiles(const TopologyPtr& topo)
     {
         chemfiles::Topology chflTopo;
         for (auto atom: topo->get_atoms())
         {
-            chflTopo.add_atom(save_atom(atom));
+            chflTopo.add_atom(to_chemfiles(atom));
         }
 
-        // for (auto bond: topo->get_bonds())
-        // {
-        //     chflTopo.add_bond(bond->get_itom()->get_id(), bond->get_jtom()->get_id());
-        // }
+        for (auto bond: topo->get_bond_connect())
+        {
+            chflTopo.add_bond(bond[0], bond[1]);
+        }
+
         return chflTopo;
     }
 

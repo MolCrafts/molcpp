@@ -66,7 +66,7 @@ namespace molcpp
          * @brief Write frames in this trajectory to a file
          * 
          */
-        // void write();
+        void write(std::string, char, const std::string&);
 
         /**
          * @brief If open a Chemfiles::Trajectory
@@ -110,6 +110,6 @@ namespace molcpp
     TrajectoryPtr new_trajectory();
     TrajectoryPtr new_trajectory(chemfiles::Trajectory&);
 
-    chemfiles::Trajectory save_trajectory(TrajectoryPtr, std::string, char, const std::string&);
+    chemfiles::Trajectory to_chemfiles(TrajectoryPtr, std::string, char, const std::string&);
 
 }

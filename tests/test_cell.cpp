@@ -16,7 +16,7 @@ namespace molcpp
         EXPECT_EQ(cell3.get_tilts(), Vector3D({4, 5, 6}));
     }
 
-    TEST(TestCell, orth_wrap)
+    TEST(TestCell, test_orth_wrap)
     {
 
         Cell cell({2, 2, 2});
@@ -27,7 +27,7 @@ namespace molcpp
 
     }
 
-    TEST(TestCell, tric_wrap)
+    TEST(TestCell, test_tric_wrap)
     {
             
         Cell cell({2, 2, 2}, {1, 1, 1});
@@ -36,5 +36,20 @@ namespace molcpp
 
         EXPECT_TRUE(xt::allclose(cell.wrap(points), expected)) << cell.wrap(points);
     
+    }
+
+    TEST(TestCell, test_to_chemfiles)
+    {
+        Cell cell({2, 2, 2}, {1, 1, 1});
+        chemfiles::UnitCell chem_cell = to_chemfiles(cell);
+        auto expected_lengths = chemfiles::Vector3D(2, 2, 2);
+        auto expected_angles = chemfiles::Vector3D(60, 60, 60);
+        
+        EXPECT_FLOAT_EQ(chem_cell.lengths()[0], expected_lengths[0]);
+        EXPECT_FLOAT_EQ(chem_cell.lengths()[1], expected_lengths[1]);
+        EXPECT_FLOAT_EQ(chem_cell.lengths()[2], expected_lengths[2]);
+        EXPECT_FLOAT_EQ(chem_cell.angles()[0], expected_angles[0]);
+        EXPECT_FLOAT_EQ(chem_cell.angles()[1], expected_angles[1]);
+        EXPECT_FLOAT_EQ(chem_cell.angles()[2], expected_angles[2]);
     }
 }

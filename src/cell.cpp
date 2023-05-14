@@ -3,13 +3,35 @@
 namespace molcpp
 {
 
-    Cell::Cell() : _matrix(xt::zeros<double>({3, 3})), _pbc({P, P, P})
+    // Sinus and Cosine for degree values
+    constexpr double pi = 3.141592653589793238463;
+    // static double deg2rad(double x)
+    // {
+    //     return x * pi / 180.0;
+    // }
+
+    static double rad2deg(double x)
     {
+        return x * 180.0 / pi;
     }
 
-    Cell::Cell(Vector3D lengths) : _matrix(xt::zeros<double>({3, 3})), _pbc({P, P, P})
+    static double dcos(double alpha)
     {
-        set_lengths(lengths);
+        return rad2deg(acos(alpha));
+    }
+
+    // static double cosd(double theta)
+    // {
+    //     return cos(deg2rad(theta));
+    // }
+
+    // static double sind(double theta)
+    // {
+    //     return sin(deg2rad(theta));
+    // }
+
+    Cell::Cell() : _matrix(xt::zeros<double>({3, 3})), _pbc({P, P, P})
+    {
     }
 
     Cell::Cell(Vector3D lengths, Vector3D tilts) : _matrix(xt::zeros<double>({3, 3})), _pbc({P, P, P})
@@ -18,12 +40,12 @@ namespace molcpp
         set_tilts(tilts);
     }
 
-    Matrix3D Cell::get_matrix()
+    const Matrix3D Cell::get_matrix() const
     {
         return _matrix;
     }
 
-    Matrix3D Cell::get_inverse()
+    const Matrix3D Cell::get_inverse() const
     {
         return xt::linalg::inv(_matrix);
     }
@@ -33,12 +55,12 @@ namespace molcpp
         _pbc = {x, y, z};
     }
 
-    Vector3D Cell::get_lengths()
+    const Vector3D Cell::get_lengths() const
     {
         return Vector3D({_matrix(0, 0), _matrix(1, 1), _matrix(2, 2)});
     }
 
-    Vector3D Cell::get_tilts()
+    const Vector3D Cell::get_tilts() const
     {
         return Vector3D({_matrix(0, 1), _matrix(0, 2), _matrix(1, 2)});
     }
@@ -57,7 +79,7 @@ namespace molcpp
         _matrix(1, 2) = tilts(2);
     }
 
-    double Cell::get_volume()
+    const double Cell::get_volume() const
     {
         return xt::linalg::det(_matrix);
     }
@@ -73,7 +95,20 @@ namespace molcpp
             auto real_r = xt::linalg::dot(_matrix, wrapped_reci_vecs);
             return xt::transpose(real_r);
         }
-        else throw NotImplementedError("Only PBC = P is implemented");
+        else
+            throw NotImplementedError("Only PBC = P is implemented");
     }
 
+    chemfiles::UnitCell to_chemfiles(const Cell &cell)
+    {
+        auto lengths = cell.get_lengths();
+        auto tilts = cell.get_tilts();
+
+        chemfiles::UnitCell chemfiles_cell(
+            {lengths[0], lengths[1], lengths[2]},
+            {dcos(tilts(0) / lengths(1)),
+             dcos(tilts(1) / lengths(2)),
+             dcos(tilts(2) / lengths(0))});
+        return chemfiles_cell;
+    }
 }

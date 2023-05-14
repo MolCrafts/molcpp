@@ -154,8 +154,8 @@ namespace molcpp
 
     }
 
-    // save_atom
-    chemfiles::Atom save_atom(const AtomPtr &atom)
+    // to_chemfiles
+    chemfiles::Atom to_chemfiles(const AtomPtr &atom)
     {
         chemfiles::Atom chflAtom(atom->get<std::string>("name", ""));
         chflAtom.set_charge(atom->get<double>("charge", 0.0));

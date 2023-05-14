@@ -151,6 +151,6 @@ namespace molcpp
     AtomPtr new_atom(const AtomTypePtr& type);
     AtomPtr new_atom(const chemfiles::Atom& chflAtom);
 
-    chemfiles::Atom save_atom(const AtomPtr& atom);
+    chemfiles::Atom to_chemfiles(const AtomPtr& atom);
 
 }

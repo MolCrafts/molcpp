@@ -54,6 +54,16 @@ namespace molcpp
         return _topology->get_positions();
     }
 
+    void Frame::set_cell(Cell cell)
+    {
+        _cell = cell;
+    }
+
+    Cell Frame::get_cell() const
+    {
+        return _cell;
+    }
+
     FramePtr new_frame()
     {
         return std::make_shared<Frame>();
@@ -68,12 +78,12 @@ namespace molcpp
         return _frame;
     }
 
-    chemfiles::Frame save_frame(const FramePtr& frame)
+    chemfiles::Frame to_chemfiles(const FramePtr& frame)
     {
         chemfiles::Frame cfhlFrame;
         cfhlFrame.set_step(frame->get_timestep());
-        // cfhlFrame.set_cell(save_cell(frame->get_cell()));
-        cfhlFrame.set_topology(save_topology(frame->get_topology()));
+        cfhlFrame.set_cell(to_chemfiles(frame->get_cell()));
+        cfhlFrame.set_topology(to_chemfiles(frame->get_topology()));
         return cfhlFrame;
     }
 }

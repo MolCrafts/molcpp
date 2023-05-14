@@ -169,6 +169,8 @@ namespace molcpp
 
             const xt::xarray<double> get_positions() const;
 
+            const BondConnect get_bond_connect() const { return _bondConnect; }
+
         private:
 
             AtomVec _atoms;
@@ -185,5 +187,5 @@ namespace molcpp
     TopologyPtr new_topology();
     TopologyPtr new_topology(const chemfiles::Topology& chflTopology);
 
-    chemfiles::Topology save_topology(const TopologyPtr &);
+    chemfiles::Topology to_chemfiles(const TopologyPtr &);
 }

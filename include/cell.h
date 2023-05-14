@@ -24,16 +24,15 @@ namespace molcpp
             };
 
             Cell();
-            Cell(Vector3D lengths);
-            Cell(Vector3D lengths, Vector3D tilts);
-            Matrix3D get_matrix();
-            Matrix3D get_inverse();
+            Cell(Vector3D lengths, Vector3D tilts = {0, 0, 0});
+            const Matrix3D get_matrix() const;
+            const Matrix3D get_inverse() const;
             void set_boundary(PBC, PBC, PBC);
-            Vector3D get_lengths();
-            Vector3D get_tilts();
+            const Vector3D get_lengths() const;
+            const Vector3D get_tilts() const;
             void set_lengths(Vector3D lengths);
             void set_tilts(Vector3D titls);
-            double get_volume();
+            const double get_volume() const;
             Matrix3D wrap(Matrix3D);
 
         private:
@@ -42,5 +41,7 @@ namespace molcpp
             std::array<PBC, 3> _pbc;
 
     };
+
+    chemfiles::UnitCell to_chemfiles(const Cell &cell);
 
 }

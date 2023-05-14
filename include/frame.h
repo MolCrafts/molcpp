@@ -5,6 +5,7 @@
 #include "atom.h"
 #include "topology.h"
 #include "itemtype.h"
+#include "cell.h"
 
 namespace molcpp
 {
@@ -83,8 +84,15 @@ namespace molcpp
 
         const xt::xarray<double> get_positions() const;
 
+        void set_cell(Cell);
+
+        void set_cell(Vector3D lengths, Vector3D titles = {0, 0, 0});
+
+        Cell get_cell() const;
+
     private:
         size_t _timestep;
+        Cell _cell;
         TopologyPtr _topology;
     };
 
@@ -94,6 +102,6 @@ namespace molcpp
     FramePtr new_frame();
     FramePtr new_frame(const chemfiles::Frame &);
 
-    chemfiles::Frame save_frame(const FramePtr &);
+    chemfiles::Frame to_chemfiles(const FramePtr &);
 
 }
