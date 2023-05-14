@@ -39,8 +39,8 @@ namespace molcpp
         auto topology = new_topology();
 
         // add bond           
-        auto atom1 = new_atom();
-        auto atom2 = new_atom();
+        auto atom1 = new_atom("atom1");
+        auto atom2 = new_atom("atom2");
         auto bond1 = new_bond(atom1, atom2);
         topology->add_atom(atom1);
         topology->add_atom(atom2);
@@ -53,8 +53,8 @@ namespace molcpp
         EXPECT_THROW(topology->new_bond(0, 1), KeyError);
 
         // create bond in place
-        auto atom3 = topology->new_atom();
-        auto atom4 = topology->new_atom();
+        auto atom3 = topology->new_atom("atom3");
+        auto atom4 = topology->new_atom("atom4");
         auto bond2 = topology->new_bond(atom3, atom4);
 
         // test nbonds
@@ -66,6 +66,31 @@ namespace molcpp
         EXPECT_FALSE(topology->has_bond(bond1));
         EXPECT_TRUE(topology->del_bond(bond2));
         EXPECT_EQ(topology->get_nbonds(), 0);
+    }
+
+    TEST(TestTopology, test_connect)
+    {
+        auto topology = new_topology();
+
+        // add atom 
+        auto atom1 = new_atom();
+        auto atom2 = new_atom();
+        auto atom3 = new_atom();
+        topology->add_atom(atom1);
+        topology->add_atom(atom2);
+        topology->add_atom(atom3);
+
+        // add bond
+        auto bond1 = new_bond(atom1, atom2);
+        auto bond2 = new_bond(atom2, atom3);
+        topology->add_bond(bond1);
+        topology->add_bond(bond2);
+
+        // test connect
+        auto bond_connect = topology->get_bond_connect();
+        EXPECT_EQ(bond_connect.size(), 2);
+        EXPECT_EQ(bond_connect[0], std::vector<size_t>({0, 1}));
+        EXPECT_EQ(bond_connect[1], std::vector<size_t>({1, 2}));
     }
 
     TEST(TestTopology, test_from_chemfiles)

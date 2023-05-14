@@ -8,8 +8,19 @@ namespace molcpp
     // test Atom class
     TEST(TestAtom, test_init)
     {
-        auto a0 = Atom();
+        auto a0 = Atom("a0");
+        auto a1 = new_atom("a1");
+        EXPECT_EQ(a0.get<std::string>("name"), "a0");
+        EXPECT_EQ(a1->get<std::string>("name"), "a1");
+    }
+
+    TEST(TestAtom, test_has)
+    {
         auto a1 = new_atom();
+        a1->set("name", "C");
+
+        EXPECT_TRUE(a1->has("name"));
+        EXPECT_FALSE(a1->has("mass"));
     }
 
     TEST(TestAtom, test_set_get)
@@ -22,6 +33,7 @@ namespace molcpp
         EXPECT_EQ(a1->get<std::string>("name"), "C");
         EXPECT_EQ(a1->get<double>("mass"), 12.0);
         EXPECT_EQ(a1->get<int>("charge"), 1);
+        EXPECT_EQ(a1->get<int>("unknown", 1), 1);
     }
 
     TEST(TestAtom, test_nbrs)

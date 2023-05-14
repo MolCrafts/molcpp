@@ -26,7 +26,7 @@ namespace molcpp
          * @brief Construct a new Atom object
          * 
          */
-        Atom();
+        Atom(const std::string& name = "");
 
         /**
          * @brief add a connected bond 
@@ -91,6 +91,8 @@ namespace molcpp
          */
         void set(const std::string& key, const AtomProperty& value);
 
+        bool has(const std::string& key);
+
         /**
          * @brief Set the atomtype
          * 
@@ -147,7 +149,7 @@ namespace molcpp
     };
 
     // factory function
-    AtomPtr new_atom();
+    AtomPtr new_atom(const std::string& name="");
     AtomPtr new_atom(const AtomTypePtr& type);
     AtomPtr new_atom(const chemfiles::Atom& chflAtom);
 

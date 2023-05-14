@@ -3,7 +3,7 @@
 
 namespace molcpp
 {
-    Atom::Atom() : _type{nullptr}, _properties{}, _bonds{}
+    Atom::Atom(const std::string& name) : _type{new_atomtype(name)}, _properties{}, _bonds{}
     {
     }
 
@@ -84,6 +84,11 @@ namespace molcpp
         _properties.set(key, value);
     }
 
+    bool Atom::has(const std::string &key)
+    {
+        return _properties.has(key);
+    }
+
     bool Atom::equal_to(const Atom &other) const
     {
         return get_id() == other.get_id();
@@ -114,9 +119,9 @@ namespace molcpp
         return _pos;
     }
 
-    AtomPtr new_atom()
+    AtomPtr new_atom(const std::string& name)
     {
-        return std::make_shared<Atom>();
+        return std::make_shared<Atom>(name);
     }
 
     AtomPtr new_atom(const AtomTypePtr &type)

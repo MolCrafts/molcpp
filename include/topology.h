@@ -62,7 +62,7 @@ namespace molcpp
              * 
              * @return AtomPtr 
              */
-            AtomPtr new_atom();
+            AtomPtr new_atom(const std::string& name="");
             // AtomPtr new_atom(const chemfiles::Atom &);
             
             /**
@@ -93,7 +93,7 @@ namespace molcpp
              * 
              * @return BondPtr 
              */
-            BondPtr new_bond(AtomPtr, AtomPtr);
+            BondPtr new_bond(const AtomPtr&, const AtomPtr&);
             
             /**
              * @brief Create a bond object
