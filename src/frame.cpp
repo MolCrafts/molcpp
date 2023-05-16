@@ -2,7 +2,7 @@
 
 namespace molcpp
 {
-    Frame::Frame() : _timestep(0), _topology(new_topology())
+    Frame::Frame() : _timestep(0), _cell(new_cell()) , _topology(new_topology())
     {
 
     }
@@ -52,17 +52,17 @@ namespace molcpp
         return _topology->get_positions();
     }
 
-    void Frame::set_cell(Cell cell)
+    void Frame::set_cell(CellPtr cell)
     {
         _cell = cell;
     }
 
-    void Frame::set_cell(Vector3D lengths, Vector3D tilts)
+    void Frame::set_cell(Vector3D lengths, Vector3D angles)
     {
-        _cell = Cell(lengths, tilts);
+        _cell = new_cell(lengths, angles);
     }
 
-    Cell Frame::get_cell() const
+    CellPtr Frame::get_cell() const
     {
         return _cell;
     }
@@ -76,7 +76,7 @@ namespace molcpp
     {
         auto _frame = new_frame();
         _frame->set_timestep(chflFrame.step());
-        // _frame->set_cell(new_cell(chflFrame.cell());
+        _frame->set_cell(new_cell(chflFrame.cell()));
         _frame->set_topology(new_topology(chflFrame.topology()));
         int natoms = chflFrame.size();
         auto positions = xt::adapt((double*)chflFrame.positions().data(), {natoms, 3});

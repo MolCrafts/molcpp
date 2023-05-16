@@ -84,15 +84,15 @@ namespace molcpp
 
         const xt::xarray<double> get_positions() const;
 
-        void set_cell(Cell);
+        void set_cell(CellPtr);
 
         void set_cell(Vector3D lengths, Vector3D titles = {0, 0, 0});
 
-        Cell get_cell() const;
+        CellPtr get_cell() const;
 
     private:
         size_t _timestep;
-        Cell _cell;
+        CellPtr _cell;
         TopologyPtr _topology;
     };
 

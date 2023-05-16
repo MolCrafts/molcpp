@@ -1,10 +1,10 @@
 #pragma once
 
 #include <chemfiles.hpp>
-#include "mplog.h"
-#include "mperror.h"
 #include <xtensor/xarray.hpp>
 #include <xtensor-blas/xlinalg.hpp>
+#include "mplog.h"
+#include "mperror.h"
 
 namespace molcpp
 {
@@ -24,14 +24,14 @@ namespace molcpp
             };
 
             Cell();
-            Cell(Vector3D lengths, Vector3D tilts = {0, 0, 0});
+            Cell(Vector3D lengths, Vector3D angles = {90, 90, 90});
+            void set_boundary(PBC, PBC, PBC);
+            void set_lengths_and_angles(Vector3D lengths, Vector3D angles);
             const Matrix3D get_matrix() const;
             const Matrix3D get_inverse() const;
-            void set_boundary(PBC, PBC, PBC);
             const Vector3D get_lengths() const;
+            const Vector3D get_angles() const;
             const Vector3D get_tilts() const;
-            void set_lengths(Vector3D lengths);
-            void set_tilts(Vector3D titls);
             const double get_volume() const;
             Matrix3D wrap(Matrix3D);
 
@@ -42,6 +42,10 @@ namespace molcpp
 
     };
 
-    chemfiles::UnitCell to_chemfiles(const Cell &cell);
+    using CellPtr = std::shared_ptr<Cell>;
+
+    CellPtr new_cell(Vector3D lengths = {0, 0, 0}, Vector3D tilts = {0, 0, 0});
+    CellPtr new_cell(chemfiles::UnitCell cell);
+    chemfiles::UnitCell to_chemfiles(const CellPtr &cell);
 
 }

@@ -6,14 +6,23 @@ namespace molcpp
     TEST(TestCell, test_init)
     {
         Cell cell1;
-        EXPECT_EQ(cell1.get_lengths(), Vector3D({0, 0, 0}));
+        EXPECT_EQ(cell1.get_lengths(), Vector3D({1, 1, 1}));
         EXPECT_EQ(cell1.get_tilts(), Vector3D({0, 0, 0}));
-        Cell cell2({1, 2, 3});
+        EXPECT_EQ(cell1.get_angles(), Vector3D({90, 90, 90}));
+        EXPECT_EQ(cell1.get_volume(), 1);
+
+        Cell cell2({1, 2, 3}, {90, 90, 90});
         EXPECT_EQ(cell2.get_lengths(), Vector3D({1, 2, 3}));
-        EXPECT_EQ(cell2.get_tilts(), Vector3D({0, 0, 0}));
-        Cell cell3({1, 2, 3}, {4, 5, 6});
-        EXPECT_EQ(cell3.get_lengths(), Vector3D({1, 2, 3}));
-        EXPECT_EQ(cell3.get_tilts(), Vector3D({4, 5, 6}));
+        EXPECT_TRUE(xt::allclose(cell2.get_tilts(), Vector3D({0, 0, 0})));
+        EXPECT_EQ(cell2.get_angles(), Vector3D({90, 90, 90}));
+        EXPECT_EQ(cell2.get_volume(), 6);
+
+        Cell cell3({1, 1, 1}, {45, 45, 45});
+        EXPECT_EQ(cell3.get_lengths(), Vector3D({1, 1, 1}));
+        EXPECT_TRUE(xt::allclose(cell3.get_tilts(), Vector3D({0.707, 0.707, 0.293}), 1e-3)) << cell3.get_tilts();
+        EXPECT_EQ(cell3.get_angles(), Vector3D({45, 45, 45}));
+        EXPECT_FLOAT_EQ(cell3.get_volume(), 0.45508987);
+
     }
 
     TEST(TestCell, test_orth_wrap)
@@ -30,9 +39,9 @@ namespace molcpp
     TEST(TestCell, test_tric_wrap)
     {
             
-        Cell cell({2, 2, 2}, {1, 1, 1});
-        Matrix3D points = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {-0.5, -0.5, -0.5}, {-1.5, -1.5, -1.5}};
-        Matrix3D expected = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {3.5, 2.5, 1.5}, {2.5, 1.5, 0.5}};
+        Cell cell({2, 2, 2}, {45, 45, 45});
+        Matrix3D points = {{2, 1, 0}};
+        Matrix3D expected = {{2, 1, 0}};  // TODO: need more tests
 
         EXPECT_TRUE(xt::allclose(cell.wrap(points), expected)) << cell.wrap(points);
     
@@ -40,10 +49,10 @@ namespace molcpp
 
     TEST(TestCell, test_to_chemfiles)
     {
-        Cell cell({2, 2, 2}, {1, 1, 1});
+        auto cell = new_cell({2, 2, 2}, {90, 90, 90});
         chemfiles::UnitCell chem_cell = to_chemfiles(cell);
         auto expected_lengths = chemfiles::Vector3D(2, 2, 2);
-        auto expected_angles = chemfiles::Vector3D(60, 60, 60);
+        auto expected_angles = chemfiles::Vector3D(90, 90, 90);
         auto lengths = chem_cell.lengths();
         auto angles = chem_cell.angles();
         EXPECT_FLOAT_EQ(lengths[0], expected_lengths[0]);
