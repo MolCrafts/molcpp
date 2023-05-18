@@ -63,12 +63,6 @@ namespace molcpp
         auto yz = (b * c * cosd(alpha) - xy * xz) / ly;
         auto lz = sqrt(c * c - xz * xz - yz * yz);
 
-        // TODO: value check
-        if (!(lx > 0 && ly > 0 && lz > 0))
-        {
-            ValueError("Cell lengths must all greater than 0");
-        }
-
         _matrix(0, 0) = lx;
         _matrix(0, 1) = xy;
         _matrix(0, 2) = xz;

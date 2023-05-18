@@ -169,8 +169,15 @@ namespace molcpp
 
     void Topology::set_positions(const xt::xarray<double> &positions)
     {
-        if (positions.size() != get_natoms())
-            throw ValueError("The size of the positions array must be equal to the number of atoms");
+        if (positions.shape().size() == 2)
+        {
+            if (positions.shape()[0] != get_natoms())
+                throw ValueError("The size of the positions array must be equal to the number of atoms");
+        }
+        else
+        {
+            throw ValueError("The positions array must be 2D");
+        }
 
         for (size_t i = 0; i < get_natoms(); i++)
         {
