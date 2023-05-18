@@ -66,7 +66,7 @@ namespace molcpp
          * @brief Write frames in this trajectory to a file
          * 
          */
-        void write(std::string, char, const std::string&);
+        void write(std::string, const std::string&);
 
         /**
          * @brief If open a Chemfiles::Trajectory

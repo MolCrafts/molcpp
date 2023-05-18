@@ -63,15 +63,14 @@ namespace molcpp
 
     }
 
-    void Trajectory::write(std::string path, char mode, const std::string& format)
+    void Trajectory::write(std::string path, const std::string& format)
     {
-        auto _traj = chemfiles::Trajectory(path, mode, format);
+        auto _traj = chemfiles::Trajectory(path, 'w', format);
         for (auto _frame : _frames)
         {
             auto chflFrame = to_chemfiles(_frame);
             _traj.write(chflFrame);
         }
-        _traj.close();
     }
 
     TrajectoryPtr new_trajectory()

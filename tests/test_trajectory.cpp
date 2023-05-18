@@ -58,14 +58,17 @@ namespace molcpp{
 
     TEST(TestTrajectory, test_write_single_frame)
     {
-        auto _traj_in = chemfiles::Trajectory( TEST_DATA_DIR / "lammps-data/test.data", 'r', "LAMMPS Data");
+        auto _traj_in = chemfiles::Trajectory( TEST_DATA_DIR / "lammps-data/solvated.lmp", 'r', "LAMMPS Data");
         auto traj = new_trajectory(_traj_in);
+        EXPECT_EQ(traj->get_nsteps(), 1);
+        EXPECT_EQ(traj->get_step(0)->get_natoms(), 7772);
+        EXPECT_EQ(traj->get_step(0)->get_nbonds(), 6248);
         // write to tmp file
-        //auto tempDir = ::testing::TempDir();
-        auto tempFile = "./test_write_single_frame.pdb";
-        traj->write(tempFile, 'w', "PDB");
+        auto tempDir = ::testing::TempDir();
+        auto tempFile = tempDir + "test_write_single_frame.pdb";
+        traj->write(tempFile, "PDB");
 
-        // auto _traj_out = chemfiles::Trajectory(tempFile, 'w', "PDB");
+        // auto _traj_out = chemfiles::Trajectory(tempFile, 'r', "PDB");
         // auto _frame_out = _traj_out.read();
         // EXPECT_EQ(_traj_out.nsteps(), 1);
         // EXPECT_EQ(_frame_out.size(), 7772);

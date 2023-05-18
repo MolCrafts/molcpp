@@ -62,7 +62,7 @@ namespace molcpp
                 _atoms.begin();
 
             size_t jtom_index =
-                std::find_if(_atoms.begin(), _atoms.end(), [jtom](AtomPtr atom)
+                std::find_if(_atoms.begin(), _atoms.end(), [jtom](const AtomPtr atom)
                              { return *atom == *jtom; }) -
                 _atoms.begin();
 
@@ -111,6 +111,11 @@ namespace molcpp
 
     void Topology::connect(size_t i, size_t j)
     {
+        if (i == j) 
+        {
+            auto msg = "Cannot connect atom index " + std::to_string(i) + " to itself";
+            throw ValueError(msg);
+        }
         _bondConnect.emplace_back(std::initializer_list<size_t>{i, j});
     }
 
@@ -237,8 +242,10 @@ namespace molcpp
 
         for (auto bond : topo->get_bond_connect())
         {
+            LOG_DEBUG(bond[0] << " " << bond[1]);
             chflTopo.add_bond(bond[0], bond[1]);
         }
+        LOG_INFO("Number of bonds: " << chflTopo.bonds().size());
 
         return chflTopo;
     }
