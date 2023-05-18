@@ -44,7 +44,7 @@ namespace molcpp
 
     using CellPtr = std::shared_ptr<Cell>;
 
-    CellPtr new_cell(Vector3D lengths = {0, 0, 0}, Vector3D tilts = {0, 0, 0});
+    CellPtr new_cell(Vector3D lengths = {0, 0, 0}, Vector3D angles = {90, 90, 90});
     CellPtr new_cell(chemfiles::UnitCell cell);
     chemfiles::UnitCell to_chemfiles(const CellPtr &cell);
 

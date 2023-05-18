@@ -179,9 +179,11 @@ namespace molcpp
             throw ValueError("The positions array must be 2D");
         }
 
-        for (size_t i = 0; i < get_natoms(); i++)
+        int i = 0;
+        for (auto& atom : get_atoms())
         {
-            _atoms[i]->set_position(positions[i]);
+            atom->set_position(xt::row(positions, i));
+            i++;
         }
     }
 
@@ -189,9 +191,11 @@ namespace molcpp
     {
         int natoms = get_natoms();
         xt::xarray<double> positions = xt::zeros<double>({natoms, 3});
-        for (int i = 0; i < natoms; i++)
+        int i = 0;
+        for (auto& atom : get_atoms())
         {
-            xt::view(positions, i, xt::all()) = _atoms[i]->get_position();
+            xt::row(positions, i) = atom->get_position();
+            i++;
         }
         return positions;
     }

@@ -93,6 +93,21 @@ namespace molcpp
         EXPECT_EQ(bond_connect[1], std::vector<size_t>({1, 2}));
     }
 
+    TEST(TestTopology, test_set_get_positions)
+    {
+        auto topo = new_topology();
+        topo->new_atom("H");
+        topo->new_atom("C");
+        auto positions = xt::xarray<double>({ {0, 0, 0}, {1, 1, 1} });
+        topo->set_positions(positions);
+        xt::xarray<double> get_positions = topo->get_positions();
+
+        EXPECT_EQ(get_positions.shape()[0], 2);
+        EXPECT_EQ(get_positions.shape()[1], 3);
+        EXPECT_EQ(xt::row(get_positions, 0), xt::xarray<double>({0, 0, 0}));
+        EXPECT_EQ(xt::row(get_positions, 1), xt::xarray<double>({1, 1, 1}));
+    }
+
     TEST(TestTopology, test_from_chemfiles)
     {
         auto frame = chemfiles::Frame(chemfiles::UnitCell({10, 10, 10}));
@@ -107,19 +122,6 @@ namespace molcpp
 
         EXPECT_EQ(topo->get_natoms(), 3);
         EXPECT_EQ(topo->get_nbonds(), 2);
-    }
-
-    TEST(TestTopology, test_get_positions)
-    {
-        auto topo = new_topology();
-        topo->new_atom("H");
-        topo->new_atom("C");
-        auto positions = topo->get_positions();
-
-        EXPECT_EQ(positions.shape()[0], 2);
-        EXPECT_EQ(positions.shape()[1], 3);
-        // EXPECT_EQ(positions[0], xt::xarray<double>({0, 0, 0}));
-
     }
 
 }

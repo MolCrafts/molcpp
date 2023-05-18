@@ -156,13 +156,11 @@ namespace molcpp
     chemfiles::UnitCell to_chemfiles(const CellPtr &cell)
     {
         auto lengths = cell->get_lengths();
-        auto tilts = cell->get_tilts();
+        auto angles = cell->get_angles();
 
         chemfiles::UnitCell chemfiles_cell(
             {lengths[0], lengths[1], lengths[2]},
-            {dacos(tilts(0) / lengths(1)),
-             dacos(tilts(1) / lengths(2)),
-             dacos(tilts(2) / lengths(0))});
+            {angles[0], angles[1], angles[2]});
         return chemfiles_cell;
     }
 

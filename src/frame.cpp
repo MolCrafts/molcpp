@@ -49,7 +49,8 @@ namespace molcpp
 
     const xt::xarray<double> Frame::get_positions() const
     {
-        return _topology->get_positions();
+        xt::xarray<double> tmp = _topology->get_positions();
+        return tmp;
     }
 
     void Frame::set_cell(CellPtr cell)
@@ -90,14 +91,13 @@ namespace molcpp
         auto chflTopo = to_chemfiles(frame->get_topology());
         chflFrame.set_step(frame->get_timestep());
         chflFrame.set_cell(to_chemfiles(frame->get_cell()));
-        chflFrame.set_topology(chflTopo);
         for (size_t i = 0; i < chflTopo.size(); i++)
         {   
             auto chflAtom = chflTopo[i];
-            // auto& [x, y, z] = frame->get_positions()(i);
-            
-            // chflFrame.add_atom(chflAtom, {x, y, z});
+            xt::xarray<double> xyz = frame->get_positions()(i);
+            chflFrame.add_atom(chflAtom, {xyz[0], xyz[1], xyz[2]});
         }
+        chflFrame.set_topology(chflTopo);
         return chflFrame;
     }
 }

@@ -17,6 +17,18 @@ namespace molcpp
         EXPECT_EQ(frame.get_topology(), topo);
     }
 
+    TEST(TestFrame, test_set_get_positions)
+    {
+        Frame frame;
+        auto topo = frame.get_topology();
+        topo->new_atom();
+        topo->new_atom();
+        topo->new_atom();
+        EXPECT_EQ(frame.get_natoms(), 3);
+        frame.set_positions(xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
+        EXPECT_EQ(frame.get_positions(), xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
+    }
+
     TEST(TestFrame, test_from_chemfiles)
     {
         auto _frame = chemfiles::Frame(chemfiles::UnitCell({10, 10, 10}));

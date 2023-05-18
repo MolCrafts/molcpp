@@ -71,6 +71,7 @@ namespace molcpp
             auto chflFrame = to_chemfiles(_frame);
             _traj.write(chflFrame);
         }
+        _traj.close();
     }
 
     TrajectoryPtr new_trajectory()
