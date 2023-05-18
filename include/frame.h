@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chemfiles.hpp>
 #include <vector>
 #include "atom.h"
 #include "topology.h"

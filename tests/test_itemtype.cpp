@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "itemtype.h"
 
+#include <map>
 namespace molcpp
 {
 
@@ -29,7 +30,8 @@ namespace molcpp
 
     TEST(TestAtomType, test_set_get)
     {
-        auto a1 = AtomType("C");
+        std::map<int, int> m = {{1, 2}, {3, 4}};
+        auto a1 = AtomType("C"); 
         a1.set("mass", 12.011);
         EXPECT_EQ(a1.get<double>("mass"), 12.011);
         a1["charge"] = 0.0;

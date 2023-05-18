@@ -42,6 +42,7 @@ target_link_libraries(
   molcpp
 )
 
+message(STATUS "debug build.")
 target_compile_options(molcpp_test
   PRIVATE
   -O0
