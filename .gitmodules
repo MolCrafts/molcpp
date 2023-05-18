@@ -7,3 +7,6 @@
 [submodule "external/xtensor"]
 	path = external/xtensor
 	url = https://github.com/xtensor-stack/xtensor.git
+[submodule "external/xtensor-blas"]
+	path = external/xtensor-blas
+	url = https://github.com/xtensor-stack/xtensor-blas.git

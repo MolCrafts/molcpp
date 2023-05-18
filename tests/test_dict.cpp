@@ -3,21 +3,21 @@
 
 namespace molcpp
 {
-    TEST(TestData, DefaultConstructor)
+    TEST(TestData, test_default_constructor)
     {
         Data<int, double> d;
-        EXPECT_TRUE(d.is<int>());
         EXPECT_EQ(d.get<int>(), 0);
     }
 
-    TEST(TestData, ValueConstructor)
+    TEST(TestData, test_constructor)
     {
         Data<int, double> d(3.14);
+        EXPECT_FALSE(d.is<int>());
         EXPECT_TRUE(d.is<double>());
         EXPECT_EQ(d.get<double>(), 3.14);
     }
 
-    TEST(TestData, AssignmentOperator)
+    TEST(TestData, test_assigment_op)
     {
         Data<int, double> d;
         d = 42;
@@ -29,14 +29,73 @@ namespace molcpp
         EXPECT_EQ(d.get<double>(), 2.718);
     }
 
-    TEST(TestData, Get)
+    TEST(TestData, test_equality_op)
+    {
+        Data<int, double> d1(3.14);
+        Data<int, double> d2(3.14);
+        Data<int, double> d3(2.718);
+
+        EXPECT_TRUE(d1 == d2);
+        EXPECT_FALSE(d1 == d3);
+    }
+
+    TEST(TestData, test_get)
     {
         Data<int, double> d(3.14);
         EXPECT_THROW(d.get<int>(), std::bad_variant_access);
         EXPECT_EQ(d.get<double>(), 3.14);
     }
 
-    TEST(TestDict, SetAndGet)
+    TEST(TestData, test_set)
+    {
+        Data<int, double> d;
+        d.set(42);
+        EXPECT_TRUE(d.is<int>());
+        EXPECT_EQ(d.get<int>(), 42);
+
+        d.set(2.718);
+        EXPECT_TRUE(d.is<double>());
+        EXPECT_EQ(d.get<double>(), 2.718);
+    }
+
+    TEST(TestData, test_is)
+    {
+        Data<int, double> d(3.14);
+        EXPECT_FALSE(d.is<int>());
+        EXPECT_TRUE(d.is<double>());
+    }
+
+    TEST(TestData, test_get_index)
+    {
+        Data<int, double> d;
+        EXPECT_EQ(d.index(), 0);
+        d.set(3.14);
+        EXPECT_EQ(d.index(), 1);
+    }
+
+    TEST(TestData, test_get_raw)
+    {
+        Data<int, double> d;
+        EXPECT_EQ(d.get_raw().index(), 0);
+        d.set(3.14);
+        EXPECT_EQ(d.get_raw().index(), 1);
+    }
+
+    TEST(TestDict, test_default_constructor)
+    {
+        Dict<int, double> d;
+        EXPECT_EQ(d.size(), 0);
+    }
+
+    TEST(TestDict, test_constructor)
+    {
+        Dict<int, double> d({{"int", 42}, {"double", 3.14}});
+        EXPECT_EQ(d.size(), 2);
+        EXPECT_EQ(d.get<int>("int"), 42);
+        EXPECT_EQ(d.get<double>("double"), 3.14);
+    }
+
+    TEST(TestDict, test_set_get)
     {
         Dict<int, double> d;
         d.set("int", 42);
@@ -50,44 +109,61 @@ namespace molcpp
         EXPECT_EQ(d.get<double>("double"), 1.11);
     }
 
-    TEST(TestDict, OutOfRange)
+    TEST(TestDict, test_key_out_found)
     {
         Dict<int, double> map;
-        EXPECT_THROW(map.get<int>("not_found"), std::out_of_range);
+        EXPECT_THROW(map.get<int>("not_found"), KeyError);
     }
 
-    TEST(TestDict, Key)
+    TEST(TestDict, test_get_keys)
     {
         Dict<int, std::string, std::vector<double>> pm;
 
-        pm.set("int_Dict", 42);
-        pm.set("string_Dict", "hello world");
-        pm.set("vector_Dict", std::vector<double>{1.2, 3.4, 5.6});
+        pm.set("int", 42);
+        pm.set("string", "hello world");
+        pm.set("vector", std::vector<double>{1.2, 3.4, 5.6});
 
-        std::vector<std::string> expected_keys = {"int_Dict", "string_Dict", "vector_Dict"};
+        std::vector<std::string> expected_keys = {"int", "string", "vector"};
 
-        EXPECT_EQ(pm.key(), expected_keys);
+        EXPECT_EQ(pm.keys(), expected_keys);
     }
 
-    TEST(TestDict, Value)
+    TEST(TestDict, test_get_values)
     {
         Dict<int, std::string, std::vector<double>> pm;
 
-        pm.set("int_Dict", 42);
-        pm.set("string_Dict", "hello world");
-        pm.set("vector_Dict", std::vector<double>{1.2, 3.4, 5.6});
+        pm.set("int", 42);
+        pm.set("string", "hello world");
+        pm.set("vector", std::vector<double>{1.2, 3.4, 5.6});
 
         std::vector<Data<int, std::string, std::vector<double>>> expected_values = {
             Data<int, std::string, std::vector<double>>(42),
             Data<int, std::string, std::vector<double>>("hello world"),
             Data<int, std::string, std::vector<double>>(std::vector<double>{1.2, 3.4, 5.6})};
 
-        auto value = pm.value();
+        auto value = pm.values();
 
         EXPECT_EQ(value, expected_values);
-        EXPECT_EQ(value[0], expected_values[0]);
-        EXPECT_EQ(value[1], expected_values[1]);
-        EXPECT_EQ(value[2], expected_values[2]);
+    }
+
+    TEST(TestDict, test_has_key)
+    {
+        Dict<int, std::string, std::vector<double>> pm;
+
+        pm.set("int", 42);
+        EXPECT_TRUE(pm.has("int"));
+        EXPECT_FALSE(pm.has("double"));
+    }
+
+    TEST(TestDict, test_operator_square_brackets)
+    {
+        Dict<int, std::string, std::vector<double>> pm;
+
+        pm["int"] = 42;
+        EXPECT_EQ(pm["int"].get<int>(), 42);
+
+        const Dict<int, std::string, std::vector<double>> pm2 = pm;
+        EXPECT_EQ(pm2["int"].get<int>(), 42);
     }
 
 }

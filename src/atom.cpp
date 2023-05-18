@@ -3,10 +3,8 @@
 
 namespace molcpp
 {
-    Atom::Atom() : _type{nullptr}, _properties{}, _bonds{} {}
-
-    Atom::Atom(const AtomTypePtr& type) : _type{type}, _properties{}, _bonds{} {
-        _properties.set("type", type->get_name());
+    Atom::Atom(const std::string& name, xt::xarray<double>pos) : _type{new_atomtype(name)}, _properties{}, _bonds{}, _pos{pos}
+    {
     }
 
     bool Atom::add_bond(BondPtr bond)
@@ -24,31 +22,32 @@ namespace molcpp
 
     bool Atom::has_bond(BondPtr bond)
     {
-        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b) {
-            return *b == *bond;
-        });
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
+                                    { return *b == *bond; });
         return results == _bonds.end() ? false : true;
     }
 
     bool Atom::del_bond(BondPtr bond)
     {
-        auto result = find_in_container<std::vector<BondPtr>, BondPtr>(_bonds, bond);
-        if (result.has_value())
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
+                                    { return *b == *bond; });
+        if (results == _bonds.end())
         {
-            _bonds.erase(_bonds.begin() + result.value());
-            return true;
+            return false;
         }
         else
         {
-            return false;
+            _bonds.erase(results);
+            return true;
         }
     }
 
     bool Atom::is_nbr(AtomPtr atom)
     {
         auto nbrs = this->get_nbrs();
-        auto isInNbrs = find_in_container<std::vector<AtomPtr>, AtomPtr>(nbrs, atom).has_value();
-        return isInNbrs;
+        auto results = std::find_if(nbrs.begin(), nbrs.end(), [atom](AtomPtr a)
+                                    { return *a == *atom; });
+        return results == nbrs.end() ? false : true;
     }
 
     std::vector<AtomPtr> Atom::get_nbrs()
@@ -70,43 +69,14 @@ namespace molcpp
         return nbrs;
     }
 
-    const std::string& Atom::get_typename()
-    {
-        if (_properties.has("type"))
-        {
-            return _properties.get<std::string>("type");
-        }
-        else
-        {
-            return _type->get_name();
-        }
-    }
-
-    void Atom::set_type(const std::string& type)
-    {
-        _properties.set("type", type);
-    }
-
-    void Atom::set_type(const AtomTypePtr& type)
+    void Atom::set_type(const AtomTypePtr &type)
     {
         _type = type;
     }
 
-    const AtomTypePtr& Atom::get_type()
+    const AtomTypePtr &Atom::get_type()
     {
         return _type;
-    }
-
-    AtomProperty& Atom::operator [] (const std::string& key)
-    {
-        if (_properties.has(key))
-        {
-            return _properties[key];
-        }
-        else
-        {
-            return (*_type)[key];
-        }
     }
 
     void Atom::set(const std::string &key, const AtomProperty &value)
@@ -114,13 +84,90 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    AtomPtr create_atom()
+    bool Atom::has(const std::string &key)
     {
-        return std::make_shared<Atom>();
+        return _properties.has(key);
     }
 
-    AtomPtr create_atom(const AtomTypePtr& type)
+    bool Atom::equal_to(const Atom &other) const
     {
-        return std::make_shared<Atom>(type);
+        return get_id() == other.get_id();
     }
+
+    bool Atom::equal_to(const AtomPtr &other) const
+    {
+        return get_id() == other->get_id();
+    }
+
+    bool Atom::operator==(const Atom &other) const
+    {
+        return equal_to(other);
+    }
+
+    const size_t Atom::get_id() const
+    {
+        return _id;
+    }
+
+    void Atom::set_position(const xt::xarray<double> &pos)
+    {
+        _pos = pos;
+    }
+
+    const xt::xarray<double>& Atom::get_position() const
+    {
+        return _pos;
+    }
+
+    AtomPtr new_atom(const std::string& name)
+    {
+        return std::make_shared<Atom>(name);
+    }
+
+    AtomPtr new_atom(const AtomTypePtr &type)
+    {
+        auto atom = new_atom();
+        atom->set_type(type);
+        return atom;
+    }
+
+    AtomPtr new_atom(const chemfiles::Atom& chflAtom)
+    {
+
+        auto atom = new_atom();
+        atom->set("name", chflAtom.name());
+        atom->set("type", chflAtom.type());
+        atom->set("mass", chflAtom.mass());
+        atom->set("charge", chflAtom.charge());
+        if (chflAtom.properties())
+        {
+            for (auto prop : *chflAtom.properties())
+            {
+                if (prop.second.kind() == chemfiles::Property::Kind::BOOL)
+                atom->set(prop.first, prop.second.as_bool());
+                else if (prop.second.kind() == chemfiles::Property::Kind::DOUBLE)
+                atom->set(prop.first, prop.second.as_double());
+                else if (prop.second.kind() == chemfiles::Property::Kind::STRING)
+                atom->set(prop.first, prop.second.as_string());
+                // else if (prop.second.kind() == chemfiles::Property::Kind::VECTOR3D)
+                // atom->set(prop.first, prop.second.as_vector3d());
+                else throw std::runtime_error("Unsupported property type");
+            }
+        }
+        
+        return atom;
+
+    }
+
+    // to_chemfiles
+    chemfiles::Atom to_chemfiles(const AtomPtr &atom)
+    {
+        chemfiles::Atom chflAtom(atom->get<std::string>("name", ""));
+        chflAtom.set_charge(atom->get<double>("charge", 0.0));
+        chflAtom.set_mass(atom->get<double>("mass", 0.0));
+        chflAtom.set_type(atom->get<std::string>("type", ""));
+
+        return chflAtom;
+    }
+
 }

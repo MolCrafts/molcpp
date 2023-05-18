@@ -4,7 +4,10 @@
 namespace molcpp
 {
 
-    Bond::Bond(AtomPtr itom, AtomPtr jtom) : _itom{itom}, _jtom{jtom} {}
+    Bond::Bond(AtomPtr itom, AtomPtr jtom) : _itom{itom}, _jtom{jtom} 
+    {
+
+    }
 
     AtomPtr Bond::get_itom() const
     {
@@ -26,12 +29,7 @@ namespace molcpp
         _type = type;
     }
 
-    void Bond::set_type(const std::string &type)
-    {
-        _properties.set("type", type);
-    }
-
-    bool Bond::operator==(const Bond &other) const
+    bool Bond::equal_to(const Bond& other) const
     {
         auto itom = get_itom();
         auto jtom = get_jtom();
@@ -39,7 +37,21 @@ namespace molcpp
         auto other_jtom = other.get_jtom();
         return (itom == other_itom && jtom == other_jtom) ||
                (itom == other_jtom && jtom == other_itom);
+    }
 
+    bool Bond::equal_to(const BondPtr& other) const
+    {
+        auto itom = get_itom();
+        auto jtom = get_jtom();
+        auto other_itom = other->get_itom();
+        auto other_jtom = other->get_jtom();
+        return (itom == other_itom && jtom == other_jtom) ||
+               (itom == other_jtom && jtom == other_itom);
+    }
+
+    bool Bond::operator==(const Bond &other) const
+    {
+        return equal_to(other);
     }
 
     BondProperty &Bond::operator[](const std::string &key)
@@ -53,7 +65,7 @@ namespace molcpp
     }
 
     // factory function
-    BondPtr create_bond(AtomPtr itom, AtomPtr jtom)
+    BondPtr new_bond(AtomPtr itom, AtomPtr jtom)
     {
         return std::make_shared<Bond>(itom, jtom);
     }

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 # CMake helpers
 include(CMakePrintHelpers)
+
 # set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${PROJECT_SOURCE_DIR}/cmake")
 # cmake_print_variables(CMAKE_MODULE_PATH)
 
@@ -33,12 +34,13 @@ if(chemfiles_FOUND)
   )
 else()
   message(STATUS "Chemfiles not installed, compile from source code")
+  message(STATUS "git submodule update...")
   execute_process(
     COMMAND git submodule update --init --recursive external/chemfiles
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-  set(BUILD_SHARED_LIBS ON)
+  )
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
+  set(BUILD_SHARED_LIBS ON)
 endif()
 
 find_package(xtensor QUIET)
@@ -54,14 +56,38 @@ else()
   execute_process(
     COMMAND git submodule update --init --recursive external/xtl
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+  )
   execute_process(
     COMMAND git submodule update --init --recursive external/xtensor
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
+  execute_process(
+    COMMAND git submodule update --init --recursive external/xtensor-blas
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  add_definitions(-DHAVE_CBLAS=1)
+
+  if(WIN32)
+    find_package(OpenBLAS REQUIRED)
+    set(BLAS_LIBRARIES ${CMAKE_INSTALL_PREFIX}${OpenBLAS_LIBRARIES})
+  else()
+    find_package(BLAS REQUIRED)
+    find_package(LAPACK REQUIRED)
+  endif()
+
+  message(STATUS "BLAS VENDOR:    " ${BLA_VENDOR})
+  message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
+
+
   add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
   add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
+  add_subdirectory(${CMAKE_MODULE_PATH}/xtensor-blas)
 endif()
+
+add_library(molcpp STATIC)
+
+set_target_properties(chemfiles PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(molcpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_include_directories(
   molcpp
@@ -74,13 +100,15 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
-  src/element.cpp
+  src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
   src/topology.cpp
+
+  # src/element.cpp
   src/frame.cpp
   src/trajectory.cpp
-  src/forcefield.cpp
+  src/cell.cpp
 )
 
 target_link_libraries(
@@ -89,26 +117,29 @@ target_link_libraries(
   chemfiles
   xtl
   xtensor
+  xtensor-blas
+  ${BLAS_LIBRARIES}
+  ${LAPACK_LIBRARIES}
 )
 
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   message(STATUS "Compile molcpp and its testcases in debug mode")
   target_compile_options(molcpp
-      PUBLIC
-          -g
+    PUBLIC
+    -O0
+    -Wall
+    -g
   )
-  enable_testing()
+  enable_testing() # enable_testing must at top cmakelists
   add_subdirectory(tests)
 # For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
   target_compile_options(molcpp
-      PUBLIC
-          -O3
+    PUBLIC
+    -O3
   )
-  # install(TARGETS molcpp DESTINATION lib)
-  # install(DIRECTORY include/ DESTINATION include)
 else()
   message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()
