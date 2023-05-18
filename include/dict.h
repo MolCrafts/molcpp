@@ -188,7 +188,7 @@ namespace molcpp
         template <typename T>
         void set(const key_type &key, const T &value)
         {
-            m_map.emplace(key, value);
+            m_map[key] = value;
         }
 
         /**
