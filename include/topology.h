@@ -28,14 +28,6 @@ namespace molcpp
             Topology();
             
             /**
-             * @brief Construct a new Topology from Chemfiles' Topology
-             * 
-             * @param natoms 
-             * @param nbonds 
-             */
-            // Topology(const chemfiles::Topology& chflTopology);
-            
-            /**
              * @brief Add an exsit atom to the topology
              * 
              * @return true 

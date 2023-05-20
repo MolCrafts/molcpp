@@ -29,15 +29,15 @@ namespace molcpp
 
     bool Topology::del_atom(AtomPtr atom)
     {
-        if (has_atom(atom))
+
+        auto result = std::find(_atoms.begin(), _atoms.end(), atom);
+        if (result != _atoms.end())
         {
-            _atoms.erase(std::find(_atoms.begin(), _atoms.end(), atom));
+            _atoms.erase(result);
             return true;
         }
         else
-        {
             return false;
-        }
     }
 
     const AtomVec &Topology::get_atoms() const
@@ -105,7 +105,7 @@ namespace molcpp
 
     BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
-        auto BondPtr = new_bond(_atoms[itom_index], _atoms[jtom_index]);
+        auto BondPtr = new_bond(_atoms.at(itom_index), _atoms.at(jtom_index));
         return BondPtr;
     }
 
@@ -224,10 +224,7 @@ namespace molcpp
         auto atoms = topo->get_atoms();
         for (auto chflBond : chflTopo.bonds())
         {
-            auto at0 = atoms[chflBond[0]];
-            auto at1 = atoms[chflBond[1]];
-            auto bond = new_bond(at0, at1);
-            topo->add_bond(bond);
+            topo->new_bond(chflBond[0], chflBond[1]);
         }
         return topo;
     }
