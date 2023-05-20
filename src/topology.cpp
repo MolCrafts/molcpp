@@ -54,30 +54,8 @@ namespace molcpp
         }
         else
         {
-            auto itom = bond->get_itom();
-            auto jtom = bond->get_jtom();
-            size_t itom_index =
-                std::find_if(_atoms.begin(), _atoms.end(), [itom](const AtomPtr atom)
-                             { return *atom == *itom; }) -
-                _atoms.begin();
-
-            size_t jtom_index =
-                std::find_if(_atoms.begin(), _atoms.end(), [jtom](const AtomPtr atom)
-                             { return *atom == *jtom; }) -
-                _atoms.begin();
-
-            if (itom_index < _atoms.size() && jtom_index < _atoms.size())
-            {
-                _bonds.push_back(bond);
-                // find itom and jtom index in _atoms
-
-                connect(itom_index, jtom_index);
-                return true;
-            }
-            else
-            {
-                throw KeyError("Atom not found");
-            }
+            _bonds.push_back(bond);
+            return true;
         }
     }
 
@@ -91,10 +69,29 @@ namespace molcpp
     BondPtr Topology::new_bond(const AtomPtr &itom, const AtomPtr &jtom)
     {
         BondPtr bond = molcpp::new_bond(itom, jtom);
+        size_t itom_index =
+            std::find_if(_atoms.begin(), _atoms.end(), [itom](const AtomPtr atom)
+                            { return *atom == *itom; }) -
+            _atoms.begin();
+
+        size_t jtom_index =
+            std::find_if(_atoms.begin(), _atoms.end(), [jtom](const AtomPtr atom)
+                            { return *atom == *jtom; }) -
+            _atoms.begin();
+        if (itom_index < _atoms.size() && jtom_index < _atoms.size())
+        {
+            connect(itom_index, jtom_index);
+        }
+        else
+        {
+            throw KeyError("Atom not found");
+        }
+
         if (add_bond(bond))
         {
             itom->add_bond(bond);
             jtom->add_bond(bond);
+
             return bond;
         }
         else
@@ -105,8 +102,10 @@ namespace molcpp
 
     BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
-        auto BondPtr = new_bond(_atoms.at(itom_index), _atoms.at(jtom_index));
-        return BondPtr;
+        BondPtr bond = molcpp::new_bond(_atoms.at(itom_index), _atoms.at(jtom_index));
+        if(add_bond(bond)) connect(itom_index, jtom_index);
+        else throw KeyError("Bond already exists");
+        return bond;
     }
 
     void Topology::connect(size_t i, size_t j)
@@ -239,11 +238,8 @@ namespace molcpp
 
         for (auto bond : topo->get_bond_connect())
         {
-            LOG_DEBUG(bond[0] << " " << bond[1]);
             chflTopo.add_bond(bond[0], bond[1]);
         }
-        LOG_INFO("Number of bonds: " << chflTopo.bonds().size());
-
         return chflTopo;
     }
 

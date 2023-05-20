@@ -68,11 +68,11 @@ namespace molcpp{
         auto tempFile = tempDir + "test_write_single_frame.pdb";
         traj->write(tempFile, "PDB");
 
-        // auto _traj_out = chemfiles::Trajectory(tempFile, 'r', "PDB");
-        // auto _frame_out = _traj_out.read();
-        // EXPECT_EQ(_traj_out.nsteps(), 1);
-        // EXPECT_EQ(_frame_out.size(), 7772);
-        // EXPECT_EQ(_frame_out.topology().bonds().size(), 6248);
+        auto _traj_out = chemfiles::Trajectory(tempFile, 'r', "PDB");
+        auto _frame_out = _traj_out.read();
+        EXPECT_EQ(_traj_out.nsteps(), 1);
+        EXPECT_EQ(_frame_out.size(), 7772);
+        EXPECT_EQ(_frame_out.topology().bonds().size(), 6248);
         // TODO : angles
     }
 

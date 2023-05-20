@@ -73,18 +73,13 @@ namespace molcpp
         auto topology = new_topology();
 
         // add atom 
-        auto atom1 = new_atom();
-        auto atom2 = new_atom();
-        auto atom3 = new_atom();
-        topology->add_atom(atom1);
-        topology->add_atom(atom2);
-        topology->add_atom(atom3);
+        topology->new_atom("H");
+        topology->new_atom("C");
+        topology->new_atom("O");
 
         // add bond
-        auto bond1 = new_bond(atom1, atom2);
-        auto bond2 = new_bond(atom2, atom3);
-        topology->add_bond(bond1);
-        topology->add_bond(bond2);
+        topology->new_bond(0, 1);
+        topology->new_bond(1, 2);
 
         // test connect
         auto bond_connect = topology->get_bond_connect();
