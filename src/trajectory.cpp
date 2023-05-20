@@ -90,7 +90,6 @@ namespace molcpp
             _traj->add_frame(_frame_ptr);
         }
 
-        if (chflTraj.done()) chflTraj.close();
         return _traj;
     }
 

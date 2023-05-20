@@ -15,9 +15,8 @@ namespace molcpp
 
         // add atom 
         auto atom1 = new_atom();
-        EXPECT_TRUE(topology->add_atom(atom1));
+        topology->add_atom(atom1);
         EXPECT_TRUE(topology->has_atom(atom1));
-        EXPECT_FALSE(topology->add_atom(atom1));
 
         // create atom in place
         auto atom2 = topology->new_atom();
@@ -44,13 +43,8 @@ namespace molcpp
         auto bond1 = new_bond(atom1, atom2);
         topology->add_atom(atom1);
         topology->add_atom(atom2);
-        EXPECT_TRUE(topology->add_bond(bond1));
+        topology->add_bond(bond1);
         EXPECT_TRUE(topology->has_bond(bond1));
-
-        // Repeatedly adding elements
-        EXPECT_THROW(topology->new_bond(atom1, atom2), KeyError);
-        EXPECT_THROW(topology->new_bond(atom2, atom1), KeyError);
-        EXPECT_THROW(topology->new_bond(0, 1), KeyError);
 
         // create bond in place
         auto atom3 = topology->new_atom("atom3");

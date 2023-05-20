@@ -45,9 +45,7 @@ target_link_libraries(
 message(STATUS "debug build.")
 target_compile_options(molcpp_test
   PRIVATE
-  -O0
-  -Wall
-  -g
+  -O2
 )
 
 include(GoogleTest)

@@ -6,13 +6,9 @@ namespace molcpp
     {
     }
 
-    bool Topology::add_atom(AtomPtr atom)
+    void Topology::add_atom(AtomPtr atom)
     {
-        if (has_atom(atom))
-            return false;
-        else
-            _atoms.push_back(atom);
-        return true;
+        _atoms.push_back(atom);
     }
 
     bool Topology::has_atom(AtomPtr atom)
@@ -45,18 +41,9 @@ namespace molcpp
         return _atoms;
     }
 
-    bool Topology::add_bond(BondPtr bond)
+    void Topology::add_bond(BondPtr bond)
     {
-        if (has_bond(bond))
-        {
-            LOG_WARNING("Bond already exists");
-            return false;
-        }
-        else
-        {
-            _bonds.push_back(bond);
-            return true;
-        }
+        _bonds.push_back(bond);
     }
 
     bool Topology::has_bond(BondPtr bond)
@@ -86,25 +73,18 @@ namespace molcpp
         {
             throw KeyError("Atom not found");
         }
+        add_bond(bond);
+        itom->add_bond(bond);
+        jtom->add_bond(bond);
 
-        if (add_bond(bond))
-        {
-            itom->add_bond(bond);
-            jtom->add_bond(bond);
-
-            return bond;
-        }
-        else
-        {
-            throw KeyError("Bond already exists");
-        }
+        return bond;
     }
 
     BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
     {
         BondPtr bond = molcpp::new_bond(_atoms.at(itom_index), _atoms.at(jtom_index));
-        if(add_bond(bond)) connect(itom_index, jtom_index);
-        else throw KeyError("Bond already exists");
+        add_bond(bond);
+        connect(itom_index, jtom_index);
         return bond;
     }
 

@@ -33,7 +33,7 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            bool add_atom(AtomPtr);
+            void add_atom(AtomPtr);
             
             /**
              * @brief check if the topology has an atom
@@ -70,7 +70,7 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            bool add_bond(BondPtr);
+            void add_bond(BondPtr);
             
             /**
              * @brief 
