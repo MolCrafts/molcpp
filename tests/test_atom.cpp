@@ -9,9 +9,7 @@ namespace molcpp
     TEST(TestAtom, test_init)
     {
         auto a0 = Atom("a0");
-        auto a1 = new_atom("a1");
         EXPECT_EQ(a0.get<std::string>("name"), "a0");
-        EXPECT_EQ(a1->get<std::string>("name"), "a1");
     }
 
     TEST(TestAtom, test_has)

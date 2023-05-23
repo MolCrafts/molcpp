@@ -22,14 +22,27 @@ namespace molcpp
          */
         Data() : _value(variant_type{}) {}
 
-        /**
-         * @brief Construct a new Data object with value
-         *
-         * @tparam T
-         * @param value
-         */
+        // constructr for Data<Vector3D>
         template <typename T>
-        Data(const T &value) : _value(value) {}
+        Data(const T &V) : _value(V) {}
+
+        /**
+         * @brief Construct a new Data object from another Data object
+         *
+         * @tparam Us
+         * @param other
+         */
+        template <typename... Us>
+        Data(const Data<Us...> &other) : _value(other.get_raw()) {}
+
+        /**
+         * @brief Construct a new Data object from another Data object
+         *
+         * @tparam Us
+         * @param other
+         */
+        template <typename... Us>
+        Data(Data<Us...> &&other) : _value(std::move(other.get_raw())) {}
 
         /**
          * @brief Assignment operator

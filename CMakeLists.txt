@@ -95,15 +95,15 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
-  src/forcefield.cpp
+  # src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
-  src/topology.cpp
+  # src/topology.cpp
 
   # src/element.cpp
-  src/frame.cpp
-  src/trajectory.cpp
-  src/cell.cpp
+  # src/frame.cpp
+  # src/trajectory.cpp
+  # src/cell.cpp
 )
 
 target_link_libraries(

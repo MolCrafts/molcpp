@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "dict.h"
+#include "types.hpp"
 
 namespace molcpp
 {
@@ -15,6 +16,35 @@ namespace molcpp
         EXPECT_FALSE(d.is<int>());
         EXPECT_TRUE(d.is<double>());
         EXPECT_EQ(d.get<double>(), 3.14);
+    }
+
+    TEST(TestData, test_copy_constructor)
+    {
+        Data<int, double> d1(3.14);
+        Data<int, double> d2(d1);
+        EXPECT_TRUE(d1.is<double>());
+        EXPECT_EQ(d1.get<double>(), 3.14);
+        EXPECT_TRUE(d2.is<double>());
+        EXPECT_EQ(d2.get<double>(), 3.14);
+    }
+
+    TEST(TestData, test_move_constructor)
+    {
+        
+        Data<int, double> d1(3.14);
+        Data<int, double> d2(std::move(d1));
+        EXPECT_TRUE(d1.is<double>());
+        EXPECT_EQ(d1.get<double>(), 3.14);
+        EXPECT_TRUE(d2.is<double>());
+        EXPECT_EQ(d2.get<double>(), 3.14);
+
+        Data<Vector3D> d3(Vector3D(1, 2, 3));
+        Data<Vector3D> d4(std::move(d3));
+        EXPECT_TRUE(d3.is<Vector3D>());
+        EXPECT_TRUE(d3.get<Vector3D>() == Vector3D(1, 2, 3));
+        EXPECT_TRUE(d4.is<Vector3D>());
+        EXPECT_TRUE(d4.get<Vector3D>() == Vector3D(1, 2, 3));
+
     }
 
     TEST(TestData, test_assigment_op)
