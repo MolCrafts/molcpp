@@ -3,7 +3,7 @@
 
 namespace molcpp
 {
-    Atom::Atom(const std::string& name, xt::xarray<double>pos) : _type{new_atomtype(name)}, _properties{}, _bonds{}, _pos{pos}
+    Atom::Atom(const std::string& name, xt::xarray<double>pos) : _type{new_atomtype(name)}, _properties{}, _bonds{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
     {
     }
 

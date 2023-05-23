@@ -40,6 +40,7 @@ namespace molcpp
         // add bond           
         auto atom1 = new_atom("atom1");
         auto atom2 = new_atom("atom2");
+        EXPECT_FALSE(atom1->equal_to(atom2));
         auto bond1 = new_bond(atom1, atom2);
         topology->add_atom(atom1);
         topology->add_atom(atom2);
@@ -49,6 +50,7 @@ namespace molcpp
         // create bond in place
         auto atom3 = topology->new_atom("atom3");
         auto atom4 = topology->new_atom("atom4");
+        EXPECT_FALSE(atom3->equal_to(atom4));
         auto bond2 = topology->new_bond(atom3, atom4);
 
         // test nbonds

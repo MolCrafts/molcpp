@@ -58,12 +58,12 @@ namespace molcpp
         BondPtr bond = molcpp::new_bond(itom, jtom);
         size_t itom_index =
             std::find_if(_atoms.begin(), _atoms.end(), [itom](const AtomPtr atom)
-                            { return *atom == *itom; }) -
+                            { return itom->equal_to(atom); }) -
             _atoms.begin();
 
         size_t jtom_index =
             std::find_if(_atoms.begin(), _atoms.end(), [jtom](const AtomPtr atom)
-                            { return *atom == *jtom; }) -
+                            { return jtom->equal_to(atom); }) -
             _atoms.begin();
         if (itom_index < _atoms.size() && jtom_index < _atoms.size())
         {
@@ -173,15 +173,25 @@ namespace molcpp
 
     const xt::xarray<double> Topology::get_positions() const
     {
-        int natoms = get_natoms();
-        xt::xarray<double> positions = xt::zeros<double>({natoms, 3});
-        int i = 0;
-        for (auto& atom : get_atoms())
+        auto natoms = get_natoms();
+        // xt::xarray<double> positions = xt::zeros<double>({natoms, 3});
+        // int i = 0;
+        // for (auto& atom : get_atoms())
+        // {
+        //     xt::row(positions, i) = atom->get_position();
+        //     i++;
+        // }
+        // return positions;
+        std::vector<double> positions(natoms * 3);
+        auto atoms = get_atoms();
+        for(size_t i = 0; i < natoms; i++)
         {
-            xt::row(positions, i) = atom->get_position();
-            i++;
+            positions[i*3] = atoms[i]->get_position()[0];
+            positions[i*3+1] = atoms[i]->get_position()[1];
+            positions[i*3+2] = atoms[i]->get_position()[2];
         }
-        return positions;
+        std::vector<std::size_t> shape = {natoms, 3};
+        return xt::adapt(positions, shape);
     }
 
     // factory function

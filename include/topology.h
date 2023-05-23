@@ -8,6 +8,7 @@
 #include <xtensor/xarray.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xview.hpp>
+#include <xtensor/xadapt.hpp>
 
 namespace molcpp
 {
