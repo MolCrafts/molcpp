@@ -125,6 +125,26 @@ namespace molcpp
         EXPECT_EQ(d.get<double>("double"), 3.14);
     }
 
+    TEST(TestDict, test_move_constructor)
+    {
+        Dict<int, double> d1({{"int", 42}, {"double", 3.14}});
+        Dict<int, double> d2(std::move(d1));
+        EXPECT_EQ(d1.size(), 0);
+        EXPECT_EQ(d2.size(), 2);
+        EXPECT_EQ(d2.get<int>("int"), 42);
+        EXPECT_EQ(d2.get<double>("double"), 3.14);
+    }
+
+    TEST(TestDict, test_copy_constructor)
+    {
+        Dict<int, double> d1({{"int", 42}, {"double", 3.14}});
+        Dict<int, double> d2(d1);
+        EXPECT_EQ(d1.size(), 2);
+        EXPECT_EQ(d2.size(), 2);
+        EXPECT_EQ(d2.get<int>("int"), 42);
+        EXPECT_EQ(d2.get<double>("double"), 3.14);
+    }
+
     TEST(TestDict, test_set_get)
     {
         Dict<int, double> d;

@@ -181,6 +181,12 @@ namespace molcpp
          */
         Dict(const container_type &map) : m_map(map){};
 
+        // copy constructor
+        Dict(const Dict &other) : m_map(other.m_map){};
+
+        // move constructor
+        Dict(Dict &&other) : m_map(std::move(other.m_map)){};
+
         /**
          * @brief Return the number of elements in the container
          *
