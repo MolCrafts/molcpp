@@ -85,7 +85,7 @@ namespace molcpp
 
         void set_cell(CellPtr);
 
-        void set_cell(Vector3D lengths, Vector3D titles = {0, 0, 0});
+        void set_cell(Vector lengths, Vector titles = {0, 0, 0});
 
         CellPtr get_cell() const;
 

@@ -2,7 +2,7 @@
 #include "algo.h"
 #include "dict.h"
 #include "itemtype.h"
-#include "xtensor/xarray.hpp"
+#include "types.hpp"
 #include <vector>
 #include <memory>
 #include <chemfiles.hpp>
@@ -26,7 +26,7 @@ namespace molcpp
          * @brief Construct a new Atom object
          * 
          */
-        Atom(const std::string& name = "", xt::xarray<double>pos = {0, 0, 0});
+        Atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
         /**
          * @brief add a connected bond 
@@ -40,7 +40,7 @@ namespace molcpp
         /**
          * @brief delete a connected bond 
          * 
-         * @return true 
+         * @return true
          * @return false 
          */
         bool del_bond(BondPtr);
@@ -136,16 +136,16 @@ namespace molcpp
          */
         const size_t get_id() const;
 
-        void set_position(const xt::xarray<double>& pos);
+        void set_position(const Vector3D& pos);
 
-        const xt::xarray<double>& get_position() const;
+        const Vector3D& get_position() const;
 
     private:
         AtomTypePtr _type;
         AtomPropertyDict _properties;
         std::vector<BondPtr> _bonds;
         size_t _id;
-        xt::xarray<double> _pos; 
+        Vector3D _pos; 
     };
 
     // factory function

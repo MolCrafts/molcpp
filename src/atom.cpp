@@ -3,7 +3,7 @@
 
 namespace molcpp
 {
-    Atom::Atom(const std::string& name, xt::xarray<double>pos) : _type{new_atomtype(name)}, _properties{}, _bonds{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
+    Atom::Atom(const std::string& name, Vector3D pos) : _type{new_atomtype(name)}, _properties{}, _bonds{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
     {
     }
 
@@ -109,12 +109,12 @@ namespace molcpp
         return _id;
     }
 
-    void Atom::set_position(const xt::xarray<double> &pos)
+    void Atom::set_position(const Vector3D  &pos)
     {
         _pos = pos;
     }
 
-    const xt::xarray<double>& Atom::get_position() const
+    const Vector3D & Atom::get_position() const
     {
         return _pos;
     }

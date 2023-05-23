@@ -41,12 +41,12 @@ namespace molcpp
         set_boundary(PBC::P, PBC::P, PBC::P);
     }
 
-    Cell::Cell(Vector3D lengths, Vector3D angles) : Cell()
+    Cell::Cell(Vector lengths, Vector angles) : Cell()
     {
         set_lengths_and_angles(lengths, angles);
     }
 
-    void Cell::set_lengths_and_angles(Vector3D lengths, Vector3D angles)
+    void Cell::set_lengths_and_angles(Vector lengths, Vector angles)
     {
         auto a = lengths(0);
         auto b = lengths(1);
@@ -75,17 +75,17 @@ namespace molcpp
 
     }
 
-    const Matrix3D Cell::get_matrix() const
+    const Matrix Cell::get_matrix() const
     {
         return _matrix;
     }
 
-    const Matrix3D Cell::get_inverse() const
+    const Matrix Cell::get_inverse() const
     {
         return xt::linalg::inv(_matrix);
     }
 
-    const Vector3D Cell::get_angles() const
+    const Vector Cell::get_angles() const
     {
         auto tilts = get_tilts();
         double xy = tilts(0);
@@ -110,7 +110,7 @@ namespace molcpp
         _pbc = {x, y, z};
     }
 
-    const Vector3D Cell::get_lengths() const
+    const Vector Cell::get_lengths() const
     {
         auto tilts = get_tilts();
         double xy = tilts(0);
@@ -125,7 +125,7 @@ namespace molcpp
         return {a, b, c};
     }
 
-    const Vector3D Cell::get_tilts() const
+    const Vector Cell::get_tilts() const
     {
         double xy = _matrix(0, 1);
         double xz = _matrix(0, 2);
@@ -138,7 +138,7 @@ namespace molcpp
         return xt::linalg::det(_matrix);
     }
 
-    Matrix3D Cell::wrap(Matrix3D positions)
+    Matrix Cell::wrap(Matrix positions)
     {
         // PBC are all P
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
@@ -164,15 +164,15 @@ namespace molcpp
         return chemfiles_cell;
     }
 
-    CellPtr new_cell(Vector3D lengths, Vector3D angles)
+    CellPtr new_cell(Vector lengths, Vector angles)
     {
         return std::make_shared<Cell>(lengths, angles);
     }
 
     CellPtr new_cell(chemfiles::UnitCell cell)
     {
-        Vector3D lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
-        Vector3D angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
+        Vector lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
+        Vector angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
         return std::make_shared<Cell>(lengths, angles);
     }
 }

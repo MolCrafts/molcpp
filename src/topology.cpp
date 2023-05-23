@@ -166,7 +166,8 @@ namespace molcpp
         int i = 0;
         for (auto& atom : get_atoms())
         {
-            atom->set_position(xt::row(positions, i));
+            auto _pos = xt::row(positions, i);
+            atom->set_position({_pos[0], _pos[1], _pos[2]});
             i++;
         }
     }
@@ -174,21 +175,14 @@ namespace molcpp
     const xt::xarray<double> Topology::get_positions() const
     {
         auto natoms = get_natoms();
-        // xt::xarray<double> positions = xt::zeros<double>({natoms, 3});
-        // int i = 0;
-        // for (auto& atom : get_atoms())
-        // {
-        //     xt::row(positions, i) = atom->get_position();
-        //     i++;
-        // }
-        // return positions;
         std::vector<double> positions(natoms * 3);
-        auto atoms = get_atoms();
+        auto& atoms = get_atoms();
         for(size_t i = 0; i < natoms; i++)
         {
-            positions[i*3] = atoms[i]->get_position()(0);
-            positions[i*3+1] = atoms[i]->get_position()(1);
-            positions[i*3+2] = atoms[i]->get_position()(2);
+            auto pos = atoms[i]->get_position();
+            positions[i*3] = pos[0];
+            positions[i*3+1] = pos[1];
+            positions[i*3+2] = pos[2];
         }
         std::vector<std::size_t> shape = {natoms, 3};
         return xt::adapt(positions, shape);

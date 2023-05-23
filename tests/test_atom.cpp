@@ -110,9 +110,9 @@ namespace molcpp
     TEST(TestAtom, test_pos)
     {
         auto atom = new_atom();
-        EXPECT_EQ(atom->get_position(), xt::xarray<double>({0., 0., 0.}));
+        EXPECT_EQ(atom->get_position(), Vector3D(0, 0, 0));
 
         atom->set_position({1.0, 2.0, 3.0});
-        EXPECT_EQ(atom->get_position(), xt::xarray<double>({1.0, 2.0, 3.0}));
+        EXPECT_EQ(atom->get_position(), Vector3D(1, 2, 3));
     }
 }

@@ -58,7 +58,7 @@ namespace molcpp
         _cell = cell;
     }
 
-    void Frame::set_cell(Vector3D lengths, Vector3D angles)
+    void Frame::set_cell(Vector lengths, Vector angles)
     {
         _cell = new_cell(lengths, angles);
     }
