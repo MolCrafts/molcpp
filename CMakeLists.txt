@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.16)
 project(molcpp LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
+option(BUILD_SHARED_LIBS "SHARED" ON)
+
 # CMake helpers
 include(CMakePrintHelpers)
 
@@ -14,12 +16,11 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-if(MOLCPP_BUILD_SHARED)
-  add_library(molcpp SHARED)
-else()
-  add_library(molcpp STATIC)
+if(BUILD_SHARED_LIBS)
   set(POSITION_INDEPENDENT_CODE ON)
 endif()
+
+add_library(molcpp)
 
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
@@ -40,7 +41,6 @@ else()
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
-  set(BUILD_SHARED_LIBS ON)
 endif()
 
 find_package(xtensor QUIET)
@@ -84,9 +84,6 @@ else()
   add_subdirectory(${CMAKE_MODULE_PATH}/xtensor-blas)
 endif()
 
-set_target_properties(chemfiles PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-set_target_properties(molcpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-
 target_include_directories(
   molcpp
   PUBLIC
@@ -123,21 +120,11 @@ target_link_libraries(
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   message(STATUS "Compile molcpp and its testcases in debug mode")
-  target_compile_options(molcpp
-    PUBLIC
-    -O0
-    -Wall
-    -g
-  )
   enable_testing() # enable_testing must at top cmakelists
   add_subdirectory(tests)
 # For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
-  target_compile_options(molcpp
-    PUBLIC
-    -O3
-  )
 else()
   message(FATAL_ERROR "Unknown build type: ${CMAKE_BUILD_TYPE}")
 endif()

@@ -186,9 +186,9 @@ namespace molcpp
         auto atoms = get_atoms();
         for(size_t i = 0; i < natoms; i++)
         {
-            positions[i*3] = atoms[i]->get_position()[0];
-            positions[i*3+1] = atoms[i]->get_position()[1];
-            positions[i*3+2] = atoms[i]->get_position()[2];
+            positions[i*3] = atoms[i]->get_position()(0);
+            positions[i*3+1] = atoms[i]->get_position()(1);
+            positions[i*3+2] = atoms[i]->get_position()(2);
         }
         std::vector<std::size_t> shape = {natoms, 3};
         return xt::adapt(positions, shape);
