@@ -1,22 +1,31 @@
-#include "atom.h"
 #include "bond.h"
 
 namespace molcpp
 {
 
-    Bond::Bond(AtomPtr itom, AtomPtr jtom) : _itom{itom}, _jtom{jtom} 
+    Bond::Bond(Atom& itom, Atom& jtom) : _itom{itom}, _jtom{jtom} 
     {
 
     }
 
-    AtomPtr Bond::get_itom() const
+    Bond::Bond(const Bond& other) : _itom{other._itom}, _jtom{other._jtom}, _type{other._type}, _properties{other._properties}
     {
-        return _itom.lock();
+
     }
 
-    AtomPtr Bond::get_jtom() const
+    Bond::Bond(Bond&& other) : _itom{other._itom}, _jtom{other._jtom}, _type{std::move(other._type)}, _properties{std::move(other._properties)}
     {
-        return _jtom.lock();
+
+    }
+
+    Atom& Bond::get_itom() const
+    {
+        return _itom;
+    }
+
+    Atom& Bond::get_jtom() const
+    {
+        return _jtom;
     }
 
     BondTypePtr Bond::get_bondtype() const
@@ -39,16 +48,6 @@ namespace molcpp
                (itom == other_jtom && jtom == other_itom);
     }
 
-    bool Bond::equal_to(const BondPtr& other) const
-    {
-        auto itom = get_itom();
-        auto jtom = get_jtom();
-        auto other_itom = other->get_itom();
-        auto other_jtom = other->get_jtom();
-        return (itom == other_itom && jtom == other_jtom) ||
-               (itom == other_jtom && jtom == other_itom);
-    }
-
     bool Bond::operator==(const Bond &other) const
     {
         return equal_to(other);
@@ -64,10 +63,9 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    // factory function
-    BondPtr new_bond(AtomPtr itom, AtomPtr jtom)
+    Bond& Bond::operator=(Bond&& other)
     {
-        return std::make_shared<Bond>(itom, jtom);
+        return other;
     }
 
 }

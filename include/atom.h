@@ -10,14 +10,6 @@
 namespace molcpp
 {
 
-    class Atom;
-    using AtomPtr = std::shared_ptr<Atom>;
-    class Bond;
-    using BondPtr = std::shared_ptr<Bond>;
-
-    using AtomVec = std::vector<AtomPtr>;
-    using BondVec = std::vector<BondPtr>;
-
     class Atom
     {
 
@@ -28,45 +20,11 @@ namespace molcpp
          */
         Atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
-        /**
-         * @brief add a connected bond 
-         * 
-         * @return true 
-         * @return false 
-         * @note if the bond is already connected, return false
-         */
-        bool add_bond(BondPtr);
+        // copy constructor
+        Atom(const Atom&);
 
-        /**
-         * @brief delete a connected bond 
-         * 
-         * @return true
-         * @return false 
-         */
-        bool del_bond(BondPtr);
-
-        /**
-         * @brief check if the atom has a connected bond 
-         * 
-         * @return true 
-         * @return false 
-         */
-        bool has_bond(BondPtr);
-
-        /**
-         * @brief check if the atom is a neighbor of the given atom 
-         * 
-         * @return true 
-         * @return false 
-         */
-        bool is_nbr(AtomPtr);
-        
-        /**
-         * @brief Get a list of connected atoms 
-         * 
-         * @return std::vector<AtomPtr> 
-         */
-        std::vector<AtomPtr> get_nbrs();
+        // move constructor
+        Atom(Atom&&);
 
         /**
          * @brief Get a property by key 
@@ -76,7 +34,7 @@ namespace molcpp
          * @return T 
          */
         template<typename T>
-        T get(const std::string& key, T _default = T())
+        T get(const std::string& key, T _default = T()) const
         {
             if (_properties.has(key)) return _properties.get<T>(key);
             else if(_type->has(key)) return _type->get<T>(key);
@@ -120,14 +78,6 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        bool equal_to(const AtomPtr&) const;
-
-        /**
-         * @brief 
-         * 
-         * @return true 
-         * @return false 
-         */
         bool operator==(const Atom&) const;
 
         /**
@@ -140,19 +90,25 @@ namespace molcpp
 
         const Vector3D& get_position() const;
 
+        AtomProperty &operator[](const std::string& key)
+        {
+            return _properties[key];
+        }
+
+        const AtomProperty &operator[](const std::string& key) const
+        {
+            return _properties[key];
+        }
+
     private:
         AtomTypePtr _type;
         AtomPropertyDict _properties;
-        std::vector<BondPtr> _bonds;
         size_t _id;
         Vector3D _pos; 
     };
 
     // factory function
-    AtomPtr new_atom(const std::string& name="");
-    AtomPtr new_atom(const AtomTypePtr& type);
-    AtomPtr new_atom(const chemfiles::Atom& chflAtom);
-
-    chemfiles::Atom to_chemfiles(const AtomPtr& atom);
+    Atom from_chemfiles(const chemfiles::Atom& chflAtom);
+    chemfiles::Atom to_chemfiles(const Atom& atom);
 
 }

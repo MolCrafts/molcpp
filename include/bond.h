@@ -8,9 +8,6 @@ namespace molcpp
 {
 
     class Atom;
-    using AtomPtr = std::shared_ptr<Atom>;
-    class Bond;
-    using BondPtr = std::shared_ptr<Bond>;
 
     class Bond
     {
@@ -20,21 +17,27 @@ namespace molcpp
          * @brief Construct a new Bond object
          *
          */
-        Bond(AtomPtr, AtomPtr);
+        Bond(Atom&, Atom&);
+
+        // copy constructor
+        Bond(const Bond&);
+
+        // move constructor
+        Bond(Bond&&);
 
         /**
          * @brief Get the itom
          *
-         * @return AtomPtr
+         * @return Atom
          */
-        AtomPtr get_itom() const;
+        Atom& get_itom() const;
 
         /**
          * @brief Get the jtom
          *
-         * @return AtomPtr
+         * @return Atom
          */
-        AtomPtr get_jtom() const;
+        Atom& get_jtom() const;
 
         /**
          * @brief Get the bondtype
@@ -54,14 +57,6 @@ namespace molcpp
          *
          */
         bool equal_to(const Bond &) const;
-
-        /**
-         * @brief Compare two BondPtr
-         *
-         * @return true
-         * @return false
-         */
-        bool equal_to(const BondPtr &) const;
 
         /**
          * @brief Compare two BondPtr
@@ -104,14 +99,14 @@ namespace molcpp
                 return _type->get<T>(key);
         }
 
+        Bond& operator=(Bond &&);
+
     private:
-        std::weak_ptr<Atom> _itom;
-        std::weak_ptr<Atom> _jtom;
+        Atom& _itom;
+        Atom& _jtom;
         BondTypePtr _type;
         BondPropertyDict _properties;
     };
 
-    // factory function
-    BondPtr new_bond(AtomPtr, AtomPtr);
 
 }
