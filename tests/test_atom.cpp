@@ -63,8 +63,8 @@ namespace molcpp
         EXPECT_TRUE(a1.equal_to(a1));
         EXPECT_FALSE(a1.equal_to(a2));
 
-        auto a3 = Atom();
-        auto a4 = Atom();
+        Atom& a3 = a1;
+        Atom& a4 = a2;
         EXPECT_TRUE(a3.equal_to(a3));
         EXPECT_FALSE(a3.equal_to(a4));
         EXPECT_TRUE(a3 == a3);

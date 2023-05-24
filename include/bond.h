@@ -3,6 +3,7 @@
 #include <memory>
 #include "dict.h"
 #include "itemtype.h"
+#include "atom.h"
 
 namespace molcpp
 {

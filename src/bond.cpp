@@ -40,12 +40,11 @@ namespace molcpp
 
     bool Bond::equal_to(const Bond& other) const
     {
-        auto itom = get_itom();
-        auto jtom = get_jtom();
-        auto other_itom = other.get_itom();
-        auto other_jtom = other.get_jtom();
-        return (itom == other_itom && jtom == other_jtom) ||
-               (itom == other_jtom && jtom == other_itom);
+        Atom& itom = get_itom();
+        Atom& jtom = get_jtom();
+        Atom& other_itom = other.get_itom();
+        Atom& other_jtom = other.get_jtom();
+        return (itom == other_itom && jtom == other_jtom) || (itom == other_jtom && jtom == other_itom);
     }
 
     bool Bond::operator==(const Bond &other) const
