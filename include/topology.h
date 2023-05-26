@@ -13,8 +13,9 @@
 namespace molcpp
 {
 
-    class Topology;
-    using TopoVec = std::vector<Topology>;
+    using AtomVec = std::vector<Atom>;
+    using BondVec = std::vector<Bond>;
+    using AtomTopoMask = std::vector<size_t>;
     using BondConnect = std::vector<std::vector<size_t>>;
 
     class Topology
@@ -34,7 +35,7 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            void add_atom(AtomPtr);
+            void add_atom(Atom&&);
             
             /**
              * @brief check if the topology has an atom
@@ -42,20 +43,20 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            bool has_atom(AtomPtr);
+            bool has_atom(Atom&);
 
             /**
              * @brief 
              * 
              */
-            bool del_atom(AtomPtr);
+            bool del_atom(Atom&);
             
             /**
              * @brief Create a 
              * 
              * @return AtomPtr 
              */
-            AtomPtr new_atom(const std::string& name="");
+            Atom& create_atom(const std::string& name="");
             // AtomPtr new_atom(const chemfiles::Atom &);
             
             /**
@@ -63,7 +64,7 @@ namespace molcpp
              * 
              * @return AtomVec 
              */
-            const AtomVec& get_atoms() const;
+            AtomVec& get_atoms();
             
             /**
              * @brief 
@@ -71,7 +72,7 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            void add_bond(BondPtr);
+            void add_bond(Bond&&);
             
             /**
              * @brief 
@@ -79,21 +80,21 @@ namespace molcpp
              * @return true 
              * @return false 
              */
-            bool has_bond(BondPtr);
+            bool has_bond(Bond&);
             
             /**
              * @brief Create a bond object
              * 
              * @return BondPtr 
              */
-            BondPtr new_bond(const AtomPtr&, const AtomPtr&);
+            Bond& create_bond(Atom&, Atom&);
             
             /**
              * @brief Create a bond object
              * 
              * @return BondPtr 
              */
-            BondPtr new_bond(size_t, size_t);
+            Bond& create_bond(size_t, size_t);
 
             /**
              * @brief 
@@ -107,7 +108,8 @@ namespace molcpp
              * 
              * @return const BondPtr 
              */
-            const BondPtr get_bond(const AtomPtr&, const AtomPtr&) const;
+            Bond& get_bond(const Atom&, const Atom&);
+            Bond& get_bond(size_t, size_t);
 
             /**
              * @brief Get the bonds object
@@ -134,21 +136,21 @@ namespace molcpp
              * @brief 
              * 
              */
-            bool del_bond(BondPtr);
+            bool del_bond(Bond&);
 
             /**
              * @brief 
              * 
              */
-            bool del_bond(const AtomPtr&, const AtomPtr& );
+            bool del_bond(const Atom&, const Atom& );
 
             template<typename T>
-            xt::xarray<T> get(const std::string& name) const
+            std::vector<T> get(const std::string& name) const
             {
-                xt::xarray<T> arr = xt::empty<T>({get_natoms()});
+                std::vector<T> arr(get_natoms());
                 for (size_t i = 0; i < get_natoms(); ++i)
                 {
-                    arr[i] = _atoms[i]->get<T>(name);
+                    arr[i] = _atoms[i].get<T>(name);
                 }
                 return arr;
             }
@@ -157,25 +159,21 @@ namespace molcpp
 
             void set_positions(const xt::xarray<double>&);
 
-            const xt::xarray<double> get_positions() const;
+            xt::xarray<double> get_positions();
 
             const BondConnect get_bond_connect() const { return _bondConnect; }
 
         private:
 
             AtomVec _atoms;
+            AtomTopoMask _atomTopoMask;
             BondVec _bonds;
-            TopoVec _topos;
 
             BondConnect _bondConnect;
 
     };
 
-    using TopologyPtr = std::shared_ptr<Topology>;
-
     // factory function
-    TopologyPtr new_topology();
-    TopologyPtr new_topology(const chemfiles::Topology& chflTopology);
-
-    chemfiles::Topology to_chemfiles(const TopologyPtr &);
+    Topology from_chemfiles(const chemfiles::Topology& chflTopology);
+    chemfiles::Topology to_chemfiles(const Topology &);
 }

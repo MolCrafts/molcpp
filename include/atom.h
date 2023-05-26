@@ -26,6 +26,8 @@ namespace molcpp
         // move constructor
         Atom(Atom&&);
 
+        Atom& operator=(Atom &&);
+
         /**
          * @brief Get a property by key 
          * 

@@ -2,90 +2,85 @@
 
 namespace molcpp
 {
-    Topology::Topology() : _atoms{}, _bonds{}, _bondConnect{}
+    Topology::Topology() : _atoms{}, _atomTopoMask{}, _bonds{}, _bondConnect{}
     {
     }
 
-    void Topology::add_atom(AtomPtr atom)
+    void Topology::add_atom(Atom&& atom)
     {
-        _atoms.push_back(atom);
+        _atoms.emplace_back(std::move(atom));
     }
 
-    bool Topology::has_atom(AtomPtr atom)
+    bool Topology::has_atom(Atom& atom)
     {
-        return std::find(_atoms.begin(), _atoms.end(), atom) != _atoms.end();
-    }
-
-    AtomPtr Topology::new_atom(const std::string &name)
-    {
-        AtomPtr atom = molcpp::new_atom(name);
-        add_atom(atom);
-        return atom;
-    }
-
-    bool Topology::del_atom(AtomPtr atom)
-    {
-
-        auto result = std::find(_atoms.begin(), _atoms.end(), atom);
-        if (result != _atoms.end())
+        for(auto& a : _atoms)
         {
-            _atoms.erase(result);
-            return true;
+            if(a == atom)
+                return true;
         }
-        else
-            return false;
+        return false;
     }
 
-    const AtomVec &Topology::get_atoms() const
+    Atom& Topology::create_atom(const std::string &name)
+    {
+        _atoms.emplace_back(name);
+        std::cout << _atoms.back().get_id() << std::endl;
+        return _atoms.back();
+    }
+
+    bool Topology::del_atom(Atom& atom)
+    {
+        for(size_t i = 0; i<get_natoms(); i++)
+        {
+            if(_atoms[i] == atom)
+            {
+                _atoms.erase(_atoms.begin()+i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    AtomVec &Topology::get_atoms()
     {
         return _atoms;
     }
 
-    void Topology::add_bond(BondPtr bond)
+    void Topology::add_bond(Bond&& bond)
     {
         _bonds.push_back(bond);
     }
 
-    bool Topology::has_bond(BondPtr bond)
+    bool Topology::has_bond(Bond& bond)
     {
-        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](BondPtr b)
-                                    { return *b == *bond; });
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond b)
+                                    { return b == bond; });
         return results == _bonds.end() ? false : true;
     }
 
-    BondPtr Topology::new_bond(const AtomPtr &itom, const AtomPtr &jtom)
+    Bond& Topology::create_bond(Atom &itom, Atom &jtom)
     {
-        BondPtr bond = molcpp::new_bond(itom, jtom);
-        size_t itom_index =
-            std::find_if(_atoms.begin(), _atoms.end(), [itom](const AtomPtr atom)
-                            { return itom->equal_to(atom); }) -
-            _atoms.begin();
-
-        size_t jtom_index =
-            std::find_if(_atoms.begin(), _atoms.end(), [jtom](const AtomPtr atom)
-                            { return jtom->equal_to(atom); }) -
-            _atoms.begin();
-        if (itom_index < _atoms.size() && jtom_index < _atoms.size())
-        {
-            connect(itom_index, jtom_index);
-        }
-        else
-        {
-            throw KeyError("Atom not found");
-        }
-        add_bond(bond);
-        itom->add_bond(bond);
-        jtom->add_bond(bond);
-
-        return bond;
+        _bonds.emplace_back(itom, jtom);
+        return _bonds.back();
     }
 
-    BondPtr Topology::new_bond(size_t itom_index, size_t jtom_index)
+    Bond& Topology::create_bond(size_t itom_index, size_t jtom_index)
     {
-        BondPtr bond = molcpp::new_bond(_atoms.at(itom_index), _atoms.at(jtom_index));
-        add_bond(bond);
+        if (itom_index == jtom_index)
+        {
+            auto msg = "Cannot connect atom index " + std::to_string(itom_index) + " to itself";
+            throw ValueError(msg);
+        }
+        if (itom_index > _atoms.size() || jtom_index > _atoms.size())
+        {
+            auto msg = "Cannot connect atom index " + std::to_string(itom_index) + " to " + std::to_string(jtom_index) + " because one of them is out of range";
+            throw IndexError(msg);
+        }
+        Atom &itom = _atoms[itom_index];
+        Atom &jtom = _atoms[jtom_index];
+        _bonds.emplace_back(itom, jtom);
         connect(itom_index, jtom_index);
-        return bond;
+        return _bonds.back();
     }
 
     void Topology::connect(size_t i, size_t j)
@@ -98,10 +93,10 @@ namespace molcpp
         _bondConnect.emplace_back(std::initializer_list<size_t>{i, j});
     }
 
-    const BondPtr Topology::get_bond(const AtomPtr &itom, const AtomPtr &jtom) const
+    Bond& Topology::get_bond(const Atom &itom, const Atom &jtom)
     {
-        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](BondPtr bond)
-                                   { return bond->get_itom() == itom && bond->get_jtom() == jtom; });
+        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](Bond bond)
+                                   { return bond.get_itom() == itom && bond.get_jtom() == jtom; });
         if (result != _bonds.end())
         {
             return *result;
@@ -112,7 +107,24 @@ namespace molcpp
         }
     }
 
-    bool Topology::del_bond(BondPtr bond)
+    Bond& Topology::get_bond(size_t itom_index, size_t jtom_index)
+    {
+        if (itom_index == jtom_index)
+        {
+            auto msg = "Cannot get bond with same atom index " + std::to_string(itom_index);
+            throw ValueError(msg);
+        }
+        if (itom_index > _atoms.size() || jtom_index > _atoms.size())
+        {
+            auto msg = "Cannot get bond with atom index " + std::to_string(itom_index) + " to " + std::to_string(jtom_index) + " because one of them is out of range";
+            throw IndexError(msg);
+        }
+        Atom &itom = _atoms[itom_index];
+        Atom &jtom = _atoms[jtom_index];
+        return get_bond(itom, jtom);
+    }
+
+    bool Topology::del_bond(Bond& bond)
     {
         auto result = std::find(_bonds.begin(), _bonds.end(), bond);
         if (result != _bonds.end())
@@ -125,10 +137,10 @@ namespace molcpp
             return false;
     }
 
-    bool Topology::del_bond(const AtomPtr &itom, const AtomPtr &jtom)
+    bool Topology::del_bond(const Atom &itom, const Atom &jtom)
     {
-        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](BondPtr bond)
-                                   { return bond->get_itom() == itom && bond->get_jtom() == jtom; });
+        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](Bond bond)
+                                   { return bond.get_itom() == itom && bond.get_jtom() == jtom; });
         if (result != _bonds.end())
         {
             _bonds.erase(result);
@@ -147,7 +159,7 @@ namespace molcpp
 
         for (size_t i = 0; i < get_natoms(); i++)
         {
-            _atoms[i]->set(key, value[i]);
+            _atoms[i].set(key, value[i]);
         }
     }
 
@@ -166,20 +178,19 @@ namespace molcpp
         int i = 0;
         for (auto& atom : get_atoms())
         {
-            auto _pos = xt::row(positions, i);
-            atom->set_position({_pos[0], _pos[1], _pos[2]});
+            atom.set_position(Vector3D(positions[i, 0], positions[i, 1], positions[i, 2]));
             i++;
         }
     }
 
-    const xt::xarray<double> Topology::get_positions() const
+    xt::xarray<double> Topology::get_positions()
     {
         auto natoms = get_natoms();
         std::vector<double> positions(natoms * 3);
         auto& atoms = get_atoms();
         for(size_t i = 0; i < natoms; i++)
         {
-            auto pos = atoms[i]->get_position();
+            auto pos = atoms[i].get_position();
             positions[i*3] = pos[0];
             positions[i*3+1] = pos[1];
             positions[i*3+2] = pos[2];
@@ -188,39 +199,32 @@ namespace molcpp
         return xt::adapt(positions, shape);
     }
 
-    // factory function
-
-    TopologyPtr new_topology()
+    Topology from_chemfiles(const chemfiles::Topology &chflTopo)
     {
-        return std::make_shared<Topology>();
-    }
-
-    TopologyPtr new_topology(const chemfiles::Topology &chflTopo)
-    {
-        auto topo = new_topology();
+        auto topo = Topology();
         for (auto chflAtom : chflTopo)
         {
-            auto atom = new_atom(chflAtom);
-            topo->add_atom(atom);
+            auto atom = from_chemfiles(chflAtom);
+            topo.add_atom(std::move(atom));
         }
 
-        auto atoms = topo->get_atoms();
+        auto atoms = topo.get_atoms();
         for (auto chflBond : chflTopo.bonds())
         {
-            topo->new_bond(chflBond[0], chflBond[1]);
+            topo.create_bond(chflBond[0], chflBond[1]);
         }
         return topo;
     }
 
-    chemfiles::Topology to_chemfiles(const TopologyPtr &topo)
+    chemfiles::Topology to_chemfiles(Topology &topo)
     {
         chemfiles::Topology chflTopo;
-        for (auto atom : topo->get_atoms())
+        for (auto atom : topo.get_atoms())
         {
             chflTopo.add_atom(to_chemfiles(atom));
         }
 
-        for (auto bond : topo->get_bond_connect())
+        for (auto bond : topo.get_bond_connect())
         {
             chflTopo.add_bond(bond[0], bond[1]);
         }

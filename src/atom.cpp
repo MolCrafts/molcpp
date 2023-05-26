@@ -4,14 +4,18 @@ namespace molcpp
 {
     Atom::Atom(const std::string& name, Vector3D pos) : _type{new_atomtype(name)}, _properties{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
     {
+        LOG_DEBUG("Atom created " );
     }
 
     Atom::Atom(const Atom& other) : _type{other._type}, _properties{other._properties}, _id{reinterpret_cast<size_t>(this)}, _pos{other._pos}
     {
+        
+        LOG_DEBUG("Atom cpoied " );
     }
 
     Atom::Atom(Atom&& other) : _type{std::move(other._type)}, _properties{std::move(other._properties)}, _id{other._id}, _pos{std::move(other._pos)}
     {
+        LOG_DEBUG("Atom moved " );
     }
 
     void Atom::set_type(const AtomTypePtr &type)
@@ -57,6 +61,11 @@ namespace molcpp
     const Vector3D & Atom::get_position() const
     {
         return _pos;
+    }
+
+    Atom& Atom::operator=(Atom&& other)
+    {
+        return other;
     }
 
     Atom from_chemfiles(const chemfiles::Atom& chflAtom)

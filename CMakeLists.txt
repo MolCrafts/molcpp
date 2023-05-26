@@ -26,12 +26,13 @@ add_library(molcpp)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 find_package(chemfiles QUIET)
+
 if(chemfiles_FOUND)
   message(STATUS "Chemfiles installed")
   target_include_directories(
     molcpp
     PUBLIC
-    ${chemfiles_INCLUDE_DIRS}      
+    ${chemfiles_INCLUDE_DIRS}
   )
 else()
   message(STATUS "Chemfiles not installed, compile from source code")
@@ -44,6 +45,7 @@ else()
 endif()
 
 find_package(xtensor QUIET)
+
 if(xtensor_FOUND)
   message(STATUS "xtensor installed")
   target_include_directories(
@@ -78,7 +80,6 @@ else()
   message(STATUS "BLAS VENDOR:    " ${BLA_VENDOR})
   message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
 
-
   add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
   add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
   add_subdirectory(${CMAKE_MODULE_PATH}/xtensor-blas)
@@ -95,10 +96,11 @@ target_sources(
   PRIVATE
   src/algo.cpp
   src/itemtype.cpp
+
   # src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
-  # src/topology.cpp
+  src/topology.cpp
 
   # src/element.cpp
   # src/frame.cpp
@@ -122,6 +124,7 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   message(STATUS "Compile molcpp and its testcases in debug mode")
   enable_testing() # enable_testing must at top cmakelists
   add_subdirectory(tests)
+
 # For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
