@@ -16,7 +16,7 @@ namespace molcpp
     public:
         /**
          * @brief Construct a new Atom object
-         * 
+         *
          */
         Atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
@@ -24,16 +24,16 @@ namespace molcpp
         Atom(const Atom&);
 
         // move constructor
-        Atom(Atom&&);
+        Atom(Atom&&) noexcept;
 
         Atom& operator=(Atom &&);
 
         /**
-         * @brief Get a property by key 
-         * 
-         * @tparam T 
-         * @param key 
-         * @return T 
+         * @brief Get a property by key
+         *
+         * @tparam T
+         * @param key
+         * @return T
          */
         template<typename T>
         T get(const std::string& key, T _default = T()) const
@@ -44,10 +44,10 @@ namespace molcpp
         };
 
         /**
-         * @brief 
-         * 
-         * @param key 
-         * @param value 
+         * @brief
+         *
+         * @param key
+         * @param value
          */
         void set(const std::string& key, const AtomProperty& value);
 
@@ -55,36 +55,36 @@ namespace molcpp
 
         /**
          * @brief Set the atomtype
-         * 
+         *
          */
         void set_type(const AtomTypePtr&);
-        
+
         /**
          * @brief Get the atomtype
-         * 
-         * @return const AtomTypePtr& 
+         *
+         * @return const AtomTypePtr&
          */
         const AtomTypePtr& get_type();
 
         /**
-         * @brief 
-         * 
-         * @return true 
-         * @return false 
+         * @brief
+         *
+         * @return true
+         * @return false
          */
         bool equal_to(const Atom&) const;
 
         /**
-         * @brief 
-         * 
-         * @return true 
-         * @return false 
+         * @brief
+         *
+         * @return true
+         * @return false
          */
         bool operator==(const Atom&) const;
 
         /**
          * @brief Get id of this atom
-         * 
+         *
          */
         const size_t get_id() const;
 
@@ -106,7 +106,7 @@ namespace molcpp
         AtomTypePtr _type;
         AtomPropertyDict _properties;
         size_t _id;
-        Vector3D _pos; 
+        Vector3D _pos;
     };
 
     // factory function

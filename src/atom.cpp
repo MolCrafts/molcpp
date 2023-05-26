@@ -9,11 +9,12 @@ namespace molcpp
 
     Atom::Atom(const Atom& other) : _type{other._type}, _properties{other._properties}, _id{reinterpret_cast<size_t>(this)}, _pos{other._pos}
     {
-        
+
         LOG_DEBUG("Atom cpoied " );
     }
 
-    Atom::Atom(Atom&& other) : _type{std::move(other._type)}, _properties{std::move(other._properties)}, _id{other._id}, _pos{std::move(other._pos)}
+    Atom::Atom(Atom&& other) noexcept : _type{std::move(other._type)}, _properties{std::move(other._properties)}, _id{other._id}, _pos{std::move(other._pos)}
+
     {
         LOG_DEBUG("Atom moved " );
     }
@@ -91,7 +92,7 @@ namespace molcpp
                 else throw std::runtime_error("Unsupported property type");
             }
         }
-        
+
         return atom;
 
     }
