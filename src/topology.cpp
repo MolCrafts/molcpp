@@ -13,32 +13,20 @@ namespace molcpp
 
     bool Topology::has_atom(Atom& atom)
     {
-        for(auto& a : _atoms)
-        {
-            if(a == atom)
-                return true;
-        }
-        return false;
+        auto results = std::find_if(_atoms.begin(), _atoms.end(), [&atom](Atom& a)
+                                    { return a.equal_to(atom); });
+        return results == _atoms.end() ? false : true;
     }
 
     Atom& Topology::create_atom(const std::string &name)
     {
         _atoms.emplace_back(name);
-        std::cout << _atoms.back().get_id() << std::endl;
         return _atoms.back();
     }
 
-    bool Topology::del_atom(Atom& atom)
+    void Topology::del_atom(Atom& atom)
     {
-        for(size_t i = 0; i<get_natoms(); i++)
-        {
-            if(_atoms[i] == atom)
-            {
-                _atoms.erase(_atoms.begin()+i);
-                return true;
-            }
-        }
-        return false;
+        std::erase(_atoms, atom);
     }
 
     AtomVec &Topology::get_atoms()

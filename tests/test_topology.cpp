@@ -16,17 +16,11 @@ namespace molcpp
         // add atom 
         auto atom1 = Atom();
         topology.add_atom(std::move(atom1));
-        std::cout << "A" << std::endl;
         EXPECT_TRUE(topology.has_atom(atom1));
-        std::cout << topology.get_atoms()[0].get_id() << " " << atom1.get_id() << std::endl;
-        std::cout << "B" << std::endl;
         EXPECT_EQ(topology.get_natoms(), 1);
 
         // create atom in place
-        std::cout << "C" << std::endl;
         auto& atom2 = topology.create_atom();
-        std::cout << topology.get_atoms()[0].get_id() << " " << atom1.get_id() << std::endl;
-        std::cout << topology.get_atoms()[1].get_id() << " " << atom2.get_id() << std::endl;
         EXPECT_TRUE(topology.has_atom(atom2));
 
         // // test natoms
@@ -34,9 +28,11 @@ namespace molcpp
         EXPECT_EQ(topology.get_atoms().size(), 2);
 
         // // delete atoms
-        EXPECT_TRUE(topology.del_atom(atom1));
+        topology.del_atom(atom1);
         EXPECT_FALSE(topology.has_atom(atom1));
-        EXPECT_TRUE(topology.del_atom(atom2));
+        EXPECT_EQ(topology.get_natoms(), 1);
+        topology.del_atom(atom2);
+        EXPECT_FALSE(topology.has_atom(atom2));
         EXPECT_EQ(topology.get_natoms(), 0);
     }
 

@@ -292,6 +292,19 @@ namespace molcpp
             return m_map.at(key);
         }
 
+        // operator=
+        Dict &operator=(const Dict &other)
+        {
+            m_map = other.m_map;
+            return *this;
+        }
+
+        Dict& operator=(const Dict&& rhs)
+        {
+            m_map = std::move(rhs.m_map);
+            return *this;
+        }
+
         /**
          * @brief Returns a read/write iterator that points to the first pair in the map
          *

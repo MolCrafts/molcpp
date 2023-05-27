@@ -49,7 +49,7 @@ namespace molcpp
              * @brief 
              * 
              */
-            bool del_atom(Atom&);
+            void del_atom(Atom&);
             
             /**
              * @brief Create a 

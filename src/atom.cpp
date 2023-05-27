@@ -64,9 +64,26 @@ namespace molcpp
         return _pos;
     }
 
-    Atom& Atom::operator=(Atom&& other)
+    Atom& Atom::operator=(const Atom& rhs)
     {
-        return other;
+        if (this != &rhs){
+            _type = rhs._type;
+            _properties = rhs._properties;
+            _id = rhs._id;
+            _pos = rhs._pos;
+        }
+        return *this;
+    }
+
+    Atom& Atom::operator=(Atom&& rhs) noexcept
+    {
+        if (this != &rhs){
+            _type = std::move(rhs._type);
+            _properties = std::move(rhs._properties);
+            _id = rhs._id;
+            _pos = std::move(rhs._pos);
+        }
+        return *this;
     }
 
     Atom from_chemfiles(const chemfiles::Atom& chflAtom)
