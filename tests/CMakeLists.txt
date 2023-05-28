@@ -23,7 +23,7 @@ endif()
 # enable_testing()
 add_executable(
   molcpp_test
-  test_algo.cpp
+  test_graph.cpp
   test_dict.cpp
   # test_itemtype.cpp
   # test_forcefield.cpp

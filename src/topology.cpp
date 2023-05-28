@@ -94,8 +94,8 @@ namespace molcpp
     Bond *Topology::create_bond(Atom *itom, Atom *jtom)
     {
         AtomVec atoms = get_atoms();
-        auto i = std::find(atoms.begin(), atoms.end(), itom);
-        auto j = std::find(atoms.begin(), atoms.end(), jtom);
+        // auto i = std::find(atoms.begin(), atoms.end(), itom);
+        // auto j = std::find(atoms.begin(), atoms.end(), jtom);
         // connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
 
         _bonds.emplace_back(new Bond(itom, jtom));
