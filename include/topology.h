@@ -12,14 +12,15 @@
 
 namespace molcpp
 {
-
+    class Topology;  // forward declearation
     using AtomVec = std::vector<Atom *>;
     using BondVec = std::vector<Bond *>;
+    using TopoVec = std::vector<Topology *>;
     using AtomTopoMask = std::vector<size_t>;
     using BondConnect = std::vector<std::vector<size_t>>;
-
     class Topology
     {
+
 
     public:
         /**
@@ -31,7 +32,7 @@ namespace molcpp
         ~Topology();
 
         /**
-         * @brief Add an exsit atom to the topology
+         * @brief Add a pointer of exsit atom to this topology
          *
          * @return true
          * @return false
@@ -53,7 +54,7 @@ namespace molcpp
         void del_atom(Atom *);
 
         /**
-         * @brief Create a
+         * @brief Create an atom in this topology
          *
          * @return AtomPtr
          */
@@ -61,11 +62,11 @@ namespace molcpp
         // AtomPtr new_atom(const chemfiles::Atom &);
 
         /**
-         * @brief Get the atoms object
+         * @brief Get the atoms from this topology and its sub-topologies
          *
          * @return AtomVec
          */
-        AtomVec &get_atoms();
+        AtomVec get_atoms();
 
         /**
          * @brief
@@ -82,6 +83,8 @@ namespace molcpp
          * @return false
          */
         bool has_bond(Bond *);
+
+        bool has_bond(Atom*, Atom*);
 
         /**
          * @brief Create a bond object
@@ -118,21 +121,21 @@ namespace molcpp
          *
          * @return BondVec
          */
-        BondVec get_bonds() const { return _bonds; }
+        BondVec get_bonds() const;
 
         /**
          * @brief Get the natoms object
          *
          * @return size_t
          */
-        size_t get_natoms() const { return _atoms.size(); }
+        size_t get_natoms() const;
 
         /**
          * @brief Get the nbonds object
          *
          * @return size_t
          */
-        size_t get_nbonds() const { return _bonds.size(); }
+        size_t get_nbonds() const;
 
         /**
          * @brief
@@ -166,9 +169,10 @@ namespace molcpp
         const BondConnect get_bond_connect() const { return _bondConnect; }
 
     private:
+
         AtomVec _atoms;
-        AtomTopoMask _atomTopoMask;
         BondVec _bonds;
+        TopoVec _topos;
 
         BondConnect _bondConnect;
     };

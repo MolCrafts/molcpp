@@ -2,7 +2,7 @@
 
 namespace molcpp
 {
-    Topology::Topology() : _atoms{}, _atomTopoMask{}, _bonds{}, _bondConnect{}
+    Topology::Topology() : _atoms{}, _bonds{}, _topos{}, _bondConnect{}
     {
     }
 
@@ -25,9 +25,16 @@ namespace molcpp
 
     bool Topology::has_atom(Atom *atom)
     {
-        auto results = std::find_if(_atoms.begin(), _atoms.end(), [atom](Atom* a)
-                                    { return a->equal_to(atom); });
-        return results == _atoms.end() ? false : true;
+        auto is_find_in_atoms = std::find_if(_atoms.begin(), _atoms.end(), [atom](Atom *a)
+                                             { return a->equal_to(atom); });
+        if (is_find_in_atoms == _atoms.end())
+        {
+            auto is_find_in_sub_topo = std::find_if(_topos.begin(), _topos.end(), [atom](Topology *t)
+                                                    { return t->has_atom(atom); });
+            return is_find_in_sub_topo == _topos.end() ? false : true;
+        }
+        else
+            return true;
     }
 
     Atom *Topology::create_atom(const std::string &name, Vector3D pos)
@@ -38,21 +45,29 @@ namespace molcpp
 
     void Topology::del_atom(Atom *atom)
     {
-        
-        for (auto bond : _bonds)
+        size_t n = std::erase_if(_atoms, [atom](Atom *a)
+                                 { return a->equal_to(atom); });
+        if (n == 0)
         {
-            if (bond->get_itom() == atom || bond->get_jtom() == atom)
+            for (auto topo : _topos)
             {
-                delete bond;
+                size_t o_natoms = topo->get_natoms();
+                topo->del_atom(atom);
+                if (o_natoms != topo->get_natoms())
+                    break;
             }
         }
-
-        std::erase(_atoms, atom);
     }
 
-    AtomVec &Topology::get_atoms()
+    AtomVec Topology::get_atoms()
     {
-        return _atoms;
+        AtomVec tmp(_atoms);
+        for (auto topo : _topos)
+        {
+            AtomVec sub_atoms = topo->get_atoms();
+            tmp.insert(tmp.end(), sub_atoms.begin(), sub_atoms.end());
+        }
+        return tmp;
     }
 
     void Topology::add_bond(Bond *bond)
@@ -62,16 +77,26 @@ namespace molcpp
 
     bool Topology::has_bond(Bond *bond)
     {
-        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond* b)
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond *b)
+                                    { return b == bond; });
+        return results == _bonds.end() ? false : true;
+    }
+
+    bool Topology::has_bond(Atom *itom, Atom *jtom)
+    {
+        auto trial_bond = molcpp::create_bond(itom, jtom);
+        Bond* bond = trial_bond.get();
+        auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond *b)
                                     { return b == bond; });
         return results == _bonds.end() ? false : true;
     }
 
     Bond *Topology::create_bond(Atom *itom, Atom *jtom)
     {
-        auto i = std::find(_atoms.begin(), _atoms.end(), itom);
-        auto j = std::find(_atoms.begin(), _atoms.end(), jtom);
-        connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
+        AtomVec atoms = get_atoms();
+        auto i = std::find(atoms.begin(), atoms.end(), itom);
+        auto j = std::find(atoms.begin(), atoms.end(), jtom);
+        // connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
 
         _bonds.emplace_back(new Bond(itom, jtom));
         return _bonds.back();
@@ -79,10 +104,10 @@ namespace molcpp
 
     Bond *Topology::create_bond(size_t itom_index, size_t jtom_index)
     {
-        connect(itom_index, jtom_index);
-
-        Atom *itom = _atoms[itom_index];
-        Atom *jtom = _atoms[jtom_index];
+        // connect(itom_index, jtom_index);
+        AtomVec atoms = get_atoms();
+        Atom *itom = atoms[itom_index];
+        Atom *jtom = atoms[jtom_index];
         _bonds.emplace_back(new Bond(itom, jtom));
         return _bonds.back();
     }
@@ -110,29 +135,73 @@ namespace molcpp
 
     Bond *Topology::get_bond(Atom *itom, Atom *jtom)
     {
-        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](Bond* bond)
-                                   { return bond->get_itom() == itom && bond->get_jtom() == jtom; });
-        if (result != _bonds.end())
+        auto trial_bond = molcpp::create_bond(itom, jtom);
+        Bond* bond = trial_bond.get();
+        auto is_find_in_bonds = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond *b)
+                                             { return b->equal_to(bond); });
+        if (is_find_in_bonds == _bonds.end())
         {
-            return *result;
+            auto is_find_in_sub_topo = std::find_if(_topos.begin(), _topos.end(), [bond](Topology *t)
+                                                    { return t->has_bond(bond); });
+            if (is_find_in_sub_topo == _topos.end())
+                throw KeyError("Cannot find bond");
+            else
+                return (*is_find_in_sub_topo)->get_bond(itom, jtom);
         }
         else
-        {
-            throw KeyError("Bond not found");
-        }
+            return *is_find_in_bonds;
     }
 
     Bond *Topology::get_bond(size_t itom_index, size_t jtom_index)
     {
-        check_connect(itom_index, jtom_index);
-        Atom *itom = _atoms[itom_index];
-        Atom *jtom = _atoms[jtom_index];
+        // check_connect(itom_index, jtom_index);
+        AtomVec atoms = get_atoms();
+        Atom *itom = atoms[itom_index];
+        Atom *jtom = atoms[jtom_index];
         return get_bond(itom, jtom);
     }
 
-    void Topology::del_bond(Bond *bond)
+    BondVec Topology::get_bonds() const
     {
-        std::erase(_bonds, bond);
+        BondVec tmp(_bonds);
+        for (auto topo : _topos)
+        {
+            BondVec sub_bonds = topo->get_bonds();
+            tmp.insert(tmp.end(), sub_bonds.begin(), sub_bonds.end());
+        }
+        return tmp;
+    }
+
+    size_t Topology::get_nbonds() const
+    {
+        size_t nbonds = _bonds.size();
+        for (auto topo : _topos)
+            nbonds += topo->get_nbonds();
+        return nbonds;
+    }
+
+    size_t Topology::get_natoms() const
+    {
+        size_t natoms = _atoms.size();
+        for (auto topo : _topos)
+            natoms += topo->get_natoms();
+        return natoms;
+    }
+
+    void Topology::del_bond(Bond *bond)
+    {   
+        size_t n = std::erase_if(_bonds, [bond](Bond *b)
+                                 { return b->equal_to(bond); });
+        if (n == 0)
+        {
+            for (auto topo : _topos)
+            {
+                size_t o_nbonds = topo->get_nbonds();
+                topo->del_bond(bond);
+                if (o_nbonds != topo->get_nbonds())
+                    break;
+            }
+        }
     }
 
     void Topology::del_bond(Atom *itom, Atom *jtom)
@@ -176,7 +245,7 @@ namespace molcpp
     {
         auto natoms = get_natoms();
         std::vector<double> positions(natoms * 3);
-        auto &atoms = get_atoms();
+        auto atoms = get_atoms();
         for (size_t i = 0; i < natoms; i++)
         {
             auto pos = atoms[i]->get_position();
