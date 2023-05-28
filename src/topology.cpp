@@ -210,6 +210,18 @@ namespace molcpp
         del_bond(bond.get());
     }
 
+    Topology *Topology::create_topology()
+    {
+        Topology *topo = new Topology();
+        _topos.emplace_back(topo);
+        return topo;
+    }
+
+    void Topology::add_topology(Topology* topo)
+    {
+        _topos.emplace_back(topo);
+    }
+
     void Topology::set(const std::string &key, const xt::xarray<AtomProperty> &value)
     {
         if (value.size() != get_natoms())

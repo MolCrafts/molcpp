@@ -60,6 +60,90 @@ namespace molcpp
         EXPECT_EQ(topology->get_nbonds(), 0);
     }
 
+    TEST(TestSubTopo, test_atom_manage)
+    {
+        auto topology = create_topology();
+        auto subtopo = topology->create_topology();
+
+        Atom* atom1 = topology->create_atom();
+        EXPECT_TRUE(topology->has_atom(atom1));
+        EXPECT_EQ(topology->get_natoms(), 1);
+
+        Atom* atom2 = subtopo->create_atom();
+        EXPECT_TRUE(topology->has_atom(atom2));
+
+        EXPECT_EQ(topology->get_natoms(), 2);
+
+        topology->del_atom(atom1);
+        EXPECT_FALSE(topology->has_atom(atom1));
+        EXPECT_EQ(topology->get_natoms(), 1);
+        topology->del_atom(atom2);
+        EXPECT_FALSE(topology->has_atom(atom2));
+        EXPECT_EQ(topology->get_natoms(), 0);
+    }
+
+    TEST(TestSubTopo, test_bond_manage)
+    {
+        auto topology = create_topology();
+        auto subtopo = topology->create_topology();
+
+        // 1 - 2 - 3 - 4
+        Atom* atom1 = topology->create_atom("atom1");
+        Atom* atom2 = topology->create_atom("atom2");
+        Bond* bond1 = topology->create_bond(atom1, atom2);
+
+        Atom* atom3 = subtopo->create_atom("atom3");
+        Atom* atom4 = subtopo->create_atom("atom4");
+        Bond* bond2 = subtopo->create_bond(atom3, atom4);
+
+        Bond* bond3 = topology->create_bond(atom2, atom3);
+
+        EXPECT_EQ(topology->get_nbonds(), 3);
+        EXPECT_EQ(subtopo->get_nbonds(), 1);
+
+        topology->del_bond(bond1);
+        EXPECT_FALSE(topology->has_bond(bond1));
+        EXPECT_EQ(topology->get_nbonds(), 2);
+
+        topology->del_bond(bond2);
+        EXPECT_FALSE(subtopo->has_bond(bond2));
+        EXPECT_EQ(subtopo->get_nbonds(), 0);
+        EXPECT_EQ(topology->get_nbonds(), 1);
+    }
+
+    TEST(TestSubTopo, test_topo_manage)
+    {
+        auto top = create_topology();
+        auto sub1 = create_topology();
+        auto sub2 = create_topology();
+        
+        // 1 \       / 5
+        // |   3 - 4   |
+        // 2 /       \ 6
+
+        Atom* atom1 = sub1->create_atom();
+        Atom* atom2 = sub1->create_atom();
+        Atom* atom3 = sub1->create_atom();
+        Bond* bond1 = sub1->create_bond(atom1, atom3);
+        Bond* bond2 = sub1->create_bond(atom2, atom3);
+        Bond* bond3 = sub1->create_bond(atom1, atom2);
+
+        Atom* atom4 = sub2->create_atom();
+        Atom* atom5 = sub2->create_atom();
+        Atom* atom6 = sub2->create_atom();
+        Bond* bond4 = sub1->create_bond(atom4, atom5);
+        Bond* bond5 = sub1->create_bond(atom5, atom6);
+        Bond* bond6 = sub1->create_bond(atom6, atom4);
+
+        Bond* bond7 = sub1->create_bond(atom3, atom4);
+
+        top->add_topology(sub1.release());
+        top->add_topology(sub2.release());
+
+        EXPECT_EQ(top->get_nbonds(), 7);
+
+    }
+
     // TEST(TestTopology, test_connect)
     // {
     //     auto topology = create_topology();

@@ -149,6 +149,10 @@ namespace molcpp
          */
         void del_bond(Atom *, Atom *);
 
+        Topology* create_topology();
+
+        void add_topology(Topology*);
+
         template <typename T>
         std::vector<T> get(const std::string &name) const
         {
