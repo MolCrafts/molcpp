@@ -109,6 +109,10 @@ namespace molcpp
         EXPECT_FALSE(subtopo->has_bond(bond2));
         EXPECT_EQ(subtopo->get_nbonds(), 0);
         EXPECT_EQ(topology->get_nbonds(), 1);
+
+        topology->del_bond(bond3);
+        EXPECT_FALSE(topology->has_bond(bond3));
+        EXPECT_EQ(topology->get_nbonds(), 0);
     }
 
     TEST(TestSubTopo, test_topo_manage)
@@ -124,18 +128,18 @@ namespace molcpp
         Atom* atom1 = sub1->create_atom();
         Atom* atom2 = sub1->create_atom();
         Atom* atom3 = sub1->create_atom();
-        Bond* bond1 = sub1->create_bond(atom1, atom3);
-        Bond* bond2 = sub1->create_bond(atom2, atom3);
-        Bond* bond3 = sub1->create_bond(atom1, atom2);
+        sub1->create_bond(atom1, atom3);
+        sub1->create_bond(atom2, atom3);
+        sub1->create_bond(atom1, atom2);
 
         Atom* atom4 = sub2->create_atom();
         Atom* atom5 = sub2->create_atom();
         Atom* atom6 = sub2->create_atom();
-        Bond* bond4 = sub1->create_bond(atom4, atom5);
-        Bond* bond5 = sub1->create_bond(atom5, atom6);
-        Bond* bond6 = sub1->create_bond(atom6, atom4);
+        sub1->create_bond(atom4, atom5);
+        sub1->create_bond(atom5, atom6);
+        sub1->create_bond(atom6, atom4);
 
-        Bond* bond7 = sub1->create_bond(atom3, atom4);
+        sub1->create_bond(atom3, atom4);
 
         top->add_topology(sub1.release());
         top->add_topology(sub2.release());

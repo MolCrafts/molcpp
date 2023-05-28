@@ -170,6 +170,10 @@ namespace molcpp
         EXPECT_EQ(d.get<int>("int"), 2);
         d.set("double", 2.718);
         EXPECT_EQ(d.get<double>("double"), 2.718);
+
+        // test double set
+        d.set("double", 1.11);
+        EXPECT_EQ(d.get<double>("double"), 1.11);
     }
 
     TEST(TestDict, test_key_out_found)

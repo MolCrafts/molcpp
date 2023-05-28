@@ -16,19 +16,24 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-if(BUILD_SHARED_LIBS)
+if(MOLCPP_BUILD_SHARED)
+  add_library(molcpp SHARED)
+else()
+  add_library(molcpp STATIC)
   set(POSITION_INDEPENDENT_CODE ON)
 endif()
-
-add_library(molcpp)
 
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 find_package(chemfiles QUIET)
-
 if(chemfiles_FOUND)
   message(STATUS "Chemfiles installed")
+  target_include_directories(
+    molcpp
+    PUBLIC
+    ${chemfiles_INCLUDE_DIRS}      
+  )
   target_include_directories(
     molcpp
     PUBLIC
@@ -45,9 +50,13 @@ else()
 endif()
 
 find_package(xtensor QUIET)
-
 if(xtensor_FOUND)
   message(STATUS "xtensor installed")
+  target_include_directories(
+    molcpp
+    PUBLIC
+    ${xtensor_INCLUDE_DIRS}
+  )
   target_include_directories(
     molcpp
     PUBLIC
@@ -122,9 +131,16 @@ target_link_libraries(
 # For debug and test
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
   message(STATUS "Compile molcpp and its testcases in debug mode")
+  target_compile_options(molcpp
+    PUBLIC
+    -O0
+    -Wall
+    -g
+  )
   enable_testing() # enable_testing must at top cmakelists
   add_subdirectory(tests)
 
+# For release
 # For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
