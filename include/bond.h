@@ -8,8 +8,6 @@
 namespace molcpp
 {
 
-    class Atom;
-
     class Bond
     {
 
@@ -24,7 +22,7 @@ namespace molcpp
         Bond(const Bond&);
 
         // move constructor
-        Bond(Bond&&);
+        Bond(Bond&&) noexcept;
 
         /**
          * @brief Get the itom

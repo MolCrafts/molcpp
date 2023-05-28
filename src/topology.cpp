@@ -112,32 +112,15 @@ namespace molcpp
         return get_bond(itom, jtom);
     }
 
-    bool Topology::del_bond(Bond& bond)
+    void Topology::del_bond(Bond& bond)
     {
-        auto result = std::find(_bonds.begin(), _bonds.end(), bond);
-        if (result != _bonds.end())
-        {
-
-            _bonds.erase(result);
-            return true;
-        }
-        else
-            return false;
+        std::erase(_bonds, bond);
     }
 
-    bool Topology::del_bond(const Atom &itom, const Atom &jtom)
+    void Topology::del_bond(Atom &itom, Atom &jtom)
     {
-        auto result = std::find_if(_bonds.begin(), _bonds.end(), [itom, jtom](Bond bond)
-                                   { return bond.get_itom() == itom && bond.get_jtom() == jtom; });
-        if (result != _bonds.end())
-        {
-            _bonds.erase(result);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        auto bond = Bond(itom, jtom);
+        std::erase(_bonds, bond);
     }
 
     void Topology::set(const std::string &key, const xt::xarray<AtomProperty> &value)
@@ -151,7 +134,7 @@ namespace molcpp
         }
     }
 
-    void Topology::set_positions(const xt::xarray<double> &positions)
+    void Topology::set_positions(xt::xarray<double> &positions)
     {
         if (positions.shape().size() == 2)
         {
@@ -166,7 +149,7 @@ namespace molcpp
         int i = 0;
         for (auto& atom : get_atoms())
         {
-            atom.set_position(Vector3D(positions[i, 0], positions[i, 1], positions[i, 2]));
+            atom.set_position(Vector3D(positions(i, 0), positions(i, 1), positions(i, 2)));
             i++;
         }
     }

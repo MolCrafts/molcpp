@@ -40,30 +40,25 @@ namespace molcpp
     {
         auto topology = Topology();
 
-        // add bond           
-        auto atom1 = Atom("atom1");
-        auto atom2 = Atom("atom2");
-        EXPECT_FALSE(atom1.equal_to(atom2));
-        auto bond1 = Bond(atom1, atom2);
-        topology.add_atom(std::move(atom1));
-        topology.add_atom(std::move(atom2));
-        topology.add_bond(std::move(bond1));
-        EXPECT_TRUE(topology.has_bond(bond1));
+        // create bond
+        auto& atom1 = topology.create_atom("atom1");
+        auto& atom2 = topology.create_atom("atom2");
+        auto& bond1 = topology.create_bond(atom1, atom2);
 
-        // create bond in place
-        auto atom3 = topology.create_atom("atom3");
-        auto atom4 = topology.create_atom("atom4");
-        EXPECT_FALSE(atom3.equal_to(atom4));
-        auto bond2 = topology.create_bond(atom3, atom4);
+        auto& atom3 = topology.create_atom("atom3");
+        auto& atom4 = topology.create_atom("atom4");
+        auto& bond2 = topology.create_bond(2, 3);
 
-        // test nbonds
+        // // test nbonds
         EXPECT_EQ(topology.get_nbonds(), 2);
         EXPECT_EQ(topology.get_bonds().size(), 2);
 
-        // delete bonds
-        EXPECT_TRUE(topology.del_bond(bond1));
+        // // delete bonds
+        topology.del_bond(bond1);
         EXPECT_FALSE(topology.has_bond(bond1));
-        EXPECT_TRUE(topology.del_bond(bond2));
+        EXPECT_EQ(topology.get_nbonds(), 1);
+        topology.del_bond(atom3, atom4);
+        EXPECT_FALSE(topology.has_bond(bond2));
         EXPECT_EQ(topology.get_nbonds(), 0);
     }
 
@@ -92,14 +87,14 @@ namespace molcpp
         auto topo = Topology();
         topo.create_atom("H");
         topo.create_atom("C");
-        auto positions = xt::xarray<double>({ {0, 0, 0}, {1, 1, 1} });
+        auto positions = xt::xarray<double>({ {1, 1, 1}, {2, 2, 2} });
         topo.set_positions(positions);
         xt::xarray<double> get_positions = topo.get_positions();
 
         EXPECT_EQ(get_positions.shape()[0], 2);
         EXPECT_EQ(get_positions.shape()[1], 3);
-        EXPECT_EQ(xt::row(get_positions, 0), xt::xarray<double>({0, 0, 0}));
-        EXPECT_EQ(xt::row(get_positions, 1), xt::xarray<double>({1, 1, 1}));
+        EXPECT_EQ(xt::row(get_positions, 0), xt::xarray<double>({1, 1, 1}));
+        EXPECT_EQ(xt::row(get_positions, 1), xt::xarray<double>({2, 2, 2}));
     }
 
     TEST(TestTopology, test_from_chemfiles)

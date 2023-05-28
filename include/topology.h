@@ -136,13 +136,13 @@ namespace molcpp
              * @brief 
              * 
              */
-            bool del_bond(Bond&);
+            void del_bond(Bond&);
 
             /**
              * @brief 
              * 
              */
-            bool del_bond(const Atom&, const Atom& );
+            void del_bond(Atom&, Atom&);
 
             template<typename T>
             std::vector<T> get(const std::string& name) const
@@ -157,7 +157,7 @@ namespace molcpp
 
             void set(const std::string&, const xt::xarray<AtomProperty>&);
 
-            void set_positions(const xt::xarray<double>&);
+            void set_positions(xt::xarray<double>&);
 
             xt::xarray<double> get_positions();
 

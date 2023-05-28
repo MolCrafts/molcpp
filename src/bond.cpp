@@ -13,7 +13,7 @@ namespace molcpp
 
     }
 
-    Bond::Bond(Bond&& other) : _itom{other._itom}, _jtom{other._jtom}, _type{std::move(other._type)}, _properties{std::move(other._properties)}
+    Bond::Bond(Bond&& other) noexcept : _itom{other._itom}, _jtom{other._jtom}, _type{std::move(other._type)}, _properties{std::move(other._properties)}
     {
 
     }
