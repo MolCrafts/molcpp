@@ -78,6 +78,11 @@ namespace molcpp
 
         EXPECT_TRUE(a1->equal_to(a1.get()));
         EXPECT_FALSE(a1->equal_to(a2.get()));
+
+        auto a3 = new Atom();
+        auto a4 = new Atom();
+        EXPECT_TRUE(a3 == a3);
+        EXPECT_FALSE(a3 == a4);
     }
 
     TEST(TestAtom, test_from_chemfiles)

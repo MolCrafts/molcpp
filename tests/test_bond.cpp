@@ -44,6 +44,8 @@ namespace molcpp{
 
         EXPECT_TRUE(b1->equal_to(b1.get()));
         EXPECT_FALSE(b1->equal_to(b2.get()));
+
+        EXPECT_TRUE(b1.get() == b1.get());
     }
 
     TEST(TestBond, test_set_get)

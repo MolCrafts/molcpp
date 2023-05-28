@@ -117,7 +117,7 @@ namespace molcpp
 
     // factory function
     std::unique_ptr<Atom> from_chemfiles(const chemfiles::Atom& chflAtom);
-    chemfiles::Atom& to_chemfiles(Atom*);
+    chemfiles::Atom to_chemfiles(Atom*);
     std::unique_ptr<Atom> create_atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
 }

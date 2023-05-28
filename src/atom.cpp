@@ -126,12 +126,12 @@ namespace molcpp
         return atom;
     }
 
-    chemfiles::Atom& to_chemfiles(const Atom &atom)
+    chemfiles::Atom to_chemfiles(Atom* atom)
     {
-        chemfiles::Atom chflAtom(atom.get<std::string>("name", ""));
-        chflAtom.set_charge(atom.get<double>("charge", 0.0));
-        chflAtom.set_mass(atom.get<double>("mass", 0.0));
-        chflAtom.set_type(atom.get<std::string>("type", ""));
+        chemfiles::Atom chflAtom(atom->get<std::string>("name", ""));
+        chflAtom.set_charge(atom->get<double>("charge", 0.0));
+        chflAtom.set_mass(atom->get<double>("mass", 0.0));
+        chflAtom.set_type(atom->get<std::string>("type", ""));
 
         return chflAtom;
     }
