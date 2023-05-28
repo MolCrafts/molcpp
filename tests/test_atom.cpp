@@ -71,6 +71,15 @@ namespace molcpp
         EXPECT_FALSE(a3 == a4);
     }
 
+    TEST(TestAtom, test_raw_ptr_equality)
+    {
+        auto a1 = create_atom();
+        auto a2 = create_atom();
+
+        EXPECT_TRUE(a1->equal_to(a1.get()));
+        EXPECT_FALSE(a1->equal_to(a2.get()));
+    }
+
     TEST(TestAtom, test_from_chemfiles)
     {
         auto chflAtom = chemfiles::Atom("tAtom", "C");
@@ -78,11 +87,11 @@ namespace molcpp
         chflAtom.set_charge(1.0);
         chflAtom.set("full_name", "testAtom");
         auto atom = from_chemfiles(chflAtom);
-        EXPECT_EQ(atom.get<std::string>("name"), "tAtom");
-        EXPECT_EQ(atom.get<std::string>("type"), "C");
-        EXPECT_EQ(atom.get<double>("mass"), 12.0);
-        EXPECT_EQ(atom.get<double>("charge"), 1.0);
-        EXPECT_EQ(atom.get<std::string>("full_name"), "testAtom");
+        EXPECT_EQ(atom->get<std::string>("name"), "tAtom");
+        EXPECT_EQ(atom->get<std::string>("type"), "C");
+        EXPECT_EQ(atom->get<double>("mass"), 12.0);
+        EXPECT_EQ(atom->get<double>("charge"), 1.0);
+        EXPECT_EQ(atom->get<std::string>("full_name"), "testAtom");
     }
 
     TEST(TestAtom, test_pos)

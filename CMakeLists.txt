@@ -100,7 +100,7 @@ target_sources(
   # src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
-  src/topology.cpp
+  # src/topology.cpp
 
   # src/element.cpp
   # src/frame.cpp

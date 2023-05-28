@@ -3,7 +3,7 @@
 namespace molcpp
 {
 
-    Bond::Bond(Atom& itom, Atom& jtom) : _itom{itom}, _jtom{jtom} 
+    Bond::Bond(Atom* itom, Atom* jtom) : _itom{itom}, _jtom{jtom} 
     {
 
     }
@@ -18,12 +18,18 @@ namespace molcpp
 
     }
 
-    Atom& Bond::get_itom() const
+    Bond::~Bond()
+    {
+        // Bond doesn't need to delete _itom and _jtom
+        // It must be delete from atom container
+    }
+
+    Atom* Bond::get_itom()
     {
         return _itom;
     }
 
-    Atom& Bond::get_jtom() const
+    Atom* Bond::get_jtom()
     {
         return _jtom;
     }
@@ -38,18 +44,18 @@ namespace molcpp
         _type = type;
     }
 
-    bool Bond::equal_to(const Bond& other) const
+    bool Bond::equal_to(Bond* rhs)
     {
-        Atom& itom = get_itom();
-        Atom& jtom = get_jtom();
-        Atom& other_itom = other.get_itom();
-        Atom& other_jtom = other.get_jtom();
-        return (itom == other_itom && jtom == other_jtom) || (itom == other_jtom && jtom == other_itom);
+        Atom* itom = get_itom();
+        Atom* jtom = get_jtom();
+        Atom* rhs_itom = rhs->get_itom();
+        Atom* rhs_jtom = rhs->get_jtom();
+        return (itom->equal_to(rhs_itom) && jtom->equal_to(rhs_jtom)) || (itom->equal_to(rhs_jtom) && jtom->equal_to(rhs_itom));
     }
 
-    bool Bond::operator==(const Bond &other) const
+    bool Bond::operator==(Bond* rhs)
     {
-        return equal_to(other);
+        return equal_to(rhs);
     }
 
     BondProperty &Bond::operator[](const std::string &key)
@@ -65,6 +71,11 @@ namespace molcpp
     Bond& Bond::operator=(Bond&& other)
     {
         return other;
+    }
+
+    std::unique_ptr<Bond> create_bond(Atom* itom, Atom* jtom)
+    {
+        return std::make_unique<Bond>(itom, jtom);
     }
 
 }

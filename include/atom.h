@@ -26,6 +26,8 @@ namespace molcpp
         // move constructor
         Atom(Atom&&) noexcept;
 
+        ~Atom();
+
         Atom& operator=(const Atom &);
         Atom& operator=(Atom &&) noexcept;
 
@@ -73,7 +75,9 @@ namespace molcpp
          * @return true
          * @return false
          */
-        bool equal_to(const Atom&) const;
+        bool equal_to(Atom*);
+
+        bool equal_to(const Atom&);
 
         /**
          * @brief
@@ -81,13 +85,14 @@ namespace molcpp
          * @return true
          * @return false
          */
-        bool operator==(const Atom&) const;
+        bool operator==(Atom*);
+        bool operator==(const Atom&);
 
         /**
          * @brief Get id of this atom
          *
          */
-        const size_t get_id() const;
+        size_t get_id() const;
 
         void set_position(const Vector3D& pos);
 
@@ -111,7 +116,8 @@ namespace molcpp
     };
 
     // factory function
-    Atom from_chemfiles(const chemfiles::Atom& chflAtom);
-    chemfiles::Atom to_chemfiles(const Atom& atom);
+    std::unique_ptr<Atom> from_chemfiles(const chemfiles::Atom& chflAtom);
+    chemfiles::Atom& to_chemfiles(Atom*);
+    std::unique_ptr<Atom> create_atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
 }

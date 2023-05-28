@@ -16,7 +16,7 @@ namespace molcpp
          * @brief Construct a new Bond object
          *
          */
-        Bond(Atom&, Atom&);
+        Bond(Atom*, Atom*);
 
         // copy constructor
         Bond(const Bond&);
@@ -24,19 +24,21 @@ namespace molcpp
         // move constructor
         Bond(Bond&&) noexcept;
 
+        ~Bond();
+
         /**
          * @brief Get the itom
          *
          * @return Atom
          */
-        Atom& get_itom() const;
+        Atom* get_itom();
 
         /**
          * @brief Get the jtom
          *
          * @return Atom
          */
-        Atom& get_jtom() const;
+        Atom* get_jtom();
 
         /**
          * @brief Get the bondtype
@@ -55,7 +57,7 @@ namespace molcpp
          * @brief
          *
          */
-        bool equal_to(const Bond &) const;
+        bool equal_to(Bond*);
 
         /**
          * @brief Compare two BondPtr
@@ -64,7 +66,7 @@ namespace molcpp
          * @return true
          * @return false
          */
-        bool operator==(const Bond &) const;
+        bool operator==(Bond*);
 
         /**
          * @brief get BondProperty
@@ -101,11 +103,12 @@ namespace molcpp
         Bond& operator=(Bond &&);
 
     private:
-        Atom& _itom;
-        Atom& _jtom;
+        Atom* _itom;
+        Atom* _jtom;
         BondTypePtr _type;
         BondPropertyDict _properties;
     };
 
+    std::unique_ptr<Bond> create_bond(Atom*, Atom*);
 
 }
