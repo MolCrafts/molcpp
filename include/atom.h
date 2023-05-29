@@ -2,7 +2,7 @@
 #include "algo.h"
 #include "dict.h"
 #include "itemtype.h"
-#include "types.hpp"
+#include "linalg.hpp"
 #include <vector>
 #include <memory>
 #include <chemfiles.hpp>

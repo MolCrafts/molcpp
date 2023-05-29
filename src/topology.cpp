@@ -235,7 +235,7 @@ namespace molcpp
         }
     }
 
-    void Topology::set_positions(xt::xarray<double> &positions)
+    void Topology::set_positions(const xt::xarray<double> &positions)
     {
         if (positions.shape().size() == 2)
         {
@@ -286,16 +286,16 @@ namespace molcpp
         return _graph.get_dihedrals();
     }
 
-    std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology &chflTopo)
+    std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology& chflTopo)
     {
         auto topo = create_topology();
-        for (auto chflAtom : chflTopo)
+        for (auto& chflAtom : chflTopo)
         {
             auto atom = from_chemfiles(chflAtom);
             topo->add_atom(atom.release());
         }
 
-        for (auto chflBond : chflTopo.bonds())
+        for (auto& chflBond : chflTopo.bonds())
         {
             topo->create_bond(chflBond[0], chflBond[1]);
         }

@@ -11,20 +11,20 @@ namespace molcpp{
     TEST(TestTrajectory, test_add_frame)
     {
         auto traj = Trajectory();
-        auto frame = new_frame();
-        traj.add_frame(frame);
+        auto frame = create_frame();
+        traj.add_frame(frame.release());
         EXPECT_EQ(traj.get_nsteps(), 1);
     }
 
     TEST(TestTrajectory, test_get_step)
     {
         auto traj = new_trajectory();
-        auto f0 = new_frame();
-        auto f199 = new_frame();
+        auto f0 = create_frame();
+        auto f199 = create_frame();
         f0->set_timestep(0);
         f199->set_timestep(199);
-        traj->add_frame(f0);
-        traj->add_frame(f199);
+        traj->add_frame(f0.release());
+        traj->add_frame(f199.release());
         EXPECT_EQ(traj->get_step(0)->get_timestep(), 0);
         EXPECT_EQ(traj->get_step(199)->get_timestep(), 199);
     }
@@ -32,12 +32,12 @@ namespace molcpp{
     TEST(TestTrajectory, test_get_by_index)
     {
         auto traj = new_trajectory();
-        auto f0 = new_frame();
-        auto f199 = new_frame();
+        auto f0 = create_frame();
+        auto f199 = create_frame();
         f0->set_timestep(0);
         f199->set_timestep(199);
-        traj->add_frame(f0);
-        traj->add_frame(f199);
+        traj->add_frame(f0.release());
+        traj->add_frame(f199.release());
         EXPECT_EQ(traj->get_by_index(0)->get_timestep(), 0);
         EXPECT_EQ(traj->get_by_index(1)->get_timestep(), 199);
     }

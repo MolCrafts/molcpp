@@ -56,13 +56,13 @@ namespace molcpp
          *
          * @return Topology&
          */
-        const TopologyPtr &get_topology() const;
+        Topology* get_topology() const;
 
         /**
          * @brief Set the topology object
          *
          */
-        void set_topology(const TopologyPtr &topology);
+        void set_topology(Topology* topology);
 
         /**
          * @brief Get a property by key
@@ -83,24 +83,21 @@ namespace molcpp
 
         const xt::xarray<double> get_positions() const;
 
-        void set_cell(CellPtr);
+        void set_cell(Cell*);
 
-        void set_cell(Vector lengths, Vector titles = {0, 0, 0});
+        void set_cell(Vector3D lengths, Vector3D titles = {0, 0, 0});
 
-        CellPtr get_cell() const;
+        Cell* get_cell() const;
 
     private:
         size_t _timestep;
-        CellPtr _cell;
-        TopologyPtr _topology;
+        Cell* _cell;
+        Topology* _topology;
     };
 
-    using FramePtr = std::shared_ptr<Frame>;
-    using FrameVec = std::vector<FramePtr>;
+    std::unique_ptr<Frame> create_frame();
+    std::unique_ptr<Frame> from_chemfiles(const chemfiles::Frame &);
 
-    FramePtr new_frame();
-    FramePtr new_frame(const chemfiles::Frame &);
-
-    chemfiles::Frame to_chemfiles(const FramePtr &);
+    chemfiles::Frame to_chemfiles(Frame*);
 
 }

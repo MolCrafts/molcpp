@@ -7,7 +7,7 @@ namespace molcpp
 
     }
 
-    bool Trajectory::add_frame(const FramePtr& frame)
+    bool Trajectory::add_frame(Frame* frame)
     {
         _frames.push_back(frame);
         return true;
@@ -18,9 +18,9 @@ namespace molcpp
         return _frames.size();
     }
 
-    FramePtr& Trajectory::get_step(size_t step) 
+    Frame* Trajectory::get_step(size_t step) 
     {
-        auto result = std::find_if(_frames.begin(), _frames.end(), [step](FramePtr frame)
+        auto result = std::find_if(_frames.begin(), _frames.end(), [step](Frame* frame)
                                     { return frame->get_timestep() == step; });
         if (result == _frames.end())
         {
@@ -32,7 +32,7 @@ namespace molcpp
         }
     }
 
-    FramePtr& Trajectory::get_by_index(size_t index)
+    Frame* Trajectory::get_by_index(size_t index)
     {
         if (index >= _frames.size())
         {
@@ -44,7 +44,7 @@ namespace molcpp
         }
     }
 
-    const FrameVec& Trajectory::get_frames() const
+    FrameVec Trajectory::get_frames() const
     {
         return _frames;
     }
@@ -57,8 +57,8 @@ namespace molcpp
         for (size_t i = 0; i < _nsteps; i++)
         {
             auto _frame = _traj.read();
-            auto _frame_ptr = new_frame(_frame);
-            _frames.push_back(_frame_ptr);
+            auto _frame_ptr = from_chemfiles(_frame);
+            _frames.push_back(_frame_ptr.release());
         }
 
     }
@@ -73,12 +73,12 @@ namespace molcpp
         }
     }
 
-    TrajectoryPtr new_trajectory()
+    std::unique_ptr<Trajectory> new_trajectory()
     {
-        return std::make_shared<Trajectory>();
+        return std::make_unique<Trajectory>();
     }
 
-    TrajectoryPtr new_trajectory(chemfiles::Trajectory& chflTraj)
+    std::unique_ptr<Trajectory> new_trajectory(chemfiles::Trajectory& chflTraj)
     {
         auto _traj = new_trajectory();
         auto _nsteps = chflTraj.nsteps();
@@ -86,14 +86,14 @@ namespace molcpp
         for (size_t i = 0; i < _nsteps; i++)
         {
             auto _frame = chflTraj.read();
-            auto _frame_ptr = new_frame(_frame);
-            _traj->add_frame(_frame_ptr);
+            auto _frame_ptr = from_chemfiles(_frame);
+            _traj->add_frame(_frame_ptr.release());
         }
 
         return _traj;
     }
 
-    chemfiles::Trajectory to_chemfiles(TrajectoryPtr traj, std::string path, char mode, const std::string &format)
+    chemfiles::Trajectory to_chemfiles(Trajectory* traj, std::string path, char mode, const std::string &format)
     {
         auto _traj = chemfiles::Trajectory(path, mode, format);
         auto _frames = traj->get_frames();

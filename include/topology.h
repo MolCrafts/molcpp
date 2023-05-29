@@ -164,7 +164,7 @@ namespace molcpp
 
         void set(const std::string &, const xt::xarray<AtomProperty> &);
 
-        void set_positions(xt::xarray<double> &);
+        void set_positions(const xt::xarray<double> &);
 
         xt::xarray<double> get_positions();
 
@@ -184,7 +184,7 @@ namespace molcpp
 
     // factory function
     std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology &chflTopology);
-    chemfiles::Topology to_chemfiles(const Topology &);
+    chemfiles::Topology to_chemfiles(Topology*);
 
     std::unique_ptr<Topology> create_topology();
 }

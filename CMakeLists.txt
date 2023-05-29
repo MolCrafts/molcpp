@@ -103,17 +103,19 @@ target_include_directories(
 target_sources(
   molcpp
   PRIVATE
+  # independent
   src/algo.cpp
+  src/linalg.cpp
+  src/element.cpp
   src/itemtype.cpp
+  # dependent
   src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
   src/topology.cpp
-
-  # src/element.cpp
-  # src/frame.cpp
-  # src/trajectory.cpp
-  # src/cell.cpp
+  src/frame.cpp
+  src/trajectory.cpp
+  src/cell.cpp
 )
 
 target_link_libraries(
