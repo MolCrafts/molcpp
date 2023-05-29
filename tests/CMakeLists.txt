@@ -25,7 +25,7 @@ add_executable(
   molcpp_test
   test_graph.cpp
   test_dict.cpp
-  # test_itemtype.cpp
+  test_itemtype.cpp
   # test_forcefield.cpp
   test_atom.cpp
   test_bond.cpp

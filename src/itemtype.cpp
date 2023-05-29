@@ -1,5 +1,4 @@
 #include "itemtype.h"
-#include "forcefield.h"
 
 namespace molcpp
 {
@@ -14,7 +13,7 @@ namespace molcpp
         return _properties["name"].get<std::string>();
     }
 
-    bool AtomType::equal_to(const AtomType &other) const
+    bool AtomType::equal_to(AtomType &other)
     {
         if (other.get_name() == get_name())
             return true;
@@ -22,20 +21,20 @@ namespace molcpp
             return false;
     }
 
-    bool AtomType::equal_to(const AtomTypePtr &other) const
+    bool AtomType::equal_to(AtomType *other)
     {
-        if (other->get_name() == this->get_name())
+        if (other->get_name() == get_name())
             return true;
         else
             return false;
     }
 
-    bool AtomType::operator==(const AtomType &other) const
+    bool AtomType::operator==(AtomType &other)
     {
         return equal_to(other);
     }
 
-    bool AtomType::operator!=(const AtomType &other) const
+    bool AtomType::operator!=(AtomType *other)
     {
         return !equal_to(other);
     }
@@ -60,26 +59,25 @@ namespace molcpp
         return _properties.has(key);
     }
 
-    AtomTypePtr new_atomtype(const std::string &name)
+    std::unique_ptr<AtomType> create_atomtype(const std::string &name)
     {
-        return std::make_shared<AtomType>(name);
+        return std::make_unique<AtomType>(name);
     }
 
     AtomTypeManager::AtomTypeManager() : _atom_types{}
     {
     }
 
-    AtomTypePtr AtomTypeManager::def(const std::string &name)
+    AtomType *AtomTypeManager::def(const std::string &name)
     {
-        auto at1 = std::make_shared<AtomType>(name);
-        _atom_types.push_back(at1);
-        return at1;
+        _atom_types.emplace_back(new AtomType(name));
+        return _atom_types.back();
     }
 
-    std::optional<AtomTypePtr> AtomTypeManager::get(const std::string &tname)
+    std::optional<AtomType *> AtomTypeManager::get(const std::string &tname)
     {
         // use std::find to find atomtype
-        auto it = std::find_if(_atom_types.begin(), _atom_types.end(), [&tname](const AtomTypePtr &atype)
+        auto it = std::find_if(_atom_types.begin(), _atom_types.end(), [&tname](AtomType *atype)
                                { return atype->get_name() == tname; });
 
         if (it != _atom_types.end())
@@ -96,16 +94,21 @@ namespace molcpp
         return _atom_types.size();
     }
 
-    BondType::BondType(const std::string &name, const AtomTypePtr &_itype, const AtomTypePtr &_jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
+    BondType::BondType(const std::string &name, AtomType *_itype, AtomType *_jtype) : _name{name}, _itomtype{_itype}, _jtomtype{_jtype} {};
 
-    AtomTypePtr BondType::get_itype() const
+    bool BondType::has(const std::string &key) const
     {
-        return _itomtype.lock();
+        return _properties.has(key);
     }
 
-    AtomTypePtr BondType::get_jtype() const
+    AtomType *BondType::get_itype() const
     {
-        return _jtomtype.lock();
+        return _itomtype;
+    }
+
+    AtomType *BondType::get_jtype() const
+    {
+        return _jtomtype;
     }
 
     std::string BondType::get_name() const
@@ -113,7 +116,7 @@ namespace molcpp
         return _name;
     }
 
-    bool BondType::equal_to(const BondType &other) const
+    bool BondType::equal_to(BondType &other)
     {
         if (other.get_name() == _name)
             return true;
@@ -121,7 +124,7 @@ namespace molcpp
             return false;
     }
 
-    bool BondType::equal_to(const BondTypePtr &other) const
+    bool BondType::equal_to(BondType *other)
     {
         if (other->get_name() == _name)
             return true;
@@ -129,12 +132,12 @@ namespace molcpp
             return false;
     }
 
-    bool BondType::operator==(const BondType &other) const
+    bool BondType::operator==(BondType &other)
     {
         return equal_to(other);
     }
 
-    bool BondType::operator!=(const BondType &other) const
+    bool BondType::operator!=(BondType *other)
     {
         return !equal_to(other);
     }
@@ -154,16 +157,16 @@ namespace molcpp
         _properties.set(key, value);
     }
 
-    BondTypePtr new_bondtype(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
+    std::unique_ptr<BondType> create_bondtype(const std::string &name, AtomType *itype, AtomType *jtype)
     {
-        return std::make_shared<BondType>(name, itype, jtype);
+        return std::make_unique<BondType>(name, itype, jtype);
     }
 
     BondTypeManager::BondTypeManager() : _bond_types{}
     {
     }
 
-    BondTypePtr BondTypeManager::def(const std::string &name, const AtomTypePtr &itype, const AtomTypePtr &jtype)
+    BondType *BondTypeManager::def(const std::string &name, AtomType *itype, AtomType *jtype)
     {
         auto bondtype = this->get(name);
         if (bondtype.has_value())
@@ -172,15 +175,14 @@ namespace molcpp
         }
         else
         {
-            auto bt = new_bondtype(name, itype, jtype);
-            _bond_types.push_back(bt);
-            return bt;
+            _bond_types.push_back(new BondType(name, itype, jtype));
+            return _bond_types.back();
         }
     }
 
-    std::optional<BondTypePtr> BondTypeManager::get(const std::string &tname)
+    std::optional<BondType *> BondTypeManager::get(const std::string &tname)
     {
-        auto it = std::find_if(_bond_types.begin(), _bond_types.end(), [&tname](const BondTypePtr &btype)
+        auto it = std::find_if(_bond_types.begin(), _bond_types.end(), [&tname](BondType *btype)
                                { return btype->get_name() == tname; });
 
         if (it != _bond_types.end())
@@ -192,9 +194,9 @@ namespace molcpp
         }
     }
 
-    std::optional<BondTypePtr> BondTypeManager::get(const AtomTypePtr &itype, const AtomTypePtr &jtype)
+    std::optional<BondType *> BondTypeManager::get(AtomType *itype, AtomType *jtype)
     {
-        auto it = std::find_if(_bond_types.begin(), _bond_types.end(), [&itype, &jtype](const BondTypePtr &btype)
+        auto it = std::find_if(_bond_types.begin(), _bond_types.end(), [&itype, &jtype](BondType *btype)
                                { return ((btype->get_itype() == itype && btype->get_jtype() == jtype) || (btype->get_itype() == jtype && btype->get_jtype() == itype)); });
 
         if (it != _bond_types.end())

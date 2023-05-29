@@ -87,15 +87,18 @@ namespace molcpp
         auto trial_bond = molcpp::create_bond(itom, jtom);
         Bond* bond = trial_bond.get();
         auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond *b)
-                                    { return b == bond; });
+                                    { return b->equal_to(bond); });
         return results == _bonds.end() ? false : true;
     }
 
     Bond *Topology::create_bond(Atom *itom, Atom *jtom)
     {
         AtomVec atoms = get_atoms();
-        auto i = std::find(atoms.begin(), atoms.end(), itom);
-        auto j = std::find(atoms.begin(), atoms.end(), jtom);
+        auto i = std::find_if(atoms.begin(), atoms.end(), [itom](Atom *a)
+                              { return a->equal_to(itom); });
+        auto j = std::find_if(atoms.begin(), atoms.end(), [jtom](Atom* a){return a->equal_to(jtom);});
+        if (i == atoms.end() || j == atoms.end())
+            throw KeyError("Cannot find atom");
         connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
 
         _bonds.emplace_back(new Bond(itom, jtom));

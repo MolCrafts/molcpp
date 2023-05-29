@@ -7,25 +7,23 @@ namespace molcpp
 
     TEST(TestAtomType, test_constructor)
     {
-        auto a1 = AtomType("C");
-        EXPECT_EQ(a1.get_name(), "C");
+        auto a1 = create_atomtype("C");
     }
 
     TEST(TestAtomType, test_get_name)
     {
-        auto a1 = AtomType("C");
-        EXPECT_EQ(a1.get_name(), "C");
+        auto a1 = create_atomtype("C");
+        EXPECT_EQ(a1->get_name(), "C");
     }
 
     TEST(TestAtomType, test_equal_to)
     {
-        auto a1 = AtomType("C");
-        AtomType& a2 = a1;
-        auto a3 = new_atomtype("H");
-        EXPECT_TRUE(a1.equal_to(a2));
-        EXPECT_FALSE(a1.equal_to(*a3));
-        EXPECT_TRUE(a1 == a2);
-        EXPECT_FALSE(a1 != a2);
+        auto a1 = create_atomtype("C");
+        auto a2 = create_atomtype("H");
+        EXPECT_TRUE(a1->equal_to(a1.get()));
+        EXPECT_FALSE(a1->equal_to(a2.get()));
+        EXPECT_TRUE((*a1) == (*a1));
+        EXPECT_FALSE((*a1) == (*a2));
     }
 
     TEST(TestAtomType, test_set_get)
@@ -59,34 +57,32 @@ namespace molcpp
 
     TEST(TestBondType, test_constructor)
     {
-        auto a1 = new_atomtype("C");
-        auto a2 = new_atomtype("H");
-        auto b1 = BondType("C-H", a1, a2);
+        auto a1 = create_atomtype("C");
+        auto a2 = create_atomtype("H");
+        auto b1 = BondType("C-H", a1.get(), a2.get());
         EXPECT_EQ(b1.get_name(), "C-H");
 
         // test get i/jtype
-        EXPECT_EQ(b1.get_itype(), a1);
-        EXPECT_EQ(b1.get_jtype(), a2);
+        EXPECT_TRUE(b1.get_itype()->equal_to(a1.get()));
+        EXPECT_TRUE(b1.get_jtype()->equal_to(a2.get()));
     }
 
     TEST(TestBondType, test_equal_to)
     {
-        auto a1 = new_atomtype("C");
-        auto a2 = new_atomtype("H");
-        auto b1 = BondType("C-H", a1, a2);
-        auto b2 = BondType("C-H", a1, a2);
-        auto b3 = BondType("C-H", a2, a1);
+        auto a1 = create_atomtype("C");
+        auto a2 = create_atomtype("H");
+        auto b1 = BondType("C-H", a1.get(), a2.get());
+        auto b2 = BondType("C-H", a1.get(), a2.get());
+        auto b3 = BondType("C-H", a2.get(), a1.get());
         EXPECT_TRUE(b1.equal_to(b2));
         EXPECT_TRUE(b1.equal_to(b3));
-        EXPECT_TRUE(b1 == b2);
-        EXPECT_FALSE(b1 != b3);
     }
 
     TEST(TestBondType, test_set_get)
     {
-        auto a1 = new_atomtype("C");
-        auto a2 = new_atomtype("H");
-        auto b1 = BondType("C-H", a1, a2);
+        auto a1 = create_atomtype("C");
+        auto a2 = create_atomtype("H");
+        auto b1 = BondType("C-H", a1.get(), a2.get());
         b1.set("k", 100.0);
         EXPECT_EQ(b1.get<double>("k"), 100.0);
         b1["r0"] = 1.0;
@@ -102,13 +98,13 @@ namespace molcpp
     TEST(TestBondTypeManager, test_set_get)
     {
         auto bvec = molcpp::BondTypeManager();
-        auto a1 = new_atomtype("C");
-        auto a2 = new_atomtype("H");
-        auto b1 = bvec.def("C-H", a1, a2);
+        auto a1 = create_atomtype("C");
+        auto a2 = create_atomtype("H");
+        auto b1 = bvec.def("C-H", a1.get(), a2.get());
         EXPECT_EQ(bvec.get_ntypes(), 1);
-        EXPECT_EQ(bvec.get("C-H"), b1);
-        EXPECT_EQ(bvec.get(a1, a2), b1);
-        EXPECT_EQ(bvec.get(a2, a1), b1);
+        EXPECT_TRUE(bvec.get("C-H").value()->equal_to(b1));
+        EXPECT_TRUE(bvec.get(a1.get(), a2.get()).value()->equal_to(b1));
+        EXPECT_TRUE(bvec.get(a2.get(), a1.get()).value()->equal_to(b1));
     }
 
 }

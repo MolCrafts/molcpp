@@ -135,14 +135,14 @@ namespace molcpp
         Atom* atom4 = sub2->create_atom();
         Atom* atom5 = sub2->create_atom();
         Atom* atom6 = sub2->create_atom();
-        sub1->create_bond(atom4, atom5);
-        sub1->create_bond(atom5, atom6);
-        sub1->create_bond(atom6, atom4);
-
-        sub1->create_bond(atom3, atom4);
+        sub2->create_bond(atom4, atom5);
+        sub2->create_bond(atom5, atom6);
+        sub2->create_bond(atom6, atom4);
 
         top->add_topology(sub1.release());
         top->add_topology(sub2.release());
+
+        top->create_bond(atom3, atom4);
 
         EXPECT_EQ(top->get_nbonds(), 7);
 
