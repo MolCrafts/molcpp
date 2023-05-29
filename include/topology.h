@@ -1,10 +1,11 @@
 #pragma once
 
-#include <chemfiles.hpp>
+#include "algo.h"
 #include "atom.h"
 #include "bond.h"
-#include "algo.h"
 #include "mplog.h"
+#include "graph.h"
+#include <chemfiles.hpp>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xview.hpp>
@@ -12,15 +13,12 @@
 
 namespace molcpp
 {
-    class Topology;  // forward declearation
+    class Topology; // forward declearation
     using AtomVec = std::vector<Atom *>;
     using BondVec = std::vector<Bond *>;
     using TopoVec = std::vector<Topology *>;
-    using AtomTopoMask = std::vector<size_t>;
-    using BondConnect = std::vector<std::vector<size_t>>;
     class Topology
     {
-
 
     public:
         /**
@@ -84,7 +82,7 @@ namespace molcpp
          */
         bool has_bond(Bond *);
 
-        bool has_bond(Atom*, Atom*);
+        bool has_bond(Atom *, Atom *);
 
         /**
          * @brief Create a bond object
@@ -149,9 +147,9 @@ namespace molcpp
          */
         void del_bond(Atom *, Atom *);
 
-        Topology* create_topology();
+        Topology *create_topology();
 
-        void add_topology(Topology*);
+        void add_topology(Topology *);
 
         template <typename T>
         std::vector<T> get(const std::string &name) const
@@ -170,15 +168,18 @@ namespace molcpp
 
         xt::xarray<double> get_positions();
 
-        const BondConnect get_bond_connect() const { return _bondConnect; }
+        BondConnect get_bond_connect();
+
+        AngleConnect get_angle_connect();
+
+        DihedralConnect get_dihedral_connect();
 
     private:
-
         AtomVec _atoms;
         BondVec _bonds;
         TopoVec _topos;
 
-        BondConnect _bondConnect;
+        Graph _graph;
     };
 
     // factory function

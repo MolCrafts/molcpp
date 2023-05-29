@@ -3,8 +3,12 @@
 #include <map>
 #include <set>
 #include "algo.h"
+#include "mperror.h"
 namespace molcpp
 {
+    using BondConnect = std::vector<std::tuple<size_t, size_t>>;
+    using AngleConnect = std::vector<std::tuple<size_t, size_t, size_t>>;
+    using DihedralConnect = std::vector<std::tuple<size_t, size_t, size_t, size_t>>;
     class Graph
     {
     public:
@@ -15,6 +19,8 @@ namespace molcpp
 
         void add_edge(int from, int to)
         {
+            if (from == to)
+                throw ValueError("Self-loop is not allowed.");
             _edges[from].insert(to);
             _edges[to].insert(from);
         }
@@ -95,14 +101,14 @@ namespace molcpp
             }
         }
 
-        std::vector<std::tuple<int, int>> get_bonds()
+        BondConnect get_bonds()
         {
             size_t nbonds = 0;
             for (auto &[from, tos] : _edges)
             {
                 nbonds += tos.size();
             }
-            std::vector<std::tuple<int, int>> bonds;
+            BondConnect bonds;
             bonds.reserve(nbonds);
             for (auto &[from, tos] : _edges)
             {
@@ -117,16 +123,16 @@ namespace molcpp
             return bonds;
         }
 
-        std::vector<std::tuple<int, int, int>> get_angles()
+        AngleConnect get_angles()
         {
             size_t nangles = 0;
             for (auto &[i, tos] : _edges)
             {
                 nangles += C(tos.size(), 2);
             }
-            std::vector<std::tuple<int, int, int>> angles;
+            AngleConnect angles;
             angles.reserve(nangles);
-            for (const auto &[j, edge] : _edges)
+            for (auto &[j, edge] : _edges)
             {
                 for (auto &i : edge)
                 {
@@ -142,9 +148,9 @@ namespace molcpp
             return angles;
         }
 
-        std::vector<std::tuple<int, int, int, int>> get_dihedrals()
+        DihedralConnect get_dihedrals()
         {
-            std::vector<std::tuple<int, int, int, int>> dihedrals;
+            DihedralConnect dihedrals;
             for (auto &[j, edge] : _edges)
             {
                 for (auto &k : edge)
@@ -153,13 +159,14 @@ namespace molcpp
                         continue;
                     for (auto &i : edge)
                     {
-                        if (i == k) continue;
+                        if (i == k)
+                            continue;
                         for (auto &l : _edges[k])
                         {
-                            if (l == j) continue;
-                            
-                                dihedrals.push_back(std::make_tuple(i, j, k, l));
-                            
+                            if (l == j)
+                                continue;
+
+                            dihedrals.push_back(std::make_tuple(i, j, k, l));
                         }
                     }
                 }

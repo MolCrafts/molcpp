@@ -148,25 +148,25 @@ namespace molcpp
 
     }
 
-    // TEST(TestTopology, test_connect)
-    // {
-    //     auto topology = create_topology();
+    TEST(TestTopology, test_connect)
+    {
+        auto topology = create_topology();
 
-    //     // add atom
-    //     topology->create_atom("H");
-    //     topology->create_atom("C");
-    //     topology->create_atom("O");
+        // add atom
+        topology->create_atom("H");
+        topology->create_atom("C");
+        topology->create_atom("O");
 
-    //     // add bond
-    //     topology->create_bond(0, 1);
-    //     topology->create_bond(1, 2);
+        // add bond
+        topology->create_bond(0, 1);
+        topology->create_bond(1, 2);
 
-    //     // test connect
-    //     BondConnect bond_connect = topology->get_bond_connect();
-    //     EXPECT_EQ(bond_connect.size(), 2);
-    //     EXPECT_EQ(bond_connect[0], std::vector<size_t>({0, 1}));
-    //     EXPECT_EQ(bond_connect[1], std::vector<size_t>({1, 2}));
-    // }
+        // test connect
+        BondConnect bond_connect = topology->get_bond_connect();
+        EXPECT_EQ(bond_connect.size(), 2);
+        EXPECT_EQ(bond_connect[0], std::make_tuple(0, 1));
+        EXPECT_EQ(bond_connect[1], std::make_tuple(1, 2));
+    }
 
     TEST(TestTopology, test_set_get_positions)
     {
