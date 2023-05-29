@@ -26,7 +26,7 @@ add_executable(
   test_graph.cpp
   test_dict.cpp
   test_itemtype.cpp
-  # test_forcefield.cpp
+  test_forcefield.cpp
   test_atom.cpp
   test_bond.cpp
   test_topology.cpp

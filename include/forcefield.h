@@ -23,9 +23,9 @@ namespace molcpp
         /**
          * @brief Define an atom type
          * 
-         * @return AtomTypePtr 
+         * @return AtomType* 
          */
-        AtomTypePtr def_atomtype(const std::string&);
+        AtomType* def_atomtype(const std::string&);
 
         /**
          * @brief Get the number of defined atomtypes
@@ -37,23 +37,23 @@ namespace molcpp
         /**
          * @brief Get the atomtype object with given name
          * 
-         * @return std::optional<AtomTypePtr> 
+         * @return std::optional<AtomType*> 
          */
-        std::optional<AtomTypePtr> get_atomtype(const std::string&);
+        std::optional<AtomType*> get_atomtype(const std::string&);
 
         /**
          * @brief Define a bond type
          * 
-         * @return BondTypePtr 
+         * @return BondType* 
          */
-        BondTypePtr def_bondtype(const std::string&, const AtomTypePtr&, const AtomTypePtr&);
+        BondType* def_bondtype(const std::string&, AtomType*, AtomType*);
 
         /**
          * @brief Define a bond type
          * 
-         * @return BondTypePtr 
+         * @return BondType* 
          */
-        BondTypePtr def_bondtype(const std::string&, const std::string&, const std::string&);
+        BondType* def_bondtype(const std::string&, const std::string&, const std::string&);
 
         /**
          * @brief Get the number of defined bondtypes
@@ -65,16 +65,16 @@ namespace molcpp
         /**
          * @brief Get the bondtype object with given name
          * 
-         * @return std::optional<BondTypePtr> 
+         * @return std::optional<BondType*> 
          */
-        std::optional<BondTypePtr> get_bondtype(const std::string&);
+        std::optional<BondType*> get_bondtype(const std::string&);
 
         /**
          * @brief Get the bondtype object with given atomtypes
          * 
-         * @return std::optional<BondTypePtr> 
+         * @return std::optional<BondType*> 
          */
-        std::optional<BondTypePtr> get_bondtype(const AtomTypePtr&, const AtomTypePtr&);
+        std::optional<BondType*> get_bondtype(AtomType*, AtomType*);
 
         // bool match_atom(const AtomPtr&);
         // bool match_bond(const BondPtr&);
