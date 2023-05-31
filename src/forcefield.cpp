@@ -3,7 +3,7 @@
 namespace molcpp
 {
 
-    ForceField::ForceField() : _atom_type_manager{}// , _bond_type_manager{}
+    ForceField::ForceField() : _atom_type_manager{}, _bond_type_manager{}
     {
     }
 
@@ -12,15 +12,25 @@ namespace molcpp
         return _atom_type_manager.def(name);
     }
 
+    size_t ForceField::get_natomtypes()
+    {
+        return _atom_type_manager.get_ntypes();
+    }
+
+    std::optional<AtomTypePtr> ForceField::get_atomtype(const std::string& tname)
+    {
+        return _atom_type_manager.get(tname);
+    }
+
     BondTypePtr ForceField::def_bondtype(const std::string& name, const AtomTypePtr& itype, const AtomTypePtr& jtype)
     {
         return _bond_type_manager.def(name, itype, jtype);
     }
 
-    BondTypePtr ForceField::def_bondtype(const std::string& name, const std::string& itype, const std::string& jtype)
+    BondTypePtr ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename)
     {
-        auto it = get_atomtype(itype);
-        auto jt = get_atomtype(jtype);
+        auto it = get_atomtype(itypename);
+        auto jt = get_atomtype(jtypename);
         if (it && jt)
             return _bond_type_manager.def(name, *it, *jt);
         else
@@ -30,9 +40,9 @@ namespace molcpp
         }
     }
 
-    std::optional<AtomTypePtr> ForceField::get_atomtype(const std::string& tname)
+    size_t ForceField::get_nbondtypes()
     {
-        return _atom_type_manager.get(tname);
+        return _bond_type_manager.get_ntypes();
     }
 
     std::optional<BondTypePtr> ForceField::get_bondtype(const std::string& tname)
@@ -45,44 +55,34 @@ namespace molcpp
         return _bond_type_manager.get(itype, jtype);
     }
 
-    size_t ForceField::get_natomtypes()
-    {
-        return _atom_type_manager.get_ntypes();
-    }
+    // bool ForceField::match_atom(const AtomPtr& atom)
+    // {
+    //     auto at = atom->get_typename();
+    //     auto atomtype = get_atomtype(at);
+    //     if (atomtype.has_value())
+    //     {
+    //         atom->set_type(atomtype.value());
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
 
-    size_t ForceField::get_nbondtypes()
-    {
-        return _bond_type_manager.get_ntypes();
-    }
-
-    bool ForceField::match_atom(const AtomPtr& atom)
-    {
-        auto at = atom->get_typename();
-        auto atomtype = get_atomtype(at);
-        if (atomtype.has_value())
-        {
-            atom->set_type(atomtype.value());
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    bool ForceField::match_bond(const BondPtr& bond)
-    {
-        auto it = bond->get_itom()->get_type();
-        auto jt = bond->get_jtom()->get_type();
-        auto bondtype = get_bondtype(it, jt);
-        if (bondtype.has_value())
-        {
-            bond->set_type(bondtype.value());
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+    // bool ForceField::match_bond(const BondPtr& bond)
+    // {
+    //     auto it = bond->get_itom()->get_type();
+    //     auto jt = bond->get_jtom()->get_type();
+    //     auto bondtype = get_bondtype(it, jt);
+    //     if (bondtype.has_value())
+    //     {
+    //         bond->set_type(bondtype.value());
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //     }
+    // }
 }

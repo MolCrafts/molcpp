@@ -2,52 +2,122 @@
 #include "algo.h"
 #include "dict.h"
 #include "itemtype.h"
+#include "types.hpp"
 #include <vector>
 #include <memory>
+#include <chemfiles.hpp>
 
 namespace molcpp
 {
-
-    class Atom;
-    using AtomPtr = std::shared_ptr<Atom>;
-    class Bond;
-    using BondPtr = std::shared_ptr<Bond>;
-
-    using AtomVec = std::vector<AtomPtr>;
-    using BondVec = std::vector<BondPtr>;
 
     class Atom
     {
 
     public:
-        Atom();
-        Atom(const AtomTypePtr&);
-        bool add_bond(BondPtr);
-        bool del_bond(BondPtr);
-        bool has_bond(BondPtr);
-        bool is_nbr(AtomPtr);
-        std::vector<AtomPtr> get_nbrs();
-        AtomProperty& operator [] (const std::string&);
+        /**
+         * @brief Construct a new Atom object
+         *
+         */
+        Atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
+
+        // copy constructor
+        Atom(const Atom&);
+
+        // move constructor
+        Atom(Atom&&) noexcept;
+
+        ~Atom();
+
+        Atom& operator=(const Atom &);
+        Atom& operator=(Atom &&) noexcept;
+
+        /**
+         * @brief Get a property by key
+         *
+         * @tparam T
+         * @param key
+         * @return T
+         */
         template<typename T>
-        T get(const std::string& key)
+        T get(const std::string& key, T _default = T()) const
         {
             if (_properties.has(key)) return _properties.get<T>(key);
-            else return _type->get<T>(key);
+            else if(_type->has(key)) return _type->get<T>(key);
+            else return _default;
         };
+
+        /**
+         * @brief
+         *
+         * @param key
+         * @param value
+         */
         void set(const std::string& key, const AtomProperty& value);
-        const std::string& get_typename();
-        void set_type(const std::string&);
+
+        bool has(const std::string& key);
+
+        /**
+         * @brief Set the atomtype
+         *
+         */
         void set_type(const AtomTypePtr&);
+
+        /**
+         * @brief Get the atomtype
+         *
+         * @return const AtomTypePtr&
+         */
         const AtomTypePtr& get_type();
+
+        /**
+         * @brief
+         *
+         * @return true
+         * @return false
+         */
+        bool equal_to(Atom*);
+
+        bool equal_to(const Atom&);
+
+        /**
+         * @brief
+         *
+         * @return true
+         * @return false
+         */
+        bool operator==(Atom*);
+        bool operator==(const Atom&);
+
+        /**
+         * @brief Get id of this atom
+         *
+         */
+        size_t get_id() const;
+
+        void set_position(const Vector3D& pos);
+
+        const Vector3D& get_position() const;
+
+        AtomProperty &operator[](const std::string& key)
+        {
+            return _properties[key];
+        }
+
+        const AtomProperty &operator[](const std::string& key) const
+        {
+            return _properties[key];
+        }
 
     private:
         AtomTypePtr _type;
         AtomPropertyDict _properties;
-        std::vector<BondPtr> _bonds;
+        size_t _id;
+        Vector3D _pos;
     };
 
     // factory function
-    AtomPtr create_atom();
-    AtomPtr create_atom(const AtomTypePtr& type);
+    std::unique_ptr<Atom> from_chemfiles(const chemfiles::Atom& chflAtom);
+    chemfiles::Atom to_chemfiles(Atom*);
+    std::unique_ptr<Atom> create_atom(const std::string& name = "", Vector3D pos = {0, 0, 0});
 
 }

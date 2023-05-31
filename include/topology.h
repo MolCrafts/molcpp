@@ -1,46 +1,189 @@
 #pragma once
 
+#include <chemfiles.hpp>
 #include "atom.h"
 #include "bond.h"
 #include "algo.h"
 #include "mplog.h"
-#include "chemfiles.hpp"
+#include <xtensor/xarray.hpp>
+#include <xtensor/xadapt.hpp>
+#include <xtensor/xview.hpp>
+#include <xtensor/xadapt.hpp>
 
 namespace molcpp
 {
-
+    class Topology;  // forward declearation
+    using AtomVec = std::vector<Atom *>;
+    using BondVec = std::vector<Bond *>;
+    using TopoVec = std::vector<Topology *>;
+    using AtomTopoMask = std::vector<size_t>;
+    using BondConnect = std::vector<std::vector<size_t>>;
     class Topology
     {
 
-        public:
-            Topology() = default;
-            Topology(size_t, size_t);
-            Topology(const chemfiles::Topology& chflTopology);
-            bool add_atom(AtomPtr);
-            bool has_atom(AtomPtr);
-            AtomPtr new_atom();
-            // AtomPtr new_atom(const chemfiles::Atom &);
-            AtomVec get_atoms() const { return _atoms; }
-            bool add_bond(BondPtr);
-            bool has_bond(BondPtr);
-            BondPtr new_bond(AtomPtr, AtomPtr);
-            BondPtr new_bond(size_t, size_t);
-            BondVec get_bonds() const { return _bonds; }
-            size_t get_natoms() const { return _atoms.size(); }
-            size_t get_nbonds() const { return _bonds.size(); }
 
-        private:
+    public:
+        /**
+         * @brief Construct a new Topology object
+         *
+         */
+        Topology();
 
-            AtomVec _atoms;
-            BondVec _bonds;
+        ~Topology();
 
+        /**
+         * @brief Add a pointer of exsit atom to this topology
+         *
+         * @return true
+         * @return false
+         */
+        void add_atom(Atom *);
+
+        /**
+         * @brief check if the topology has an atom
+         *
+         * @return true
+         * @return false
+         */
+        bool has_atom(Atom *);
+
+        /**
+         * @brief
+         *
+         */
+        void del_atom(Atom *);
+
+        /**
+         * @brief Create an atom in this topology
+         *
+         * @return AtomPtr
+         */
+        Atom *create_atom(const std::string &name = "", Vector3D pos = {0, 0, 0});
+        // AtomPtr new_atom(const chemfiles::Atom &);
+
+        /**
+         * @brief Get the atoms from this topology and its sub-topologies
+         *
+         * @return AtomVec
+         */
+        AtomVec get_atoms();
+
+        /**
+         * @brief
+         *
+         * @return true
+         * @return false
+         */
+        void add_bond(Bond *);
+
+        /**
+         * @brief
+         *
+         * @return true
+         * @return false
+         */
+        bool has_bond(Bond *);
+
+        bool has_bond(Atom*, Atom*);
+
+        /**
+         * @brief Create a bond object
+         *
+         * @return BondPtr
+         */
+        Bond *create_bond(Atom *, Atom *);
+
+        /**
+         * @brief Create a bond object
+         *
+         * @return BondPtr
+         */
+        Bond *create_bond(size_t, size_t);
+
+        /**
+         * @brief
+         *
+         */
+        void connect(size_t, size_t);
+        void check_connect(size_t, size_t);
+        // TODO: connect(size_t, size_t, size_t) etc.
+
+        /**
+         * @brief Get the bond object
+         *
+         * @return const BondPtr
+         */
+        Bond *get_bond(Atom *, Atom *);
+        Bond *get_bond(size_t, size_t);
+
+        /**
+         * @brief Get the bonds object
+         *
+         * @return BondVec
+         */
+        BondVec get_bonds() const;
+
+        /**
+         * @brief Get the natoms object
+         *
+         * @return size_t
+         */
+        size_t get_natoms() const;
+
+        /**
+         * @brief Get the nbonds object
+         *
+         * @return size_t
+         */
+        size_t get_nbonds() const;
+
+        /**
+         * @brief
+         *
+         */
+        void del_bond(Bond *);
+
+        /**
+         * @brief
+         *
+         */
+        void del_bond(Atom *, Atom *);
+
+        Topology* create_topology();
+
+        void add_topology(Topology*);
+
+        template <typename T>
+        std::vector<T> get(const std::string &name) const
+        {
+            std::vector<T> arr(get_natoms());
+            for (size_t i = 0; i < get_natoms(); ++i)
+            {
+                arr[i] = _atoms[i]->get<T>(name);
+            }
+            return arr;
+        }
+
+        void set(const std::string &, const xt::xarray<AtomProperty> &);
+
+        void set_positions(xt::xarray<double> &);
+
+        xt::xarray<double> get_positions();
+
+        const BondConnect get_bond_connect() const { return _bondConnect; }
+
+    private:
+
+        AtomVec _atoms;
+        BondVec _bonds;
+        TopoVec _topos;
+
+        BondConnect _bondConnect;
     };
 
-    using TopologyPtr = std::shared_ptr<Topology>;
+    // factory function
+    std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology &chflTopology);
+    chemfiles::Topology to_chemfiles(const Topology &);
 
-    // // factory function
-    TopologyPtr create_topology();
-    TopologyPtr create_topology(size_t, size_t);
-    TopologyPtr create_topology(const chemfiles::Topology &);
-
+    std::unique_ptr<Topology> create_topology();
 }

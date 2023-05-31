@@ -1,5 +1,4 @@
 message(STATUS "Building tests")
-
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -9,7 +8,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # get test data
-if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests-data")
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests-data")
   # 如果不存在则下载
   message(STATUS "Downloading test data...")
   execute_process(
@@ -21,30 +20,26 @@ else()
   message(STATUS "Test data already downloaded, skipping...")
 endif()
 
+# enable_testing()
 add_executable(
-    molcpp_test
-    test_algo.cpp
-    test_itemtype.cpp
-    test_dict.cpp
-    test_atom.cpp
-    test_bond.cpp
-    test_topology.cpp
-    test_frame.cpp
-    test_trajectory.cpp
-    # test_forcefield.cpp
-    # test_element.cpp
+  molcpp_test
+  test_algo.cpp
+  test_dict.cpp
+  # test_itemtype.cpp
+  # test_forcefield.cpp
+  test_atom.cpp
+  test_bond.cpp
+  test_topology.cpp
+  # test_frame.cpp
+  # test_trajectory.cpp
+  # test_cell.cpp
+  # test_element.cpp
 )
 
 target_link_libraries(
-    molcpp_test
-    GTest::gtest_main
-    molcpp
-)
-
-message(STATUS "debug build.")
-target_compile_options(molcpp_test
-    PRIVATE
-        -g
+  molcpp_test
+  GTest::gtest_main
+  molcpp
 )
 
 include(GoogleTest)

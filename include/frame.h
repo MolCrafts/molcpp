@@ -1,32 +1,106 @@
 #pragma once
 
 #include <vector>
-#include "chemfiles.hpp"
-#include "xtensor/xtensor.hpp"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xadapt.hpp"
 #include "atom.h"
 #include "topology.h"
-
+#include "itemtype.h"
+#include "cell.h"
+#include <xtensor/xio.hpp>
 namespace molcpp
 {
+
     class Frame
     {
-        public:
-            Frame(size_t, const Topology&);
-            Frame(const chemfiles::Frame&);
-            size_t get_natoms() const { return _topology.get_natoms(); }
-            size_t get_nbonds() const { return _topology.get_nbonds(); }
-            size_t get_current_step() const { return _current_step; }
-            xt::xarray<double> get_xyz() const { return _xyz; }
-            Topology get_topology() const { return _topology; }
+    public:
+        /**
+         * @brief Construct an empty frame
+         *
+         */
+        Frame();
 
-        private:
-            // Cell
-            size_t _current_step;
-            Topology _topology;
-            xt::xarray<double> _xyz;
+        /**
+         * @brief Construct a new Frame from Chemfiles::Frame
+         *
+         */
+        // Frame(const chemfiles::Frame&);
 
+        /**
+         * @brief Get the natoms object
+         *
+         * @return size_t
+         */
+        size_t get_natoms() const;
+
+        /**
+         * @brief Get the nbonds object
+         *
+         * @return size_t
+         */
+        size_t get_nbonds() const;
+
+        /**
+         * @brief Get the timestep object
+         *
+         * @return size_t
+         */
+        size_t get_timestep() const;
+
+        /**
+         * @brief Set the timestep object
+         *
+         */
+        void set_timestep(size_t);
+
+        /**
+         * @brief Get the topology object
+         *
+         * @return Topology&
+         */
+        const TopologyPtr &get_topology() const;
+
+        /**
+         * @brief Set the topology object
+         *
+         */
+        void set_topology(const TopologyPtr &topology);
+
+        /**
+         * @brief Get a property by key
+         *
+         * @tparam T
+         * @param key
+         * @return T
+         */
+        template <typename T>
+        xt::xarray<T> get(const std::string &key)
+        {
+            return _topology->get<T>(key);
+        };
+
+        void set(const std::string&, const xt::xarray<AtomProperty>&);
+
+        void set_positions(const xt::xarray<double>&);
+
+        const xt::xarray<double> get_positions() const;
+
+        void set_cell(CellPtr);
+
+        void set_cell(Vector lengths, Vector titles = {0, 0, 0});
+
+        CellPtr get_cell() const;
+
+    private:
+        size_t _timestep;
+        CellPtr _cell;
+        TopologyPtr _topology;
     };
+
+    using FramePtr = std::shared_ptr<Frame>;
+    using FrameVec = std::vector<FramePtr>;
+
+    FramePtr new_frame();
+    FramePtr new_frame(const chemfiles::Frame &);
+
+    chemfiles::Frame to_chemfiles(const FramePtr &);
 
 }
