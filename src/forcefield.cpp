@@ -7,7 +7,7 @@ namespace molcpp
     {
     }
 
-    AtomTypePtr ForceField::def_atomtype(const std::string& name)
+    AtomType* ForceField::def_atomtype(const std::string& name)
     {
         return _atom_type_manager.def(name);
     }
@@ -17,17 +17,17 @@ namespace molcpp
         return _atom_type_manager.get_ntypes();
     }
 
-    std::optional<AtomTypePtr> ForceField::get_atomtype(const std::string& tname)
+    std::optional<AtomType*> ForceField::get_atomtype(const std::string& tname)
     {
         return _atom_type_manager.get(tname);
     }
 
-    BondTypePtr ForceField::def_bondtype(const std::string& name, const AtomTypePtr& itype, const AtomTypePtr& jtype)
+    BondType* ForceField::def_bondtype(const std::string& name, AtomType* itype, AtomType* jtype)
     {
         return _bond_type_manager.def(name, itype, jtype);
     }
 
-    BondTypePtr ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename)
+    BondType* ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename)
     {
         auto it = get_atomtype(itypename);
         auto jt = get_atomtype(jtypename);
@@ -45,12 +45,12 @@ namespace molcpp
         return _bond_type_manager.get_ntypes();
     }
 
-    std::optional<BondTypePtr> ForceField::get_bondtype(const std::string& tname)
+    std::optional<BondType*> ForceField::get_bondtype(const std::string& tname)
     {
         return _bond_type_manager.get(tname);
     }
 
-    std::optional<BondTypePtr> ForceField::get_bondtype(const AtomTypePtr& itype, const AtomTypePtr& jtype)
+    std::optional<BondType*> ForceField::get_bondtype(AtomType* itype, AtomType* jtype)
     {
         return _bond_type_manager.get(itype, jtype);
     }

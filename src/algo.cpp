@@ -2,10 +2,27 @@
 
 namespace molcpp
 {
-    // @brief: the number of combinations in a given container
-    // @param: v - the container
-    // @param: n - the number of elements in each combination
-    // @return: combinations in 1D, which shape should be (size/n, n)
+
+    size_t C(int n, int k)
+    {
+        size_t result = 1;
+        for (int i = 1; i <= k; ++i)
+        {
+            result *= (n - i + 1);
+            result /= i;
+        }
+        return result;
+    }
+
+    size_t P(int n, int k)
+    {
+        size_t result = 1;
+        for (int i = 1; i <= k; ++i)
+        {
+            result *= (n - i + 1);
+        }
+        return result;
+    }
 
     std::vector<size_t> combination(std::vector<size_t> &v, size_t n)
     {
@@ -25,6 +42,5 @@ namespace molcpp
         return result;
 
     }
-
 
 }

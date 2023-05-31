@@ -452,4 +452,6 @@ inline Matrix3D& Matrix3D::operator/=(double rhs) {
     return *this;
 }
 
+bool allclose(const Vector3D& a, const Vector3D& b, double rtol = 1e-05, double atol = 1e-08);
+
 } // namespace chemfiles

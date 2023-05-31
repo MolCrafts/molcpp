@@ -35,26 +35,25 @@ namespace molcpp
     //     return sin(deg2rad(theta));
     // }
 
-    Cell::Cell()
+    Cell::Cell() : _matrix(Matrix3D::unit())
     {
-        _matrix = xt::eye<double>({3, 3});
         set_boundary(PBC::P, PBC::P, PBC::P);
     }
 
-    Cell::Cell(Vector lengths, Vector angles) : Cell()
+    Cell::Cell(Vector3D lengths, Vector3D angles) : Cell()
     {
         set_lengths_and_angles(lengths, angles);
     }
 
-    void Cell::set_lengths_and_angles(Vector lengths, Vector angles)
+    void Cell::set_lengths_and_angles(Vector3D lengths, Vector3D angles)
     {
-        auto a = lengths(0);
-        auto b = lengths(1);
-        auto c = lengths(2);
+        auto a = lengths[0];
+        auto b = lengths[1];
+        auto c = lengths[2];
 
-        auto alpha = angles(0);
-        auto beta = angles(1);
-        auto gamma = angles(2);
+        auto alpha = angles[0];
+        auto beta  = angles[1];
+        auto gamma = angles[2];
 
         auto lx = a;
         auto xy = b * cosd(gamma);
@@ -63,40 +62,40 @@ namespace molcpp
         auto yz = (b * c * cosd(alpha) - xy * xz) / ly;
         auto lz = sqrt(c * c - xz * xz - yz * yz);
 
-        _matrix(0, 0) = lx;
-        _matrix(0, 1) = xy;
-        _matrix(0, 2) = xz;
-        _matrix(1, 0) = 0;
-        _matrix(1, 1) = ly;
-        _matrix(1, 2) = yz;
-        _matrix(2, 0) = 0;
-        _matrix(2, 1) = 0;
-        _matrix(2, 2) = lz;
+        _matrix[0][0] = lx;
+        _matrix[0][1] = xy;
+        _matrix[0][2] = xz;
+        _matrix[1][0] = 0;
+        _matrix[1][1] = ly;
+        _matrix[1][2] = yz;
+        _matrix[2][0] = 0;
+        _matrix[2][1] = 0;
+        _matrix[2][2] = lz;
 
     }
 
-    const Matrix Cell::get_matrix() const
+    const Matrix3D Cell::get_matrix() const
     {
         return _matrix;
     }
 
-    const Matrix Cell::get_inverse() const
+    const Matrix3D Cell::get_inverse() const
     {
-        return xt::linalg::inv(_matrix);
+        return _matrix.invert();
     }
 
-    const Vector Cell::get_angles() const
+    const Vector3D Cell::get_angles() const
     {
         auto tilts = get_tilts();
-        double xy = tilts(0);
-        double xz = tilts(1);
-        double yz = tilts(2);
+        double xy = tilts[0];
+        double xz = tilts[1];
+        double yz = tilts[2];
 
         auto lengths = get_lengths();
-        auto b = lengths(1);
-        auto c = lengths(2);
+        auto b = lengths[1];
+        auto c = lengths[2];
 
-        double ly = _matrix(1, 1);
+        double ly = _matrix[1][1];
 
         auto cos_alpha = (xy * xz + ly * yz) / (b * c);
         auto cos_beta = xz / c;
@@ -110,50 +109,50 @@ namespace molcpp
         _pbc = {x, y, z};
     }
 
-    const Vector Cell::get_lengths() const
+    const Vector3D Cell::get_lengths() const
     {
         auto tilts = get_tilts();
-        double xy = tilts(0);
-        double xz = tilts(1);
-        double yz = tilts(2);
-        double ly = _matrix(1, 1);
-        double lz = _matrix(2, 2);
+        double xy = tilts[0];
+        double xz = tilts[1];
+        double yz = tilts[2];
+        double ly = _matrix[1][1];
+        double lz = _matrix[2][2];
 
-        auto a = _matrix(0, 0);
+        auto a = _matrix[0][0];
         auto b = sqrt(ly * ly + xy * xy);
         auto c = sqrt(lz*lz + xz*xz + yz*yz);
         return {a, b, c};
     }
 
-    const Vector Cell::get_tilts() const
+    const Vector3D Cell::get_tilts() const
     {
-        double xy = _matrix(0, 1);
-        double xz = _matrix(0, 2);
-        double yz = _matrix(1, 2);
+        double xy = _matrix[0][1];
+        double xz = _matrix[0][2];
+        double yz = _matrix[1][2];
         return {xy, xz, yz};
     }
 
     const double Cell::get_volume() const
     {
-        return xt::linalg::det(_matrix);
+        return _matrix.determinant();
     }
 
-    Matrix Cell::wrap(Matrix positions)
+    xt::xarray<double> Cell::wrap(xt::xarray<double>& positions)
     {
         // PBC are all P
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
         {
-            auto _inv_mat = get_inverse();
-            auto reciprocal_vecs = xt::linalg::dot(_inv_mat, xt::transpose(positions));
+            xt::xarray<double> _mat = xt::adapt((double*)(&_matrix), {3, 3});
+            auto reciprocal_vecs = xt::linalg::dot(xt::linalg::inv(_mat), xt::transpose(positions));
             auto wrapped_reci_vecs = reciprocal_vecs - xt::floor(reciprocal_vecs);
-            auto real_r = xt::linalg::dot(_matrix, wrapped_reci_vecs);
+            auto real_r = xt::linalg::dot(_mat, wrapped_reci_vecs);
             return xt::transpose(real_r);
         }
         else
             throw NotImplementedError("Only PBC = P is implemented");
     }
 
-    chemfiles::UnitCell to_chemfiles(const CellPtr &cell)
+    chemfiles::UnitCell to_chemfiles(Cell* cell)
     {
         auto lengths = cell->get_lengths();
         auto angles = cell->get_angles();
@@ -164,15 +163,15 @@ namespace molcpp
         return chemfiles_cell;
     }
 
-    CellPtr new_cell(Vector lengths, Vector angles)
+    std::unique_ptr<Cell> create_cell(Vector3D lengths, Vector3D angles)
     {
-        return std::make_shared<Cell>(lengths, angles);
+        return std::make_unique<Cell>(lengths, angles);
     }
 
-    CellPtr new_cell(chemfiles::UnitCell cell)
+    std::unique_ptr<Cell> from_chemfiles(chemfiles::UnitCell cell)
     {
-        Vector lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
-        Vector angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
-        return std::make_shared<Cell>(lengths, angles);
+        Vector3D lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
+        Vector3D angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
+        return std::make_unique<Cell>(lengths, angles);
     }
 }

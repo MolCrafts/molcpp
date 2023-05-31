@@ -7,6 +7,7 @@
 namespace molcpp
 {
 
+    using FrameVec = std::vector<Frame *>;
     class Trajectory
     {
 
@@ -25,7 +26,7 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        bool add_frame(const FramePtr&);
+        bool add_frame(Frame*);
         
         /**
          * @brief Get the number of frames this trajectory has
@@ -37,23 +38,23 @@ namespace molcpp
         /**
          * @brief Get a frame with a specific timestep
          * 
-         * @return FramePtr& 
+         * @return Frame*& 
          */
-        FramePtr& get_step(size_t);
+        Frame* get_step(size_t);
         
         /**
          * @brief Get a frame with its index in vector
          * 
-         * @return FramePtr& 
+         * @return Frame*& 
          */
-        FramePtr& get_by_index(size_t);
+        Frame* get_by_index(size_t);
 
         /**
-         * @brief Get the read-only std::vector<FramePtr>
+         * @brief Get the read-only std::vector<Frame*>
          * 
          * @return const FrameVec& 
          */
-        const FrameVec& get_frames() const;
+        FrameVec get_frames() const;
 
         /**
          * @brief Opon a Chemfiles::Trajectory
@@ -105,11 +106,9 @@ namespace molcpp
         // TODO: cache for frames converted from chemfiles
     };
 
-    using TrajectoryPtr = std::shared_ptr<Trajectory>;
+    std::unique_ptr<Trajectory> new_trajectory();
+    std::unique_ptr<Trajectory> new_trajectory(chemfiles::Trajectory&);
 
-    TrajectoryPtr new_trajectory();
-    TrajectoryPtr new_trajectory(chemfiles::Trajectory&);
-
-    chemfiles::Trajectory to_chemfiles(TrajectoryPtr, std::string, char, const std::string&);
+    chemfiles::Trajectory to_chemfiles(Trajectory*, std::string, char, const std::string&);
 
 }

@@ -11,7 +11,7 @@ namespace molcpp
     TEST(TestForceField, test_def_atoms)
     {
         auto ff = ForceField();
-        auto at = ff.def_atomtype("C");
+        ff.def_atomtype("C");
         EXPECT_EQ(ff.get_natomtypes(), 1);
     }
 
@@ -19,7 +19,7 @@ namespace molcpp
     {
         auto ff = ForceField();
         auto at = ff.def_atomtype("C");
-        auto bt = ff.def_bondtype("C-C", at, at);
+        ff.def_bondtype("C-C", at, at);
         EXPECT_EQ(ff.get_nbondtypes(), 1);
     }
 

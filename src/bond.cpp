@@ -3,7 +3,7 @@
 namespace molcpp
 {
 
-    Bond::Bond(Atom* itom, Atom* jtom) : _itom{itom}, _jtom{jtom} 
+    Bond::Bond(Atom* itom, Atom* jtom) : _itom{itom}, _jtom{jtom} , _type{nullptr}
     {
 
     }
@@ -34,12 +34,12 @@ namespace molcpp
         return _jtom;
     }
 
-    BondTypePtr Bond::get_bondtype() const
+    BondType* Bond::get_bondtype() const
     {
         return _type;
     }
 
-    void Bond::set_type(const BondTypePtr &type)
+    void Bond::set_type(BondType* type)
     {
         _type = type;
     }

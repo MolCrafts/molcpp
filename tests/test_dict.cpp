@@ -1,6 +1,6 @@
 #include "utils.h"
 #include "dict.h"
-#include "types.hpp"
+#include "linalg.hpp"
 
 namespace molcpp
 {

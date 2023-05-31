@@ -45,13 +45,13 @@ namespace molcpp
          *
          * @return BondTypePtr
          */
-        BondTypePtr get_bondtype() const;
+        BondType* get_bondtype() const;
 
         /**
          * @brief Set the type
          *
          */
-        void set_type(const BondTypePtr &);
+        void set_type(BondType*);
 
         /**
          * @brief
@@ -92,12 +92,13 @@ namespace molcpp
          * @return T
          */
         template <typename T>
-        T get(const std::string &key) const
+        T get(const std::string &key, T _default = T()) const
         {
             if (_properties.has(key))
                 return _properties.get<T>(key);
-            else
+            else if(_type != nullptr && _type->has(key))
                 return _type->get<T>(key);
+            else return _default;
         }
 
         Bond& operator=(Bond &&);
@@ -105,7 +106,7 @@ namespace molcpp
     private:
         Atom* _itom;
         Atom* _jtom;
-        BondTypePtr _type;
+        BondType* _type;
         BondPropertyDict _properties;
     };
 

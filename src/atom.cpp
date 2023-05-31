@@ -2,9 +2,10 @@
 
 namespace molcpp
 {
-    Atom::Atom(const std::string& name, Vector3D pos) : _type{new_atomtype(name)}, _properties{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
+    Atom::Atom(const std::string& name, Vector3D pos) : _type{nullptr}, _properties{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
     {
         LOG_DEBUG("Atom created " );
+        _properties["name"] = name;
     }
 
     Atom::Atom(const Atom& other) : _type{other._type}, _properties{other._properties}, _id{reinterpret_cast<size_t>(this)}, _pos{other._pos}
@@ -23,12 +24,12 @@ namespace molcpp
         LOG_DEBUG("Atom destroyed " );
     }
 
-    void Atom::set_type(const AtomTypePtr &type)
+    void Atom::set_type(AtomType* type)
     {
         _type = type;
     }
 
-    const AtomTypePtr &Atom::get_type()
+    const AtomType* Atom::get_type()
     {
         return _type;
     }

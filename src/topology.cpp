@@ -2,7 +2,7 @@
 
 namespace molcpp
 {
-    Topology::Topology() : _atoms{}, _bonds{}, _topos{}, _bondConnect{}
+    Topology::Topology() : _atoms{}, _bonds{}, _topos{}, _graph{}
     {
     }
 
@@ -87,16 +87,19 @@ namespace molcpp
         auto trial_bond = molcpp::create_bond(itom, jtom);
         Bond* bond = trial_bond.get();
         auto results = std::find_if(_bonds.begin(), _bonds.end(), [bond](Bond *b)
-                                    { return b == bond; });
+                                    { return b->equal_to(bond); });
         return results == _bonds.end() ? false : true;
     }
 
     Bond *Topology::create_bond(Atom *itom, Atom *jtom)
     {
         AtomVec atoms = get_atoms();
-        auto i = std::find(atoms.begin(), atoms.end(), itom);
-        auto j = std::find(atoms.begin(), atoms.end(), jtom);
-        // connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
+        auto i = std::find_if(atoms.begin(), atoms.end(), [itom](Atom *a)
+                              { return a->equal_to(itom); });
+        auto j = std::find_if(atoms.begin(), atoms.end(), [jtom](Atom* a){return a->equal_to(jtom);});
+        if (i == atoms.end() || j == atoms.end())
+            throw KeyError("Cannot find atom");
+        connect(std::distance(_atoms.begin(), i), std::distance(_atoms.begin(), j));
 
         _bonds.emplace_back(new Bond(itom, jtom));
         return _bonds.back();
@@ -104,18 +107,17 @@ namespace molcpp
 
     Bond *Topology::create_bond(size_t itom_index, size_t jtom_index)
     {
-        // connect(itom_index, jtom_index);
         AtomVec atoms = get_atoms();
         Atom *itom = atoms[itom_index];
         Atom *jtom = atoms[jtom_index];
+        connect(itom_index, jtom_index);
         _bonds.emplace_back(new Bond(itom, jtom));
         return _bonds.back();
     }
 
     void Topology::connect(size_t i, size_t j)
     {
-        check_connect(i, j);
-        _bondConnect.emplace_back(std::initializer_list<size_t>{i, j});
+        _graph.add_edge(i, j);
     }
 
     void Topology::check_connect(size_t i, size_t j)
@@ -126,7 +128,7 @@ namespace molcpp
             throw ValueError(msg);
         }
 
-        if (i > _atoms.size() || j > _atoms.size())
+        if (i > get_natoms() || j > get_natoms())
         {
             auto msg = "Cannot connect atom index " + std::to_string(i) + " to " + std::to_string(j) + " because one of them is out of range";
             throw IndexError(msg);
@@ -233,7 +235,7 @@ namespace molcpp
         }
     }
 
-    void Topology::set_positions(xt::xarray<double> &positions)
+    void Topology::set_positions(const xt::xarray<double> &positions)
     {
         if (positions.shape().size() == 2)
         {
@@ -269,16 +271,31 @@ namespace molcpp
         return xt::adapt(positions, shape);
     }
 
-    std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology &chflTopo)
+    BondConnect Topology::get_bond_connect()
+    {
+        return _graph.get_bonds();
+    }
+
+    AngleConnect Topology::get_angle_connect()
+    {
+        return _graph.get_angles();
+    }
+
+    DihedralConnect Topology::get_dihedral_connect()
+    {
+        return _graph.get_dihedrals();
+    }
+
+    std::unique_ptr<Topology> from_chemfiles(const chemfiles::Topology& chflTopo)
     {
         auto topo = create_topology();
-        for (auto chflAtom : chflTopo)
+        for (auto& chflAtom : chflTopo)
         {
             auto atom = from_chemfiles(chflAtom);
             topo->add_atom(atom.release());
         }
 
-        for (auto chflBond : chflTopo.bonds())
+        for (auto& chflBond : chflTopo.bonds())
         {
             topo->create_bond(chflBond[0], chflBond[1]);
         }
@@ -295,7 +312,7 @@ namespace molcpp
 
         for (auto bond : topo->get_bond_connect())
         {
-            chflTopo.add_bond(bond[0], bond[1]);
+            chflTopo.add_bond(std::get<0>(bond), std::get<1>(bond));
         }
         return chflTopo;
     }

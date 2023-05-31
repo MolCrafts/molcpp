@@ -2,7 +2,7 @@
 #include "algo.h"
 #include "dict.h"
 #include "itemtype.h"
-#include "types.hpp"
+#include "linalg.hpp"
 #include <vector>
 #include <memory>
 #include <chemfiles.hpp>
@@ -42,7 +42,7 @@ namespace molcpp
         T get(const std::string& key, T _default = T()) const
         {
             if (_properties.has(key)) return _properties.get<T>(key);
-            else if(_type->has(key)) return _type->get<T>(key);
+            else if(_type != nullptr && _type->has(key)) return _type->get<T>(key);
             else return _default;
         };
 
@@ -60,14 +60,14 @@ namespace molcpp
          * @brief Set the atomtype
          *
          */
-        void set_type(const AtomTypePtr&);
+        void set_type(AtomType*);
 
         /**
          * @brief Get the atomtype
          *
-         * @return const AtomTypePtr&
+         * @return const AtomType*
          */
-        const AtomTypePtr& get_type();
+        const AtomType* get_type();
 
         /**
          * @brief
@@ -109,7 +109,7 @@ namespace molcpp
         }
 
     private:
-        AtomTypePtr _type;
+        AtomType* _type;
         AtomPropertyDict _properties;
         size_t _id;
         Vector3D _pos;
