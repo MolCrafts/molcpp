@@ -41,24 +41,11 @@ namespace molcpp
         _topology = topology;
     }
 
-    void Frame::set(const std::string& key, const xt::xarray<AtomProperty> &value)
+    void Frame::set(const std::string& key, const std::vector<AtomProperty> &value)
     {
         if (_topology == nullptr)
             throw std::runtime_error("Topology is not set");
         _topology->set(key, value);
-    }
-
-    void Frame::set_positions(const xt::xarray<double>& positions)
-    {
-        if (_topology == nullptr)
-            throw std::runtime_error("Topology is not set");
-        _topology->set_positions(positions);
-    }
-
-    const xt::xarray<double> Frame::get_positions() const
-    {
-        xt::xarray<double> tmp = _topology->get_positions();
-        return tmp;
     }
 
     void Frame::set_cell(Cell* cell)
@@ -87,9 +74,16 @@ namespace molcpp
         _frame->set_timestep(chflFrame.step());
         _frame->set_cell(from_chemfiles(chflFrame.cell()).release());
         _frame->set_topology(from_chemfiles(chflFrame.topology()).release());
-        int natoms = chflFrame.size();
-        auto positions = xt::adapt((double*)chflFrame.positions().data(), {natoms, 3});
-        // _frame->set_positions(positions);
+        std::vector<AtomProperty> positions(chflFrame.size());
+        std::transform(
+            chflFrame.positions().begin(),
+            chflFrame.positions().end(),
+            positions.begin(),
+            [](const chemfiles::Vector3D& pos) {
+                return AtomProperty(Vector3D(pos[0], pos[1], pos[2]));
+            }
+        );
+        _frame->set("positions", positions);
         return _frame;
     }
 
@@ -99,11 +93,11 @@ namespace molcpp
         auto chflTopo = to_chemfiles(frame->get_topology());
         chflFrame.set_step(frame->get_timestep());
         chflFrame.set_cell(to_chemfiles(frame->get_cell()));
-        for (size_t i = 0; i < chflTopo.size(); i++)
+        std::vector<Vector3D> xyz = frame->get<Vector3D>("positions");
+        for (size_t i = 0; i < chflTopo.size(); i++)  // for_each atom
         {   
             auto chflAtom = chflTopo[i];
-            xt::xarray<double> xyz = frame->get_positions()(i);
-            chflFrame.add_atom(chflAtom, {xyz[0], xyz[1], xyz[2]});
+            chflFrame.add_atom(chflAtom, chemfiles::Vector3D(xyz[i][0], xyz[i][1], xyz[i][2]));
         }
         chflFrame.set_topology(chflTopo);
         return chflFrame;

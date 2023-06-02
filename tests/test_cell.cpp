@@ -6,21 +6,21 @@ namespace molcpp
     TEST(TestCell, test_init)
     {
         Cell cell1;
-        EXPECT_EQ(cell1.get_lengths(), Vector3D({1, 1, 1}));
-        EXPECT_EQ(cell1.get_tilts(), Vector3D({0, 0, 0}));
-        EXPECT_EQ(cell1.get_angles(), Vector3D({90, 90, 90}));
+        EXPECT_EQ(cell1.get_lengths(), Vector3D(1, 1, 1));
+        EXPECT_EQ(cell1.get_tilts(), Vector3D(0, 0, 0));
+        EXPECT_EQ(cell1.get_angles(), Vector3D(90, 90, 90));
         EXPECT_EQ(cell1.get_volume(), 1);
 
         Cell cell2({1, 2, 3}, {90, 90, 90});
-        EXPECT_EQ(cell2.get_lengths(), Vector3D({1, 2, 3}));
-        EXPECT_TRUE(allclose(cell2.get_tilts(), Vector3D({0, 0, 0})));
-        EXPECT_EQ(cell2.get_angles(), Vector3D({90, 90, 90}));
+        EXPECT_EQ(cell2.get_lengths(), Vector3D(1, 2, 3));
+        EXPECT_TRUE(allclose(cell2.get_tilts(), Vector3D(0, 0, 0)));
+        EXPECT_EQ(cell2.get_angles(), Vector3D(90, 90, 90));
         EXPECT_EQ(cell2.get_volume(), 6);
 
         Cell cell3({1, 1, 1}, {45, 45, 45});
-        EXPECT_EQ(cell3.get_lengths(), Vector3D({1, 1, 1}));
-        EXPECT_TRUE(allclose(cell3.get_tilts(), Vector3D({0.707, 0.707, 0.293}), 1e-03));
-        EXPECT_EQ(cell3.get_angles(), Vector3D({45, 45, 45}));
+        EXPECT_EQ(cell3.get_lengths(), Vector3D(1, 1, 1));
+        EXPECT_TRUE(allclose(cell3.get_tilts(), Vector3D(0.707, 0.707, 0.293), 1e-03));
+        EXPECT_EQ(cell3.get_angles(), Vector3D(45, 45, 45));
         EXPECT_FLOAT_EQ(cell3.get_volume(), 0.45508987);
 
     }

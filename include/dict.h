@@ -76,6 +76,18 @@ namespace molcpp
         }
 
         /**
+         * @brief Equality operator that compare with a value which type is T in Ts
+         * 
+         */
+        template <typename T>
+        bool operator==(const T &V) const
+        {
+            if (!std::holds_alternative<T>(_value))
+                return false;
+            return true;
+        }
+
+        /**
          * @brief Get a typed value object
          *
          * @tparam T

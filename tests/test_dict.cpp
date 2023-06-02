@@ -16,6 +16,15 @@ namespace molcpp
         EXPECT_FALSE(d.is<int>());
         EXPECT_TRUE(d.is<double>());
         EXPECT_EQ(d.get<double>(), 3.14);
+
+        // TODO
+        // Data<Vector3D> d2({0, 1, 2});
+        // EXPECT_TRUE(d2.is<Vector3D>());
+        // EXPECT_TRUE(d2.get<Vector3D>() == Vector3D(0, 1, 2));
+
+        Data<Vector3D> d3(Vector3D(1, 2, 3));
+        EXPECT_TRUE(d3.is<Vector3D>());
+        EXPECT_TRUE(d3.get<Vector3D>() == Vector3D(1, 2, 3));
     }
 
     TEST(TestData, test_copy_constructor)
@@ -67,6 +76,17 @@ namespace molcpp
 
         EXPECT_TRUE(d1 == d2);
         EXPECT_FALSE(d1 == d3);
+    }
+
+    TEST(TestData, test_inhomogeneous_eq_op)
+    {
+        Data<int, std::string, Vector3D> d1(1);
+        // Data<int, std::string, Vector3D> d2("hello");
+        // Data<int, std::string, Vector3D> d3(Vector3D(1, 2, 3));
+
+        EXPECT_TRUE(d1 == 1);
+        // EXPECT_TRUE(d2 == "hello");
+        // EXPECT_TRUE(d3 == Vector3D(1, 2, 3));
     }
 
     TEST(TestData, test_get)

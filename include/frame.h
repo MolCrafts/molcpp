@@ -5,6 +5,7 @@
 #include "topology.h"
 #include "itemtype.h"
 #include "cell.h"
+#include "algo.h"
 #include <xtensor/xio.hpp>
 namespace molcpp
 {
@@ -72,16 +73,12 @@ namespace molcpp
          * @return T
          */
         template <typename T>
-        xt::xarray<T> get(const std::string &key)
+        std::vector<T> get(const std::string &key)
         {
             return _topology->get<T>(key);
         };
 
-        void set(const std::string&, const xt::xarray<AtomProperty>&);
-
-        void set_positions(const xt::xarray<double>&);
-
-        const xt::xarray<double> get_positions() const;
+        void set(const std::string&, const std::vector<AtomProperty>&);
 
         void set_cell(Cell*);
 

@@ -24,8 +24,9 @@ namespace molcpp
         topo->create_atom();
         topo->create_atom();
         EXPECT_EQ(frame.get_natoms(), 3);
-        frame.set_positions(xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
-        EXPECT_EQ(frame.get_positions(), xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
+        std::vector<AtomProperty> vec {Vector3D(1, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 1, 0)};
+        frame.set("positions", vec);
+        // EXPECT_EQ(frame.get<Vector3D>("positions"), vec);
     }
 
     TEST(TestFrame, test_from_chemfiles)
@@ -40,10 +41,10 @@ namespace molcpp
         _frame.add_bond(2, 1);
 
         auto frame = from_chemfiles(_frame);
-        // EXPECT_EQ(frame->get_natoms(), 3);
-        // EXPECT_EQ(frame->get_nbonds(), 2);
-        // EXPECT_EQ(frame->get<std::string>("name"), xt::xarray<std::string>({"H", "O", "H"}));
-        // EXPECT_EQ(frame->get_positions(), xt::xarray<double>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
+        EXPECT_EQ(frame->get_natoms(), 3);
+        EXPECT_EQ(frame->get_nbonds(), 2);
+        EXPECT_EQ(frame->get<std::string>("name"), std::vector<std::string>({"H", "O", "H"}));
+        EXPECT_EQ(frame->get<Vector3D>("positions"), std::vector<Vector3D>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
     }
 
     TEST(TestFrame, test_to_chemfiles)

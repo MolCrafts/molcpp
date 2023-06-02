@@ -98,13 +98,4 @@ namespace molcpp
         EXPECT_EQ(atom->get<double>("charge"), 1.0);
         EXPECT_EQ(atom->get<std::string>("full_name"), "testAtom");
     }
-
-    TEST(TestAtom, test_pos)
-    {
-        auto atom = Atom();
-        EXPECT_EQ(atom.get_position(), Vector3D(0, 0, 0));
-
-        atom.set_position({1.0, 2.0, 3.0});
-        EXPECT_EQ(atom.get_position(), Vector3D(1, 2, 3));
-    }
 }

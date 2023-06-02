@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "mperror.h"
+#include <chemfiles.hpp>
 
 namespace molcpp {
 
@@ -41,6 +42,7 @@ public:
     Vector3D(const Vector3D&) = default;
     Vector3D& operator=(const Vector3D&) = default;
     Vector3D(Vector3D&&) noexcept = default;
+    Vector3D(chemfiles::Vector3D&&) noexcept;
     Vector3D& operator=(Vector3D&&) noexcept = default;
 
     using super::operator[];
@@ -158,6 +160,12 @@ inline Vector3D& Vector3D::operator/=(double rhs) {
     (*this)[2] /= rhs;
 
     return *this;
+}
+
+inline Vector3D::Vector3D(chemfiles::Vector3D&& other) noexcept {
+    (*this)[0] = other[0];
+    (*this)[1] = other[1];
+    (*this)[2] = other[2];
 }
 
 // Vector3D needs to have a standard layout, equivalent to a `double[3]` array.
