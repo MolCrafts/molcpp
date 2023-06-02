@@ -6,10 +6,7 @@
 #include "mplog.h"
 #include "graph.h"
 #include <chemfiles.hpp>
-#include <xtensor/xarray.hpp>
-#include <xtensor/xadapt.hpp>
-#include <xtensor/xview.hpp>
-#include <xtensor/xadapt.hpp>
+#include <vector>
 
 namespace molcpp
 {
@@ -162,11 +159,7 @@ namespace molcpp
             return arr;
         }
 
-        void set(const std::string &, const xt::xarray<AtomProperty> &);
-
-        void set_positions(const xt::xarray<double> &);
-
-        xt::xarray<double> get_positions();
+        void set(const std::string &, const std::vector<AtomProperty> &);
 
         BondConnect get_bond_connect();
 

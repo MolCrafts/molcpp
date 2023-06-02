@@ -168,21 +168,6 @@ namespace molcpp
         EXPECT_EQ(bond_connect[1], std::make_tuple(1, 2));
     }
 
-    TEST(TestTopology, test_set_get_positions)
-    {
-        auto topo = create_topology();
-        topo->create_atom("H");
-        topo->create_atom("C");
-        auto positions = xt::xarray<double>({{1, 1, 1}, {2, 2, 2}});
-        topo->set_positions(positions);
-        xt::xarray<double> get_positions = topo->get_positions();
-
-        EXPECT_EQ(get_positions.shape()[0], 2);
-        EXPECT_EQ(get_positions.shape()[1], 3);
-        EXPECT_EQ(xt::row(get_positions, 0), xt::xarray<double>({1, 1, 1}));
-        EXPECT_EQ(xt::row(get_positions, 1), xt::xarray<double>({2, 2, 2}));
-    }
-
     TEST(TestTopology, test_from_chemfiles)
     {
         auto frame = chemfiles::Frame(chemfiles::UnitCell({10, 10, 10}));

@@ -224,7 +224,7 @@ namespace molcpp
         _topos.emplace_back(topo);
     }
 
-    void Topology::set(const std::string &key, const xt::xarray<AtomProperty> &value)
+    void Topology::set(const std::string &key, const std::vector<AtomProperty> &value)
     {
         if (value.size() != get_natoms())
             throw ValueError("The size of the value array must be equal to the number of atoms");
@@ -233,42 +233,6 @@ namespace molcpp
         {
             _atoms[i]->set(key, value[i]);
         }
-    }
-
-    void Topology::set_positions(const xt::xarray<double> &positions)
-    {
-        if (positions.shape().size() == 2)
-        {
-            if (positions.shape()[0] != get_natoms())
-                throw ValueError("The size of the positions array must be equal to the number of atoms");
-        }
-        else
-        {
-            throw ValueError("The positions array must be 2D");
-        }
-
-        int i = 0;
-        for (auto &atom : get_atoms())
-        {
-            atom->set_position(Vector3D(positions(i, 0), positions(i, 1), positions(i, 2)));
-            i++;
-        }
-    }
-
-    xt::xarray<double> Topology::get_positions()
-    {
-        auto natoms = get_natoms();
-        std::vector<double> positions(natoms * 3);
-        auto atoms = get_atoms();
-        for (size_t i = 0; i < natoms; i++)
-        {
-            auto pos = atoms[i]->get_position();
-            positions[i * 3] = pos[0];
-            positions[i * 3 + 1] = pos[1];
-            positions[i * 3 + 2] = pos[2];
-        }
-        std::vector<std::size_t> shape = {natoms, 3};
-        return xt::adapt(positions, shape);
     }
 
     BondConnect Topology::get_bond_connect()

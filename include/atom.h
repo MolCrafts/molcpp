@@ -94,10 +94,6 @@ namespace molcpp
          */
         size_t get_id() const;
 
-        void set_position(const Vector3D& pos);
-
-        const Vector3D& get_position() const;
-
         AtomProperty &operator[](const std::string& key)
         {
             return _properties[key];
@@ -112,7 +108,6 @@ namespace molcpp
         AtomType* _type;
         AtomPropertyDict _properties;
         size_t _id;
-        Vector3D _pos;
     };
 
     // factory function

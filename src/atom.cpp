@@ -2,21 +2,18 @@
 
 namespace molcpp
 {
-    Atom::Atom(const std::string& name, Vector3D pos) : _type{nullptr}, _properties{}, _id{reinterpret_cast<size_t>(this)}, _pos{pos}
+    Atom::Atom(const std::string& name, Vector3D pos) : _type{nullptr}, _properties{}, _id{reinterpret_cast<size_t>(this)}
     {
-        LOG_DEBUG("Atom created " );
         _properties["name"] = name;
+        _properties["pos"] = pos;
     }
 
-    Atom::Atom(const Atom& other) : _type{other._type}, _properties{other._properties}, _id{reinterpret_cast<size_t>(this)}, _pos{other._pos}
+    Atom::Atom(const Atom& other) : _type{other._type}, _properties{other._properties}, _id{reinterpret_cast<size_t>(this)}
     {
-
-        LOG_DEBUG("Atom cpoied " );
     }
 
-    Atom::Atom(Atom&& other) noexcept : _type{std::move(other._type)}, _properties{std::move(other._properties)}, _id{other._id}, _pos{std::move(other._pos)}
+    Atom::Atom(Atom&& other) noexcept : _type{std::move(other._type)}, _properties{std::move(other._properties)}, _id{other._id}
     {
-        LOG_DEBUG("Atom moved " );
     }
 
     Atom::~Atom()
@@ -69,23 +66,12 @@ namespace molcpp
         return _id;
     }
 
-    void Atom::set_position(const Vector3D  &pos)
-    {
-        _pos = pos;
-    }
-
-    const Vector3D & Atom::get_position() const
-    {
-        return _pos;
-    }
-
     Atom& Atom::operator=(const Atom& rhs)
     {
         if (this != &rhs){
             _type = rhs._type;
             _properties = rhs._properties;
             _id = rhs._id;
-            _pos = rhs._pos;
         }
         return *this;
     }
@@ -96,7 +82,6 @@ namespace molcpp
             _type = std::move(rhs._type);
             _properties = std::move(rhs._properties);
             _id = rhs._id;
-            _pos = std::move(rhs._pos);
         }
         return *this;
     }

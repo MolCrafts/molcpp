@@ -4,13 +4,14 @@
 #include <memory>
 #include <optional>
 #include "mplog.h"
+#include "linalg.hpp"
 #include "dict.h"
 
 namespace molcpp
 {
 
     // pre-defined dict type
-    using AtomPropertyDict = Dict<int, double, std::string>;
+    using AtomPropertyDict = Dict<int, double, std::string, Vector3D>;
     using AtomProperty = AtomPropertyDict::value_type;
     using BondPropertyDict = Dict<int, double, std::string>;
     using BondProperty = BondPropertyDict::value_type;
