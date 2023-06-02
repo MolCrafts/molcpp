@@ -82,11 +82,11 @@ namespace molcpp
     {
         Data<int, std::string, Vector3D> d1(1);
         // Data<int, std::string, Vector3D> d2("hello");
-        // Data<int, std::string, Vector3D> d3(Vector3D(1, 2, 3));
+        Data<int, std::string, Vector3D> d3(Vector3D(1, 2, 3));
 
         EXPECT_TRUE(d1 == 1);
         // EXPECT_TRUE(d2 == "hello");
-        // EXPECT_TRUE(d3 == Vector3D(1, 2, 3));
+        EXPECT_TRUE(d3 == Vector3D(1, 2, 3));
     }
 
     TEST(TestData, test_get)

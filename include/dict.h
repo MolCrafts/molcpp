@@ -82,9 +82,9 @@ namespace molcpp
         template <typename T>
         bool operator==(const T &V) const
         {
-            if (!std::holds_alternative<T>(_value))
+            if (!is<T>())
                 return false;
-            return true;
+            return get<T>() == V;
         }
 
         /**
@@ -94,7 +94,7 @@ namespace molcpp
          * @return const T&
          */
         template <typename T>
-        const T &get() const
+        inline const T &get() const
         {
             return std::get<T>(_value);
         }
@@ -104,7 +104,7 @@ namespace molcpp
          *
          * @param V
          */
-        void set(const variant_type &V)
+        inline void set(const variant_type &V)
         {
             _value = V;
         }
@@ -117,7 +117,7 @@ namespace molcpp
          * @return false
          */
         template <typename T>
-        bool is() const
+        inline bool is() const
         {
             return std::holds_alternative<T>(_value);
         }
