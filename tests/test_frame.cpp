@@ -26,7 +26,7 @@ namespace molcpp
         EXPECT_EQ(frame.get_natoms(), 3);
         std::vector<AtomProperty> vec {Vector3D(1, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 1, 0)};
         frame.set("positions", vec);
-        // EXPECT_EQ(frame.get<Vector3D>("positions"), vec);
+        EXPECT_TRUE(std::equal(vec.begin(), vec.end(), frame.get<Vector3D>("positions").begin()));
     }
 
     TEST(TestFrame, test_from_chemfiles)
