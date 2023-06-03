@@ -6,7 +6,6 @@
 #include "itemtype.h"
 #include "cell.h"
 #include "algo.h"
-#include <xtensor/xio.hpp>
 namespace molcpp
 {
 
