@@ -80,12 +80,13 @@ namespace molcpp
 
     TEST(TestData, test_inhomogeneous_eq_op)
     {
+        using namespace std::string_literals;
         Data<int, std::string, Vector3D> d1(1);
-        // Data<int, std::string, Vector3D> d2("hello");
+        Data<int, std::string, Vector3D> d2("hello");
         Data<int, std::string, Vector3D> d3(Vector3D(1, 2, 3));
 
         EXPECT_TRUE(d1 == 1);
-        // EXPECT_TRUE(d2 == "hello");
+        EXPECT_TRUE(d2 == "hello"s);
         EXPECT_TRUE(d3 == Vector3D(1, 2, 3));
     }
 

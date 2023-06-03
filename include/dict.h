@@ -82,8 +82,6 @@ namespace molcpp
         template <typename T>
         bool operator==(const T &V) const
         {
-            if (!is<T>())
-                return false;
             return get<T>() == V;
         }
 
