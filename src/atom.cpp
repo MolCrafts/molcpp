@@ -18,7 +18,7 @@ namespace molcpp
 
     Atom::~Atom()
     {
-        LOG_DEBUG("Atom destroyed " );
+
     }
 
     void Atom::set_type(AtomType* type)
@@ -26,8 +26,12 @@ namespace molcpp
         _type = type;
     }
 
-    const AtomType* Atom::get_type()
+    AtomType* Atom::get_type()
     {
+        if (_type == nullptr)
+        {
+            throw AttributeError("Atom::get_type: atom type not set");
+        }
         return _type;
     }
 

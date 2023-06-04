@@ -67,7 +67,7 @@ namespace molcpp
          *
          * @return const AtomType*
          */
-        const AtomType* get_type();
+        AtomType* get_type();
 
         /**
          * @brief

@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 #include <optional>
+#include "atom.h"
+#include "bond.h"
 #include "mplog.h"
 #include "mperror.h"
 #include "itemtype.h"
@@ -76,8 +78,8 @@ namespace molcpp
          */
         std::optional<BondType*> get_bondtype(AtomType*, AtomType*);
 
-        // bool match_atom(const AtomPtr&);
-        // bool match_bond(const BondPtr&);
+        bool match_atom(Atom*);
+        bool match_bond(Bond*);
 
     private:
         AtomTypeManager _atom_type_manager;

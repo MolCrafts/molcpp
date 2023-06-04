@@ -106,4 +106,20 @@ namespace molcpp
         std::string m_message;
     };
 
+    class AttributeError : public std::exception
+    {
+    public:
+        AttributeError(const std::string &message) : m_message(message)
+        {
+            LOG_ERROR(m_message);
+        }
+
+        const char *what() const noexcept override
+        {
+            return m_message.c_str();
+        }
+
+    private:
+        std::string m_message;
+    };
 }
