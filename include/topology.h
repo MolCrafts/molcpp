@@ -11,9 +11,8 @@
 namespace molcpp
 {
     class Topology; // forward declearation
-    using AtomVec = std::vector<Atom *>;
-    using BondVec = std::vector<Bond *>;
     using TopoVec = std::vector<Topology *>;
+    
     class Topology
     {
 

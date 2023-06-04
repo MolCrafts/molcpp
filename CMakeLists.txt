@@ -71,6 +71,7 @@ target_sources(
   src/frame.cpp
   src/trajectory.cpp
   src/cell.cpp
+  src/cellList.cpp
 )
 
 target_link_libraries(

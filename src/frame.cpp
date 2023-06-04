@@ -93,7 +93,7 @@ namespace molcpp
         auto chflTopo = to_chemfiles(frame->get_topology());
         chflFrame.set_step(frame->get_timestep());
         chflFrame.set_cell(to_chemfiles(frame->get_cell()));
-        std::vector<Vector3D> xyz = frame->get<Vector3D>("positions");
+        std::vector<Vector3D> xyz = frame->get<Vector3D>("position");
         for (size_t i = 0; i < chflTopo.size(); i++)  // for_each atom
         {   
             auto chflAtom = chflTopo[i];

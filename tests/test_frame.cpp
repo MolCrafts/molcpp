@@ -25,8 +25,8 @@ namespace molcpp
         topo->create_atom();
         EXPECT_EQ(frame.get_natoms(), 3);
         std::vector<AtomProperty> vec {Vector3D(1, 0, 0), Vector3D(0, 0, 0), Vector3D(0, 1, 0)};
-        frame.set("positions", vec);
-        EXPECT_TRUE(std::equal(vec.begin(), vec.end(), frame.get<Vector3D>("positions").begin()));
+        frame.set("position", vec);
+        EXPECT_TRUE(std::equal(vec.begin(), vec.end(), frame.get<Vector3D>("position").begin()));
     }
 
     TEST(TestFrame, test_from_chemfiles)
@@ -44,7 +44,7 @@ namespace molcpp
         EXPECT_EQ(frame->get_natoms(), 3);
         EXPECT_EQ(frame->get_nbonds(), 2);
         EXPECT_EQ(frame->get<std::string>("name"), std::vector<std::string>({"H", "O", "H"}));
-        EXPECT_EQ(frame->get<Vector3D>("positions"), std::vector<Vector3D>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
+        EXPECT_EQ(frame->get<Vector3D>("position"), std::vector<Vector3D>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
     }
 
     TEST(TestFrame, test_to_chemfiles)
