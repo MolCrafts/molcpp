@@ -24,15 +24,20 @@ namespace molcpp
         _ncell_x = ncell_x;
         _ncell_y = ncell_y;
         _ncell_z = ncell_z;
-        _cellListArray.resize(ncell_x);
+        _cellListArray.reserve(ncell_x);
         for (size_t i = 0; i < ncell_x; ++i)
         {
-            _cellListArray[i].resize(ncell_y);
+            _cellListArray[i].reserve(ncell_y);
             for (size_t j = 0; j < ncell_y; ++j)
             {
-                _cellListArray[i][j].resize(ncell_z);
+                _cellListArray[i][j].reserve(ncell_z);
             }
         }
+    }
+
+    void CellList::reset()
+    {
+        reset(_ncell_x, _ncell_y, _ncell_z);
     }
 
     void CellList::add_atom(Atom *atom)
@@ -50,5 +55,62 @@ namespace molcpp
         {
             add_atom(atom);
         }
+    }
+
+    size_t CellList::get_ncells()
+    {
+        return _ncell_x * _ncell_y * _ncell_z;
+    }
+
+    size_t CellList::get_ncell_x()
+    {
+        return _ncell_x;
+    }
+
+    size_t CellList::get_ncell_y()
+    {
+        return _ncell_y;
+    }
+
+    size_t CellList::get_ncell_z()
+    {
+        return _ncell_z;
+    }
+
+    std::vector<Atom*> CellList::get_vicinity(size_t x, size_t y, size_t z)
+    {
+        std::vector<Atom*> vicinity;
+        auto pbc = _cell->get_periodic();
+        for (size_t i = x - 1; i <= x + 1; ++i)
+        {
+            if (i < 0 || i >= _ncell_x)
+            {
+                if (pbc[0]) i = (i + _ncell_x) % _ncell_x;
+                else continue;
+            }
+            for (size_t j = y - 1; j <= y + 1; ++j)
+            {
+                if (j < 0 || j >= _ncell_y)
+                {
+                    if (pbc[1]) j = (j + _ncell_y) % _ncell_y;
+                    else continue;
+                }
+                for (size_t k = z - 1; k <= z + 1; ++k)
+                {
+                    if (k < 0 || k >= _ncell_z)
+                    {
+                        if (pbc[2]) k = (k + _ncell_z) % _ncell_z;
+                        else continue;
+                    }
+                    vicinity.insert(vicinity.end(), _cellListArray[i][j][k].begin(), _cellListArray[i][j][k].end());
+                }
+            }
+        }
+        return vicinity;
+    }
+
+    std::unique_ptr<CellList> create_cellList(Cell *cell, double cell_width)
+    {
+        return std::make_unique<CellList>(cell, cell_width);
     }
 }

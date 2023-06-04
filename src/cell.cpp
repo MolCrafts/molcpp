@@ -37,7 +37,7 @@ namespace molcpp
 
     Cell::Cell() : _matrix(Matrix3D::unit())
     {
-        set_boundary(PBC::P, PBC::P, PBC::P);
+        set_periodic(PBC::P, PBC::P, PBC::P);
     }
 
     Cell::Cell(Vector3D lengths, Vector3D angles) : Cell()
@@ -104,9 +104,14 @@ namespace molcpp
         return {dacos(cos_alpha), dacos(cos_beta), dacos(cos_gamma)};    
     }
 
-    void Cell::set_boundary(PBC x, PBC y, PBC z)
+    void Cell::set_periodic(PBC x, PBC y, PBC z)
     {
         _pbc = {x, y, z};
+    }
+
+    const std::array<PBC, 3> Cell::get_pbc() const
+    {
+        return _pbc;
     }
 
     const Vector3D Cell::get_lengths() const

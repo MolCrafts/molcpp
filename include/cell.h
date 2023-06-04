@@ -15,14 +15,14 @@ namespace molcpp
         public:
 
             enum PBC {
-                P = 0,
-                F = 1,
-                S = 2,
+                F = 0,
+                P = 1,
             };
 
             Cell();
             Cell(Vector3D lengths, Vector3D angles = {90, 90, 90});
-            void set_boundary(PBC, PBC, PBC);
+            void set_periodic(PBC, PBC, PBC);
+            std::array<PBC, 3> get_periodic() const;
             void set_lengths_and_angles(Vector3D lengths, Vector3D angles);
             const Matrix3D get_matrix() const;
             const Matrix3D get_inverse() const;
