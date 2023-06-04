@@ -89,6 +89,7 @@ namespace molcpp
         size_t _timestep;
         Cell* _cell;
         Topology* _topology;
+        // NeighborList _nblist;
     };
 
     std::unique_ptr<Frame> create_frame();

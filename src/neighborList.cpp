@@ -54,7 +54,7 @@ namespace molcpp
                             Vector3D diff = pos - neighbor_pos;
                             if (diff.norm() < r_cutoff)
                             {
-                                _neighborListArray[atom->get_id()].push_back(neighbor);
+                                _neighborListArray[atom->get_index()].push_back(neighbor);
                             }
                         }
                     }
