@@ -108,7 +108,7 @@ namespace molcpp
         EXPECT_TRUE(std::find(angles.begin(), angles.end(), std::make_tuple(0, 2, 1)) != angles.end());
     }
 
-    TEST(TestGraph, test_get_dihedral)
+    TEST(TestGraph, test_get_dihedrals)
     {
         auto g = Graph();
         g.add_node(0);

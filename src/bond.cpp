@@ -34,7 +34,7 @@ namespace molcpp
         return _jtom;
     }
 
-    BondType* Bond::get_bondtype() const
+    BondType* Bond::get_type() const
     {
         return _type;
     }

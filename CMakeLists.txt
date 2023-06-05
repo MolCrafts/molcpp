@@ -116,6 +116,8 @@ target_sources(
   src/frame.cpp
   src/trajectory.cpp
   src/cell.cpp
+
+  src/potentials/bond_harmonic.cpp
 )
 
 target_link_libraries(

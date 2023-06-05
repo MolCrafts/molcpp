@@ -45,7 +45,7 @@ namespace molcpp
          *
          * @return BondTypePtr
          */
-        BondType* get_bondtype() const;
+        BondType* get_type() const;
 
         /**
          * @brief Set the type

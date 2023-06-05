@@ -6,6 +6,8 @@
 #include "mplog.h"
 #include "mperror.h"
 #include "itemtype.h"
+#include "bond.h"
+#include "potentials/base.h"
 
 namespace molcpp
 {
@@ -46,7 +48,7 @@ namespace molcpp
          * 
          * @return BondType* 
          */
-        BondType* def_bondtype(const std::string&, AtomType*, AtomType*);
+        BondType* def_bondtype(const std::string&, AtomType*, AtomType*, const std::string&);
 
         /**
          * @brief Define a bond type
@@ -76,12 +78,16 @@ namespace molcpp
          */
         std::optional<BondType*> get_bondtype(AtomType*, AtomType*);
 
+        double compute_bond_energy(Bond*);
+
         // bool match_atom(const AtomPtr&);
         // bool match_bond(const BondPtr&);
 
     private:
         AtomTypeManager _atom_type_manager;
         BondTypeManager _bond_type_manager;
+
+        PotentialMap _potential_map;
     };
 
 }

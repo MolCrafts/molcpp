@@ -22,9 +22,11 @@ namespace molcpp
         return _atom_type_manager.get(tname);
     }
 
-    BondType* ForceField::def_bondtype(const std::string& name, AtomType* itype, AtomType* jtype)
+    BondType* ForceField::def_bondtype(const std::string& name, AtomType* itype, AtomType* jtype, const std::string& style = "")
     {
-        return _bond_type_manager.def(name, itype, jtype);
+        BondType* bt = _bond_type_manager.def(name, itype, jtype);
+        if (style != "") _potential_map.def(bt, style);
+        return bt;
     }
 
     BondType* ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename)
@@ -35,8 +37,7 @@ namespace molcpp
             return _bond_type_manager.def(name, *it, *jt);
         else
         {
-            LOG_ERROR("ForceField::def_bondtype: atom type not found");
-            throw std::runtime_error("ForceField::def_bondtype: atom type not found");
+            throw KeyError("Atom type not found");
         }
     }
 
@@ -53,6 +54,17 @@ namespace molcpp
     std::optional<BondType*> ForceField::get_bondtype(AtomType* itype, AtomType* jtype)
     {
         return _bond_type_manager.get(itype, jtype);
+    }
+
+    double ForceField::compute_bond_energy(Bond* bond)
+    {
+        BondType* bond_type = bond->get_type();
+        BondPotential* bp = _potential_map.get(bond_type);
+
+        auto itom = bond->get_itom();
+        auto jtom = bond->get_jtom();
+        auto length = (itom->get<Vector3D>("position") - jtom->get<Vector3D>("position")).norm();
+        return bp->energy(length);
     }
 
     // bool ForceField::match_atom(const AtomPtr& atom)
