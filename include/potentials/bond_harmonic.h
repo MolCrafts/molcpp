@@ -21,9 +21,19 @@ namespace molcpp
 
     BondPotential* create_bond_harmonic()
     {
+        LOG_DEBUG("Creating bond harmonic potential");
         return new BondHarmonic();
     }
 
     PotentialMap::RegisterPotential register_potential("harmonic", create_bond_harmonic);
+
+    // TODO: is any possible to convert create_bond_harmonic to a lambda function?
+    // bool PotentialMap::register_bond_potential = PotentialMap::register_bond_potential("harmonic", [](){ return new BondHarmonic();});
+
+    // and finally:
+    // #define REGISTER_POT(T, U) bool is_registered_##T = \
+    PotentialMap::register_bond_potential(#T, [](){ return new U();})
+
+    // REGISTER_POT(harmonic, BondHarmonic);
 
 }

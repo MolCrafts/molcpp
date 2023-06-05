@@ -7,6 +7,9 @@
 
 namespace molcpp
 {
+
+    #define REGISTER_POT(T, U) bool is_registered_##T = PotentialMap::register_bond_potential(#T, [](){ return new U();})
+
     class Potential
     {
     public:
@@ -36,9 +39,10 @@ namespace molcpp
     public:
         using BondCreator = BondPotential *(*)();
         using BondPotRegistry = std::map<std::string, BondCreator>;
-        static void register_bond_potential(const std::string &pot_name, BondCreator creator)
+        static bool register_bond_potential(const std::string &pot_name, BondCreator creator)
         {
             _registered_bond_potentials[pot_name] = creator;
+            return true;
         }
 
         static BondPotential *create_bond_potential(const std::string &pot_name)
@@ -54,7 +58,10 @@ namespace molcpp
             }
         }
 
-        PotentialMap() = default;
+        PotentialMap(){
+            LOG_DEBUG("Creating potential map");
+        };
+
         ~PotentialMap() = default;
 
         BondPotential *def(BondType *bond_type, const std::string &style)
