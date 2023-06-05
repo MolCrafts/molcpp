@@ -11,13 +11,19 @@ namespace molcpp
 
             void settings(double, double);
 
-            double energy(double r);
+            double energy(double r) override;
 
-            double force(double r);
+            double force(double r) override;
 
         private:
             double _K, _r0;
     };
 
-    PotentialMap::registry_bond_potential("harmonic", []()->BondPotential*{return new BondHarmonic();});
+    BondPotential* create_bond_harmonic()
+    {
+        return new BondHarmonic();
+    }
+
+    PotentialMap::RegisterPotential register_potential("harmonic", create_bond_harmonic);
+
 }

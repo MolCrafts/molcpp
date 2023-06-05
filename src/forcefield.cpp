@@ -22,19 +22,19 @@ namespace molcpp
         return _atom_type_manager.get(tname);
     }
 
-    BondType* ForceField::def_bondtype(const std::string& name, AtomType* itype, AtomType* jtype, const std::string& style = "")
+    BondType* ForceField::def_bondtype(const std::string& name, AtomType* itype, AtomType* jtype, const std::string& style)
     {
         BondType* bt = _bond_type_manager.def(name, itype, jtype);
         if (style != "") _potential_map.def(bt, style);
         return bt;
     }
 
-    BondType* ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename)
+    BondType* ForceField::def_bondtype(const std::string& name, const std::string& itypename, const std::string& jtypename, const std::string& style)
     {
         auto it = get_atomtype(itypename);
         auto jt = get_atomtype(jtypename);
         if (it && jt)
-            return _bond_type_manager.def(name, *it, *jt);
+            return def_bondtype(name, it.value(), jt.value(), style);
         else
         {
             throw KeyError("Atom type not found");

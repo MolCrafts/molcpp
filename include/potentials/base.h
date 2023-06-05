@@ -3,6 +3,7 @@
 #include "../mperror.h"
 #include <map>
 #include <functional>
+#include <type_traits>
 
 namespace molcpp
 {
@@ -21,8 +22,8 @@ namespace molcpp
         BondPotential() = default;
         ~BondPotential() = default;
 
-        double energy(double);
-        double force(double);
+        virtual double energy(double);
+        virtual double force(double);
 
     private:
     };
@@ -33,17 +34,25 @@ namespace molcpp
     {
 
     public:
-        using BondCreator = std::function<BondPotential *()>;
+        using BondCreator = BondPotential *(*)();
         using BondPotRegistry = std::map<std::string, BondCreator>;
-        static void registry_bond_potential(const std::string &pot_name, BondCreator creator)
+        static void register_bond_potential(const std::string &pot_name, BondCreator creator)
         {
             _registered_bond_potentials[pot_name] = creator;
         }
 
         static BondPotential *create_bond_potential(const std::string &pot_name)
         {
-            return _registered_bond_potentials[pot_name]();
-        };
+            auto it = _registered_bond_potentials.find(pot_name);
+            if (it != _registered_bond_potentials.end())
+            {
+                return it->second();
+            }
+            else
+            {
+                throw KeyError("Bond potential not found");
+            }
+        }
 
         PotentialMap() = default;
         ~PotentialMap() = default;
@@ -68,11 +77,30 @@ namespace molcpp
             return _bond_potential_map[bond_type];
         }
 
-    private:
-        static BondPotRegistry _registered_bond_potentials;
-        std::map<BondType*, BondPotential*> _bond_potential_map;
-    };
+        template <typename T>
+        class RegisterPotential
+        {
+        public:
+            RegisterPotential(std::string pot_name, T creator)
+            {
+                if (std::is_same<T, BondCreator>::value)
+                    register_bond_potential(pot_name, creator);
+                // elif (std::is_same<T, AngleCreator>::value)
+                //     register_angle_potential(pot_name, creator);
+                // elif (std::is_same<T, DihedralCreator>::value)
+                //     register_dihedral_potential(pot_name, creator);
+                // elif (std::is_same<T, ImproperCreator>::value)
+                //     register_improper_potential(pot_name, creator);
+                // elif (std::is_same<T, PairCreator>::value)
+                //     register_pair_potential(pot_name, creator);
+                else
+                    throw TypeError("Invalid potential creator type");
+            }
+        };
 
-    PotentialMap::BondPotRegistry PotentialMap::_registered_bond_potentials = {};
+    private:
+        static inline BondPotRegistry _registered_bond_potentials = {};
+        std::map<BondType *, BondPotential *> _bond_potential_map;
+    };
 
 }

@@ -48,14 +48,14 @@ namespace molcpp
          * 
          * @return BondType* 
          */
-        BondType* def_bondtype(const std::string&, AtomType*, AtomType*, const std::string&);
+        BondType* def_bondtype(const std::string&, AtomType*, AtomType*, const std::string& style="");
 
         /**
          * @brief Define a bond type
          * 
          * @return BondType* 
          */
-        BondType* def_bondtype(const std::string&, const std::string&, const std::string&);
+        BondType* def_bondtype(const std::string&, const std::string&, const std::string&, const std::string& style="");
 
         /**
          * @brief Get the number of defined bondtypes
