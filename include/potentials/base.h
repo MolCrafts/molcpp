@@ -37,10 +37,12 @@ namespace molcpp
     {
 
     public:
-        using BondCreator = BondPotential *(*)();
+        // using BondCreator = BondPotential *(*)();
+        using BondCreator = std::function<BondPotential *()>;
         using BondPotRegistry = std::map<std::string, BondCreator>;
         static bool register_bond_potential(const std::string &pot_name, BondCreator creator)
         {
+            LOG_INFO("Registering bond potential: " + pot_name);
             _registered_bond_potentials[pot_name] = creator;
             return true;
         }
@@ -58,9 +60,7 @@ namespace molcpp
             }
         }
 
-        PotentialMap(){
-            LOG_DEBUG("Creating potential map");
-        };
+        PotentialMap() = default;
 
         ~PotentialMap() = default;
 
