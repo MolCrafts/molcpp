@@ -49,51 +49,6 @@ else()
   add_subdirectory(${CMAKE_MODULE_PATH}/chemfiles)
 endif()
 
-find_package(xtensor QUIET)
-if(xtensor_FOUND)
-  message(STATUS "xtensor installed")
-  target_include_directories(
-    molcpp
-    PUBLIC
-    ${xtensor_INCLUDE_DIRS}
-  )
-  target_include_directories(
-    molcpp
-    PUBLIC
-    ${xtensor_INCLUDE_DIRS}
-  )
-else()
-  message(STATUS "xtensor not installed, compile from source code")
-  execute_process(
-    COMMAND git submodule update --init --recursive external/xtl
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-  execute_process(
-    COMMAND git submodule update --init --recursive external/xtensor
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-  execute_process(
-    COMMAND git submodule update --init --recursive external/xtensor-blas
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  )
-  add_definitions(-DHAVE_CBLAS=1)
-
-  if(WIN32)
-    find_package(OpenBLAS REQUIRED)
-    set(BLAS_LIBRARIES ${CMAKE_INSTALL_PREFIX}${OpenBLAS_LIBRARIES})
-  else()
-    find_package(BLAS REQUIRED)
-    find_package(LAPACK REQUIRED)
-  endif()
-
-  message(STATUS "BLAS VENDOR:    " ${BLA_VENDOR})
-  message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
-
-  add_subdirectory(${CMAKE_MODULE_PATH}/xtl)
-  add_subdirectory(${CMAKE_MODULE_PATH}/xtensor)
-  add_subdirectory(${CMAKE_MODULE_PATH}/xtensor-blas)
-endif()
-
 target_include_directories(
   molcpp
   PUBLIC
@@ -124,11 +79,6 @@ target_link_libraries(
   molcpp
   PUBLIC
   chemfiles
-  xtl
-  xtensor
-  xtensor-blas
-  ${BLAS_LIBRARIES}
-  ${LAPACK_LIBRARIES}
 )
 
 # For debug and test

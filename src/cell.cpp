@@ -137,16 +137,28 @@ namespace molcpp
         return _matrix.determinant();
     }
 
-    xt::xarray<double> Cell::wrap(xt::xarray<double>& positions)
+    std::vector<Vector3D> Cell::wrap(std::vector<Vector3D>& positions)
     {
         // PBC are all P
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
         {
-            xt::xarray<double> _mat = xt::adapt((double*)(&_matrix), {3, 3});
-            auto reciprocal_vecs = xt::linalg::dot(xt::linalg::inv(_mat), xt::transpose(positions));
-            auto wrapped_reci_vecs = reciprocal_vecs - xt::floor(reciprocal_vecs);
-            auto real_r = xt::linalg::dot(_mat, wrapped_reci_vecs);
-            return xt::transpose(real_r);
+            // xt::xarray<double> _mat = xt::adapt((double*)(&_matrix), {3, 3});
+            // auto reciprocal_vecs = xt::linalg::dot(xt::linalg::inv(_mat), xt::transpose(positions));
+            // auto wrapped_reci_vecs = reciprocal_vecs - xt::floor(reciprocal_vecs);
+            // auto real_r = xt::linalg::dot(_mat, wrapped_reci_vecs);
+            // return xt::transpose(real_r);
+            auto natoms = positions.size();
+            auto _inv_mat = _matrix.invert();
+            std::vector<Vector3D> _wrapped_positions(natoms);
+            for (size_t i = 0; i <natoms; i++)
+            {
+                Vector3D reci_vec = _inv_mat * positions[i];
+                Vector3D wrapped_reci_vec = reci_vec - reci_vec.floor();
+                _wrapped_positions[i] = _matrix * wrapped_reci_vec;
+            }
+
+            return _wrapped_positions;
+
         }
         else
             throw NotImplementedError("Only PBC = P is implemented");

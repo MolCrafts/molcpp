@@ -5,8 +5,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <xtensor/xio.hpp>
-#include <xtensor/xtensor.hpp>
 #include <filesystem>
 
 namespace fs = std::filesystem;

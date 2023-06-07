@@ -65,6 +65,9 @@ public:
 
     /// Compound division of a vector by a scalar
     Vector3D& operator/=(double rhs);
+
+    /// Compute 
+    Vector3D floor();
 };
 
 /// Compute the dot product of the vectors `lhs` and `rhs`.
@@ -166,6 +169,15 @@ inline Vector3D::Vector3D(chemfiles::Vector3D&& other) noexcept {
     (*this)[0] = other[0];
     (*this)[1] = other[1];
     (*this)[2] = other[2];
+}
+
+inline Vector3D Vector3D::floor() {
+
+    return {
+        std::floor((*this)[0]),
+        std::floor((*this)[1]),
+        std::floor((*this)[2])
+    };
 }
 
 // Vector3D needs to have a standard layout, equivalent to a `double[3]` array.

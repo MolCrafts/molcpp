@@ -29,21 +29,20 @@ namespace molcpp
     {
 
         Cell cell({2, 2, 2});
-        xt::xarray<double> points = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {-0.5, -0.5, -0.5}, {-1.5, -1.5, -1.5}};
-        xt::xarray<double> expected = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {1.5, 1.5, 1.5}, {0.5, 0.5, 0.5}};
-
-        EXPECT_TRUE(xt::allclose(cell.wrap(points), expected)) << cell.wrap(points);
-
+        std::vector<Vector3D> points = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {-0.5, -0.5, -0.5}, {-1.5, -1.5, -1.5}};
+        std::vector<Vector3D> expected = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {1.5, 1.5, 1.5}, {0.5, 0.5, 0.5}};
+        auto wrapped_points = cell.wrap(points);
+        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
     }
 
     TEST(TestCell, test_tric_wrap)
     {
             
         Cell cell({2, 2, 2}, {45, 45, 45});
-        xt::xarray<double> points = {{2, 1, 0}};
-        xt::xarray<double> expected = {{2, 1, 0}};  // TODO: need more tests
-
-        EXPECT_TRUE(xt::allclose(cell.wrap(points), expected)) << cell.wrap(points);
+        std::vector<Vector3D> points = {{2, 1, 0}};
+        std::vector<Vector3D> expected = {{2, 1, 0}};  // TODO: need more tests
+        auto wrapped_points = cell.wrap(points);
+        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
     
     }
 

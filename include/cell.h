@@ -1,9 +1,6 @@
 #pragma once
 
 #include <chemfiles.hpp>
-#include <xtensor/xarray.hpp>
-#include <xtensor/xadapt.hpp>
-#include <xtensor-blas/xlinalg.hpp>
 #include "mplog.h"
 #include "mperror.h"
 #include "linalg.hpp"
@@ -33,7 +30,7 @@ namespace molcpp
             const Vector3D get_angles() const;
             const Vector3D get_tilts() const;
             const double get_volume() const;
-            xt::xarray<double> wrap(xt::xarray<double>&);
+            std::vector<Vector3D> wrap(std::vector<Vector3D>&);
 
         private:
 
