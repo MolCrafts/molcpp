@@ -27,12 +27,13 @@ namespace molcpp
     {
         auto ff = ForceField();
         auto at = ff.def_atomtype("C");
-        ff.def_bondtype("C-C", at, at, "harmonic");
+        auto bt = ff.def_bondtype("C-C", at, at, "harmonic");
         EXPECT_EQ(ff.get_nbondtypes(), 1);
 
         auto atom1 = create_atom("C", {0, 0, 0});
         auto atom2 = create_atom("C", {1, 0, 0});
         auto bond = create_bond(atom1.get(), atom2.get());
+        bond->set_type(bt);
         ff.compute_bond_energy(bond.get());
     }
 

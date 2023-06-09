@@ -8,7 +8,7 @@
 namespace molcpp
 {
 
-    #define REGISTER_POT(T, U) bool is_registered_##T = PotentialMap::register_bond_potential(#T, [](){ return new U();})
+    #define REGISTER_POT(T, U) inline static bool is_registered_##T = PotentialMap::register_bond_potential(#T, [](){ return new U();})
 
     class Potential
     {
@@ -25,8 +25,8 @@ namespace molcpp
         BondPotential() = default;
         ~BondPotential() = default;
 
-        virtual double energy(double);
-        virtual double force(double);
+        virtual double energy(double r) {return 0.0;}
+        virtual double force(double r) {return 0.0;}
 
     private:
     };
@@ -109,5 +109,22 @@ namespace molcpp
         static inline BondPotRegistry _registered_bond_potentials = {};
         std::map<BondType *, BondPotential *> _bond_potential_map;
     };
+
+        class BondHarmonic : public BondPotential
+    {
+        public:
+            BondHarmonic();
+
+            void settings(double, double);
+
+            double energy(double r) override;
+
+            double force(double r) override;
+
+        private:
+            double _K, _r0;
+    };
+
+    REGISTER_POT(harmonic, BondHarmonic);
 
 }

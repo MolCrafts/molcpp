@@ -64,14 +64,13 @@ target_sources(
   src/element.cpp
   src/itemtype.cpp
   # dependent
-  src/forcefield.cpp
   src/atom.cpp
   src/bond.cpp
   src/topology.cpp
   src/frame.cpp
   src/trajectory.cpp
   src/cell.cpp
-
+  src/forcefield.cpp
   src/potentials/bond_harmonic.cpp
 )
 
