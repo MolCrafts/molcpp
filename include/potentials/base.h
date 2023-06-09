@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POTENTIALS_BASE_H
+#define POTENTIALS_BASE_H
 
 #include "../mperror.h"
 #include <map>
@@ -7,9 +8,6 @@
 
 namespace molcpp
 {
-
-    #define REGISTER_POT(T, U) inline static bool is_registered_##T = PotentialMap::register_bond_potential(#T, [](){ return new U();})
-
     class Potential
     {
     public:
@@ -110,21 +108,13 @@ namespace molcpp
         std::map<BondType *, BondPotential *> _bond_potential_map;
     };
 
-        class BondHarmonic : public BondPotential
-    {
-        public:
-            BondHarmonic();
 
-            void settings(double, double);
+    #ifndef BOND_POT
+    #define BOND_POT
 
-            double energy(double r) override;
+    #define REGISTER_POT(T, U) inline static bool is_registered_##T = PotentialMap::register_bond_potential(#T, [](){ return new U();})
 
-            double force(double r) override;
-
-        private:
-            double _K, _r0;
-    };
-
-    REGISTER_POT(harmonic, BondHarmonic);
-
+    #endif
 }
+
+#endif // POTENTIALS_BASE_H
