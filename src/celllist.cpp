@@ -1,13 +1,17 @@
-#include "cellList.h"
+#include "celllist.h"
 
 namespace molcpp
 {
     CellList::CellList(Cell *cell, double cell_width) : _cell{cell}
     {
-        if (cell_width <= 0)
+        if (cell_width < 0) throw ValueError("Cell width must be positive");
+        elif (cell_width == 0)
         {
-            throw ValueError("Cell width must be positive");
+            // if cell_width is not provided, estimate a cell width
+            auto lengths = cell->get_lengths();
+            
         }
+
         Vector3D lengths = cell->get_lengths();
         double x = lengths[0];
         double y = lengths[1];
