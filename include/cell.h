@@ -22,7 +22,7 @@ namespace molcpp
             Cell();
             Cell(Vector3D lengths, Vector3D angles = {90, 90, 90});
             void set_periodic(PBC, PBC, PBC);
-            std::array<PBC, 3> get_periodic() const;
+            const std::array<Cell::PBC, 3> get_periodic() const;
             void set_lengths_and_angles(Vector3D lengths, Vector3D angles);
             const Matrix3D get_matrix() const;
             const Matrix3D get_inverse() const;

@@ -9,7 +9,6 @@
 
 namespace molcpp
 {
-    using AtomVec = std::vector<Atom *>;
     class Atom
     {
 

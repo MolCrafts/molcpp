@@ -8,7 +8,6 @@
 namespace molcpp
 {
 
-    using BondVec = std::vector<Bond *>;
     class Bond
     {
 

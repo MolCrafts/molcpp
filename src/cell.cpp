@@ -109,7 +109,7 @@ namespace molcpp
         _pbc = {x, y, z};
     }
 
-    const std::array<PBC, 3> Cell::get_pbc() const
+    const std::array<Cell::PBC, 3> Cell::get_periodic() const
     {
         return _pbc;
     }

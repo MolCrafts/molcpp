@@ -83,7 +83,9 @@ namespace molcpp
                 return AtomProperty(Vector3D(pos[0], pos[1], pos[2]));
             }
         );
-        _frame->set("positions", positions);
+        // NOTE: molcpp::frame.set will assign property to each
+        //       atom, so we should use singular rather than plural
+        _frame->set("position", positions);
         return _frame;
     }
 

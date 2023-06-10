@@ -44,6 +44,7 @@ namespace molcpp
         EXPECT_EQ(frame->get_natoms(), 3);
         EXPECT_EQ(frame->get_nbonds(), 2);
         EXPECT_EQ(frame->get<std::string>("name"), std::vector<std::string>({"H", "O", "H"}));
+        auto pos = frame->get<Vector3D>("position");
         EXPECT_EQ(frame->get<Vector3D>("position"), std::vector<Vector3D>({{1, 0, 0}, {0, 0, 0}, {0, 1, 0}}));
     }
 
