@@ -2,6 +2,7 @@
 #include <map>
 #include <variant>
 #include "mperror.h"
+#include "linalg.hpp"
 
 namespace molcpp
 {
@@ -91,6 +92,12 @@ namespace molcpp
          * @tparam T
          * @return const T&
          */
+        template <typename T>
+        inline T &get()
+        {
+            return std::get<T>(_value);
+        }
+
         template <typename T>
         inline const T &get() const
         {
@@ -228,6 +235,17 @@ namespace molcpp
          * @return const T&
          */
         template <typename T>
+        T &get(const key_type &key)
+        {
+            auto it = m_map.find(key);
+            if (it == m_map.end())
+            {
+                throw KeyError("KeyError: " + key);
+            }
+            return it->second.template get<T>();
+        }
+
+        template <typename T>
         const T &get(const key_type &key) const
         {
             auto it = m_map.find(key);
@@ -348,5 +366,11 @@ namespace molcpp
     private:
         container_type m_map;
     };
+
+    // pre-defined dict type
+    using AtomPropertyDict = Dict<int, double, std::string, Vector3D>;
+    using AtomProperty = AtomPropertyDict::value_type;
+    using BondPropertyDict = Dict<int, double, std::string>;
+    using BondProperty = BondPropertyDict::value_type;
 
 }

@@ -26,18 +26,13 @@ endif()
 # Add dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
-find_package(chemfiles QUIET)
-if(chemfiles_FOUND)
+# find_package(chemfiles QUIET)
+if(FALSE)
   message(STATUS "Chemfiles installed")
   target_include_directories(
     molcpp
     PUBLIC
     ${chemfiles_INCLUDE_DIRS}      
-  )
-  target_include_directories(
-    molcpp
-    PUBLIC
-    ${chemfiles_INCLUDE_DIRS}
   )
 else()
   message(STATUS "Chemfiles not installed, compile from source code")

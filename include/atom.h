@@ -38,7 +38,15 @@ namespace molcpp
          * @return T
          */
         template<typename T>
-        T get(const std::string& key, T _default = T()) const
+        T get(const std::string& key, T _default = T())
+        {
+            if (_properties.has(key)) return _properties.get<T>(key);
+            else if(_type != nullptr && _type->has(key)) return _type->get<T>(key);
+            else return _default;
+        };
+
+        template<typename T>
+        const T get(const std::string& key, T _default = T()) const
         {
             if (_properties.has(key)) return _properties.get<T>(key);
             else if(_type != nullptr && _type->has(key)) return _type->get<T>(key);

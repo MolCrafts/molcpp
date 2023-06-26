@@ -48,6 +48,7 @@ public:
     using super::operator[];
     using super::begin;
     using super::end;
+    using super::data;
 
     /// Compute the euclidean norm of this Vector3D.
     ///
@@ -68,6 +69,8 @@ public:
 
     /// Compute 
     Vector3D floor();
+
+    /// data() from std::array
 };
 
 /// Compute the dot product of the vectors `lhs` and `rhs`.

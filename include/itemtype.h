@@ -9,13 +9,6 @@
 
 namespace molcpp
 {
-
-    // pre-defined dict type
-    using AtomPropertyDict = Dict<int, double, std::string, Vector3D>;
-    using AtomProperty = AtomPropertyDict::value_type;
-    using BondPropertyDict = Dict<int, double, std::string>;
-    using BondProperty = BondPropertyDict::value_type;
-
     class AtomType
     {
     public:
@@ -83,6 +76,15 @@ namespace molcpp
          */
         template <typename T>
         T get(const std::string &key)
+        {
+            if (_properties.has(key))
+                return _properties.get<T>(key);
+            else
+                throw std::runtime_error("AtomType::get: key not found");
+        };
+
+        template <typename T>
+        const T get(const std::string &key) const
         {
             if (_properties.has(key))
                 return _properties.get<T>(key);
