@@ -54,18 +54,19 @@ target_sources(
   molcpp
   PRIVATE
   # independent
-  src/algo.cpp
+  # src/algo.cpp
   src/linalg.cpp
-  src/element.cpp
-  src/itemtype.cpp
+  src/modeller/sarw.cpp
+  # src/element.cpp
+  # src/itemtype.cpp
   # dependent
-  src/forcefield.cpp
-  src/atom.cpp
-  src/bond.cpp
-  src/topology.cpp
-  src/frame.cpp
-  src/trajectory.cpp
-  src/cell.cpp
+  # src/forcefield.cpp
+  # src/atom.cpp
+  # src/bond.cpp
+  # src/topology.cpp
+  # src/frame.cpp
+  # src/trajectory.cpp
+  # src/cell.cpp
   # src/celllist.cpp
   # src/neighborlist.cpp
 )
