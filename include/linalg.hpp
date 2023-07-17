@@ -134,6 +134,16 @@ inline Vector3D operator/(const Vector3D& lhs, double rhs) {
     return {lhs[0] / rhs, lhs[1] / rhs, lhs[2] / rhs};
 }
 
+/// Divide a vector by another vector
+inline Vector3D operator/(const Vector3D& lhs, const Vector3D& rhs) {
+    return {lhs[0] / rhs[0], lhs[1] / rhs[1], lhs[2] / rhs[2]};
+}
+
+/// mod a vector by a scalar
+inline Vector3D operator%(const Vector3D& lhs, double rhs) {
+    return {std::fmod(lhs[0], rhs), std::fmod(lhs[1], rhs), std::fmod(lhs[2], rhs)};
+}
+
 // Compound operators:
 
 inline Vector3D& Vector3D::operator+=(const Vector3D& rhs) {

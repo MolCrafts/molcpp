@@ -1,120 +1,68 @@
-#include "celllist.h"
+#include "cellList.h"
 
 namespace molcpp
 {
-    CellList::CellList(Cell *cell, double cell_width) : _cell{cell}
+
+    CellList::CellList(Cell *cell, double r_cutoff)
     {
-        if (cell_width < 0) throw ValueError("Cell width must be positive");
-        elif (cell_width == 0)
+        _cell = cell;
+        _r_cutoff = r_cutoff;
+        auto cell_length = cell->get_lengths();
+        for (int i = 0; i < 3; i++)
         {
-            // if cell_width is not provided, estimate a cell width
-            auto lengths = cell->get_lengths();
-            
+            _cell_length[i] = std::floorf(cell_length[i] / r_cutoff);
         }
-
-        Vector3D lengths = cell->get_lengths();
-        double x = lengths[0];
-        double y = lengths[1];
-        double z = lengths[2];
-
-        reset(
-            static_cast<size_t>(std::ceil(x / cell_width)),
-            static_cast<size_t>(std::ceil(y / cell_width)),
-            static_cast<size_t>(std::ceil(z / cell_width)));
     }
 
-    void CellList::reset(size_t ncell_x, size_t ncell_y, size_t ncell_z)
+    size_t CellList::get_cell_index(std::array<size_t, 3> &cell_vector)
     {
-        _ncell_x = ncell_x;
-        _ncell_y = ncell_y;
-        _ncell_z = ncell_z;
-        _cellListArray.reserve(ncell_x);
-        for (size_t i = 0; i < ncell_x; ++i)
+        // c = cxLcyLcz + cyLcz + cz
+        return cell_vector[0] * _cell_length[1] * _cell_length[2] + cell_vector[1] * _cell_length[2] + cell_vector[2];
+    }
+
+    std::array<size_t, 3> CellList::get_cell_vector(size_t cell_index)
+    {
+        // cx = c / (LcyLcz)
+        // cy = (c / Lcz) - cxLcy or (c / Lcz) mod Lcy
+        // cz = c mod Lcz
+        std::array<size_t, 3> cell_vector;
+        cell_vector[0] = cell_index / (_cell_length[1] * _cell_length[2]);
+        cell_vector[1] = std::fmod((cell_index / _cell_length[2]), _cell_length[1]);
+        cell_vector[2] = std::fmod(cell_index, _cell_length[2]);
+        return cell_vector;
+    }
+
+    void CellList::build(std::vector<Vector3D> &xyz)
+    {
+
+        void reset();
+
+        void update(std::vector<Vector3D> & xyz);
+    }
+
+    void CellList::update(std::vector<Vector3D> &xyz)
+    {
+        size_t n_atoms = xyz.size();
+        _natoms += n_atoms;
+        std::array<size_t, 3> xyz_cell_index;
+        for (size_t i = 0; i < n_atoms; i++)
         {
-            _cellListArray[i].reserve(ncell_y);
-            for (size_t j = 0; j < ncell_y; ++j)
+
+            for (int j = 0; j < 3; ++j)
             {
-                _cellListArray[i][j].reserve(ncell_z);
+                xyz_cell_index[i] = static_cast<size_t>(std::floorf(xyz[i][j] / _r_cutoff));
             }
+            size_t cell_index = get_cell_index(xyz_cell_index);
+            _lscl[i] = _head[cell_index];
+            _head[cell_index] = i;
         }
     }
 
     void CellList::reset()
     {
-        reset(_ncell_x, _ncell_y, _ncell_z);
+        _natoms = 0;
+        _head.resize(_cell_length[0] * _cell_length[1] * _cell_length[2], EMPTY);
+        _lscl.resize(_natoms, EMPTY);
     }
 
-    void CellList::add_atom(Atom *atom)
-    {
-        Vector3D pos = atom->get<Vector3D>("position");
-        size_t i = static_cast<size_t>(std::floor(pos[0] / _ncell_x));
-        size_t j = static_cast<size_t>(std::floor(pos[1] / _ncell_y));
-        size_t k = static_cast<size_t>(std::floor(pos[2] / _ncell_z));
-        _cellListArray[i][j][k].push_back(atom);
-    }
-
-    void CellList::add_atoms(AtomVec atoms)
-    {
-        for (auto atom : atoms)
-        {
-            add_atom(atom);
-        }
-    }
-
-    size_t CellList::get_ncells()
-    {
-        return _ncell_x * _ncell_y * _ncell_z;
-    }
-
-    size_t CellList::get_ncell_x()
-    {
-        return _ncell_x;
-    }
-
-    size_t CellList::get_ncell_y()
-    {
-        return _ncell_y;
-    }
-
-    size_t CellList::get_ncell_z()
-    {
-        return _ncell_z;
-    }
-
-    std::vector<Atom*> CellList::get_vicinity(size_t x, size_t y, size_t z)
-    {
-        std::vector<Atom*> vicinity;
-        auto pbc = _cell->get_periodic();
-        for (size_t i = x - 1; i <= x + 1; ++i)
-        {
-            if (i < 0 || i >= _ncell_x)
-            {
-                if (pbc[0]) i = (i + _ncell_x) % _ncell_x;
-                else continue;
-            }
-            for (size_t j = y - 1; j <= y + 1; ++j)
-            {
-                if (j < 0 || j >= _ncell_y)
-                {
-                    if (pbc[1]) j = (j + _ncell_y) % _ncell_y;
-                    else continue;
-                }
-                for (size_t k = z - 1; k <= z + 1; ++k)
-                {
-                    if (k < 0 || k >= _ncell_z)
-                    {
-                        if (pbc[2]) k = (k + _ncell_z) % _ncell_z;
-                        else continue;
-                    }
-                    vicinity.insert(vicinity.end(), _cellListArray[i][j][k].begin(), _cellListArray[i][j][k].end());
-                }
-            }
-        }
-        return vicinity;
-    }
-
-    std::unique_ptr<CellList> create_cellList(Cell *cell, double cell_width)
-    {
-        return std::make_unique<CellList>(cell, cell_width);
-    }
 }

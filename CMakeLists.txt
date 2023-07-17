@@ -66,8 +66,8 @@ target_sources(
   # src/topology.cpp
   # src/frame.cpp
   # src/trajectory.cpp
-  # src/cell.cpp
-  # src/celllist.cpp
+  src/cell.cpp
+  src/cellList.cpp
   # src/neighborlist.cpp
 )
 
