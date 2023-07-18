@@ -1,24 +1,29 @@
 #pragma once
 #include "cellList.h"
+#include "box.h"
 
 namespace molcpp
 {
 
     class NeighborList
     {
-        using NeighborListArray = std::vector<std::vector<Atom*>>;
+        using NeighborListArray = std::vector<std::vector<size_t>>;
 
-        public:
-            NeighborList(Cell* cell, double r_cutoff);
-            ~NeighborList();
+        NeighborList(Box* box, double r_cutoff);
 
-            void build(AtomVec);
-            void update(AtomVec);
+        ~NeighborList();
+
+        void reset();
+
+        void build(std::vector<Vector3D> &xyz);
+
+        void update(std::vector<Vector3D> &xyz);
 
         private:
 
-            double r_cutoff;
-            CellList _cellList;
+            Box* _box;
+            CellList _cell_list;
+            double _r_cutoff;
             NeighborListArray _neighborListArray;
     };
 

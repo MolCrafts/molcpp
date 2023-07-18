@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mperror.h"
-#include "cell.h"
+#include "box.h"
 #include <array>
 #include <cmath>
 
@@ -13,11 +13,11 @@ namespace molcpp
         const size_t EMPTY = 0xffffffff;
     public:
 
-        CellList(Cell *cell, double cell_width);
+        CellList(Box *box, double cell_width);
 
-        size_t get_cell_index(std::array<size_t, 3>&);
+        size_t get_cell_index(std::array<size_t, 3>&) const;
 
-        std::array<size_t, 3> get_cell_vector(size_t);
+        std::array<size_t, 3> get_cell_vector(size_t) const;
 
         void build(std::vector<Vector3D> &xyz);
 
@@ -25,8 +25,14 @@ namespace molcpp
 
         void reset();
 
+        size_t get_ncells();
+
+        std::vector<size_t> get_atoms_in_cell(size_t cell_index) const;
+
+        std::vector<size_t> get_neighbors(size_t cell_index) const;
+
     private:
-        Cell *_cell;
+        Box *_box;
         Vector3D _cell_length;
         size_t _natoms;
         double _r_cutoff;
@@ -34,6 +40,6 @@ namespace molcpp
         std::vector<size_t> _lscl;
     };
 
-    std::unique_ptr<CellList> create_cellList(Cell *cell, double cell_width);
+    std::unique_ptr<CellList> create_cellList(Box *box, double cell_width);
 }
 

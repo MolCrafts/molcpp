@@ -9,7 +9,7 @@ namespace molcpp
 {
 
 
-    class Cell
+    class Box
     {
 
         public:
@@ -19,10 +19,10 @@ namespace molcpp
                 P = 1,
             };
 
-            Cell();
-            Cell(Vector3D lengths, Vector3D angles = {90, 90, 90});
+            Box();
+            Box(Vector3D lengths, Vector3D angles = {90, 90, 90});
             void set_periodic(PBC, PBC, PBC);
-            const std::array<Cell::PBC, 3> get_periodic() const;
+            const std::array<Box::PBC, 3> get_periodic() const;
             void set_lengths_and_angles(Vector3D lengths, Vector3D angles);
             const Matrix3D get_matrix() const;
             const Matrix3D get_inverse() const;
@@ -31,6 +31,9 @@ namespace molcpp
             const Vector3D get_tilts() const;
             const double get_volume() const;
             std::vector<Vector3D> wrap(std::vector<Vector3D>&);
+            Vector3D wrap(Vector3D&);
+            double calc_distance(Vector3D&, Vector3D&);
+            Vector3D calc_displacement(Vector3D&, Vector3D&);
 
         private:
 
@@ -39,8 +42,8 @@ namespace molcpp
 
     };
 
-    std::unique_ptr<Cell> create_cell(Vector3D lengths = {0, 0, 0}, Vector3D angles = {90, 90, 90});
-    std::unique_ptr<Cell> from_chemfiles(chemfiles::UnitCell cell);
-    chemfiles::UnitCell to_chemfiles(Cell* cell);
+    std::unique_ptr<Box> create_box(Vector3D lengths = {0, 0, 0}, Vector3D angles = {90, 90, 90});
+    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell Box);
+    chemfiles::UnitCell to_chemfiles(Box* Box);
 
 }
