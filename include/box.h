@@ -43,7 +43,7 @@ namespace molcpp
     };
 
     std::unique_ptr<Box> create_box(Vector3D lengths = {0, 0, 0}, Vector3D angles = {90, 90, 90});
-    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell Box);
+    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell Cell);
     chemfiles::UnitCell to_chemfiles(Box* Box);
 
 }

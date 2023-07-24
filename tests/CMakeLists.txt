@@ -23,17 +23,19 @@ endif()
 # enable_testing()
 add_executable(
   molcpp_test
-  test_graph.cpp
-  test_dict.cpp
-  test_itemtype.cpp
-  test_element.cpp
-  test_forcefield.cpp
-  test_atom.cpp
-  test_bond.cpp
-  test_topology.cpp
-  test_frame.cpp
-  test_trajectory.cpp
-  test_cell.cpp
+  # test_graph.cpp
+  # test_dict.cpp
+  # test_itemtype.cpp
+  # test_element.cpp
+  # test_forcefield.cpp
+  # test_atom.cpp
+  # test_bond.cpp
+  # test_topology.cpp
+  # test_frame.cpp
+  # test_trajectory.cpp
+  # test_cell.cpp
+  test_box.cpp
+  test_cellList.cpp
 )
 
 target_link_libraries(

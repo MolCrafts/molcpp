@@ -213,10 +213,10 @@ namespace molcpp
         return std::make_unique<Box>(lengths, angles);
     }
 
-    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell box)
+    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell cell)
     {
-        Vector3D lengths {box.lengths()[0], box.lengths()[1], box.lengths()[2]};
-        Vector3D angles {box.angles()[0], box.angles()[1], box.angles()[2]};
+        Vector3D lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
+        Vector3D angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
         return std::make_unique<Box>(lengths, angles);
     }
 }

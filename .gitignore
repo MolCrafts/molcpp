@@ -43,3 +43,6 @@ test.*
 # tests-data
 tests/tests-data
 Testing
+
+# clangd
+.cache

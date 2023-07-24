@@ -1,0 +1,65 @@
+#include "utils.h"
+#include "box.h"
+#include "linalg.hpp"
+
+namespace molcpp
+{
+    TEST(TestBox, test_init)
+    {
+        Box box1;
+        EXPECT_EQ(box1.get_lengths(), Vector3D(1, 1, 1));
+        EXPECT_EQ(box1.get_tilts(), Vector3D(0, 0, 0));
+        EXPECT_EQ(box1.get_angles(), Vector3D(90, 90, 90));
+        EXPECT_EQ(box1.get_volume(), 1);
+
+        Box box2({1, 2, 3}, {90, 90, 90});
+        EXPECT_EQ(box2.get_lengths(), Vector3D(1, 2, 3));
+        EXPECT_TRUE(allclose(box2.get_tilts(), Vector3D(0, 0, 0)));
+        EXPECT_EQ(box2.get_angles(), Vector3D(90, 90, 90));
+        EXPECT_EQ(box2.get_volume(), 6);
+
+        Box box3({1, 1, 1}, {45, 45, 45});
+        EXPECT_EQ(box3.get_lengths(), Vector3D(1, 1, 1));
+        EXPECT_TRUE(allclose(box3.get_tilts(), Vector3D(0.707, 0.707, 0.293), 1e-03));
+        EXPECT_EQ(box3.get_angles(), Vector3D(45, 45, 45));
+        EXPECT_FLOAT_EQ(box3.get_volume(), 0.45508987);
+
+    }
+
+    TEST(TestBox, test_orth_wrap)
+    {
+
+        Box box({2, 2, 2});
+        std::vector<Vector3D> points = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {-0.5, -0.5, -0.5}, {-1.5, -1.5, -1.5}};
+        std::vector<Vector3D> expected = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {1.5, 1.5, 1.5}, {0.5, 0.5, 0.5}};
+        auto wrapped_points = box.wrap(points);
+        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
+    }
+
+    TEST(TestBox, test_tric_wrap)
+    {
+            
+        Box box({2, 2, 2}, {45, 45, 45});
+        std::vector<Vector3D> points = {{2, 1, 0}};
+        std::vector<Vector3D> expected = {{2, 1, 0}};  // TODO: need more tests
+        auto wrapped_points = box.wrap(points);
+        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
+    
+    }
+
+    TEST(TestBox, test_to_chemfiles)
+    {
+        auto box = create_box({2, 2, 2}, {90, 90, 90});
+        chemfiles::UnitCell chem_box = to_chemfiles(box.release());
+        auto expected_lengths = chemfiles::Vector3D(2, 2, 2);
+        auto expected_angles = chemfiles::Vector3D(90, 90, 90);
+        auto lengths = chem_box.lengths();
+        auto angles = chem_box.angles();
+        EXPECT_FLOAT_EQ(lengths[0], expected_lengths[0]);
+        EXPECT_FLOAT_EQ(lengths[1], expected_lengths[1]);
+        EXPECT_FLOAT_EQ(lengths[2], expected_lengths[2]);
+        EXPECT_FLOAT_EQ(angles[0], expected_angles[0]);
+        EXPECT_FLOAT_EQ(angles[1], expected_angles[1]);
+        EXPECT_FLOAT_EQ(angles[2], expected_angles[2]);
+    }
+}

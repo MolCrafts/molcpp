@@ -10,7 +10,7 @@ namespace molcpp
 
     class CellList
     {
-        const size_t EMPTY = 0xffffffff;
+        
     public:
 
         CellList(Box *box, double cell_width);
@@ -38,6 +38,7 @@ namespace molcpp
         double _r_cutoff;
         std::vector<size_t> _head;
         std::vector<size_t> _lscl;
+        const size_t EMPTY = 0xffffffff;
     };
 
     std::unique_ptr<CellList> create_cellList(Box *box, double cell_width);

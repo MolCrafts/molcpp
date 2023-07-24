@@ -56,7 +56,7 @@ target_sources(
   # independent
   # src/algo.cpp
   src/linalg.cpp
-  src/modeller/sarw.cpp
+  # src/modeller/sarw.cpp
   # src/element.cpp
   # src/itemtype.cpp
   # dependent
@@ -68,7 +68,7 @@ target_sources(
   # src/trajectory.cpp
   src/box.cpp
   src/cellList.cpp
-  src/neighborList.cpp
+  # src/neighborList.cpp
 )
 
 target_link_libraries(
@@ -89,7 +89,6 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
   enable_testing() # enable_testing must at top cmakelists
   add_subdirectory(tests)
 
-# For release
 # For release
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
   message(STATUS "Release build.")
