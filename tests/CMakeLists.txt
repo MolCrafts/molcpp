@@ -1,48 +1,29 @@
-message(STATUS "Building tests")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
+
+set(TEST_EXE ${PROJECT_NAME}_test)
+
+add_executable(${TEST_EXE}
+    main.cpp
+    test_vec3.cpp
+    test_mat3.cpp
+    test_geom.cpp
+)
+
+find_package(doctest QUIET)
+if (NOT doctest_FOUND)
 include(FetchContent)
 FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  DocTest
+  GIT_REPOSITORY https://github.com/doctest/doctest.git
+  GIT_TAG        v2.4.11
 )
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-# get test data
-if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests-data")
-  # 如果不存在则下载
-  message(STATUS "Downloading test data...")
-  execute_process(
-    COMMAND git clone https://github.com/chemfiles/tests-data.git
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
+FetchContent_MakeAvailable(DocTest)
+target_link_libraries(${TEST_EXE} PRIVATE doctest::doctest molcpp)
+include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
+doctest_discover_tests(${TEST_EXE})
 else()
-  # 如果存在则跳过下载
-  message(STATUS "Test data already downloaded, skipping...")
+target_link_libraries(${TEST_EXE} PRIVATE doctest::doctest)
 endif()
 
-# enable_testing()
-add_executable(
-  molcpp_test
-  # test_graph.cpp
-  # test_dict.cpp
-  # test_itemtype.cpp
-  # test_element.cpp
-  # test_forcefield.cpp
-  # test_atom.cpp
-  # test_bond.cpp
-  # test_topology.cpp
-  # test_frame.cpp
-  # test_trajectory.cpp
-  # test_cell.cpp
-  test_box.cpp
-  test_cellList.cpp
-)
-
-target_link_libraries(
-  molcpp_test
-  GTest::gtest_main
-  molcpp
-)
-
-include(GoogleTest)
-gtest_discover_tests(molcpp_test)
