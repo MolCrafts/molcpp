@@ -25,12 +25,6 @@ static bool approx_eq(const T& lhs, const U& rhs, double eps = 1e-12) {
   } else if constexpr (is_arithmetic_vec3<T>::value && is_arithmetic_vec3<U>::value) {
     return abs(lhs[0] - rhs[0]) < eps && abs(lhs[1] - rhs[1]) < eps && abs(lhs[2] - rhs[2]) < eps;
   } else if constexpr (is_arithmetic_mat3<T>::value && is_arithmetic_mat3<U>::value) {
-    std::cout << eps << std::endl;
-    for (int i = 0; i < 9; ++i) {
-      if (abs(lhs[i] - rhs[i]) > eps) {
-        std::cout << i << " : " << abs(lhs[i] - rhs[i]) << std::endl;
-      }
-    }
     return abs(lhs[0] - rhs[0]) < eps && abs(lhs[1] - rhs[1]) < eps && abs(lhs[2] - rhs[2]) < eps &&
            abs(lhs[3] - rhs[3]) < eps && abs(lhs[4] - rhs[4]) < eps && abs(lhs[5] - rhs[5]) < eps &&
            abs(lhs[6] - rhs[6]) < eps && abs(lhs[7] - rhs[7]) < eps && abs(lhs[8] - rhs[8]) < eps;

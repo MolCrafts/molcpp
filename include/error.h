@@ -1,5 +1,5 @@
 #pragma once
-#include "mplog.h"
+#include "log.h"
 #include <exception>
 
 namespace molcpp

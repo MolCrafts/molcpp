@@ -1,376 +1,141 @@
 #pragma once
-#include <map>
-#include <variant>
-#include "mperror.h"
-#include "linalg.hpp"
 
-namespace molcpp
-{
-    /**
-     * @brief The class template Data represents a type-safe union. An instance of Data at any given time holds a value of one of its alternative types
-     *
-     * @tparam Ts
-     */
-    template <typename... Ts>
-    class Data
-    {
-    public:
-        using variant_type = std::variant<Ts...>;
+#include "error.h"
+#include <any>
+#include <error.h>
+#include <initializer_list>
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-        /**
-         * @brief Construct a new Data object
-         *
-         */
-        Data() : _value(variant_type{}) {}
+namespace molcpp {
 
-        // constructr for Data<Vector3D>
-        template <typename T>
-        Data(const T &V) : _value(V) {}
+/**
+ * A dictionary class that mimics Python's dict.
+ * The keys are unique strings and the values can be of any type.
+ */
+class Dict {
+private:
+  std::unordered_map<std::string, std::any> data;
 
-        /**
-         * @brief Construct a new Data object from another Data object
-         *
-         * @tparam Us
-         * @param other
-         */
-        template <typename... Us>
-        Data(const Data<Us...> &other) : _value(other.get_raw()) {}
+public:
+  Dict() = default;
 
-        /**
-         * @brief Construct a new Data object from another Data object
-         *
-         * @tparam Us
-         * @param other
-         */
-        template <typename... Us>
-        Data(Data<Us...> &&other) : _value(std::move(other.get_raw())) {}
+  Dict(std::initializer_list<std::pair<std::string, std::any>> initList) {
+    for (const auto &pair : initList) {
+      data[pair.first] = pair.second;
+    }
+  }
 
-        /**
-         * @brief Assignment operator
-         *
-         * @tparam T
-         * @param V
-         * @return Data<Ts...>&
-         */
-        template <typename T>
-        Data<Ts...> &operator=(const T &V)
-        {
-
-            _value = V;
-            return *this;
-        }
-
-        /**
-         * @brief Equality operator
-         *
-         * @tparam Us
-         * @param other
-         * @return true
-         * @return false
-         */
-        template <typename... Us>
-        bool operator==(const Data<Us...> &other) const
-        {
-            if (_value.index() != other.get_raw().index())
-                return false;
-            return _value == other.get_raw();
-        }
-
-        /**
-         * @brief Equality operator that compare with a value which type is T in Ts
-         * 
-         */
-        template <typename T>
-        bool operator==(const T &V) const
-        {
-            return get<T>() == V;
-        }
-
-        /**
-         * @brief Get a typed value object
-         *
-         * @tparam T
-         * @return const T&
-         */
-        template <typename T>
-        inline T &get()
-        {
-            return std::get<T>(_value);
-        }
-
-        template <typename T>
-        inline const T &get() const
-        {
-            return std::get<T>(_value);
-        }
-
-        /**
-         * @brief Set any type of value
-         *
-         * @param V
-         */
-        inline void set(const variant_type &V)
-        {
-            _value = V;
-        }
-
-        /**
-         * @brief Check if the value is of type T
-         *
-         * @tparam T
-         * @return true
-         * @return false
-         */
-        template <typename T>
-        inline bool is() const
-        {
-            return std::holds_alternative<T>(_value);
-        }
-
-        /**
-         * @brief Returns the zero-based index of the alternative that is currently held by the variant.
-         * For Data<int, double>(3.14), the index is 1.
-         * @return const size_t
-         */
-        const size_t index() const
-        {
-            return _value.index();
-        }
-
-        /**
-         * @brief Get the variant object
-         * Obtain internal std:: variant variables, which can be manipulated but cannot be modified
-         * @return variant_type
-         */
-        variant_type get_raw() const
-        {
-            return _value;
-        }
-
-        /**
-         * @brief For print Data object
-         *
-         * @param os
-         * @param d
-         * @return std::ostream&
-         */
-        friend std::ostream &operator<<(std::ostream &os, const Data &d)
-        {
-            switch (d.index())
-            {
-            case 0:
-                os << d.get<int>();
-                break;
-            case 1:
-                os << d.get<std::string>();
-                break;
-            }
-            return os;
-        }
-
-    private:
-        variant_type _value;
-    };
+  /**
+   * Get the value associated with a key.
+   * Throws std::out_of_range if key is not present.
+   */
+  template <typename T> T get(const std::string &key) {
+    auto it = data.find(key);
+    if (it == data.end()) {
+      throw std::out_of_range("Key '" + key + "' not found");
+    }
+    // if value's type is char, return as std::string
+    if (typeid(T) == typeid(std::string) && it->second.type() == typeid(char)) {
+        return std::string(1, std::any_cast<char>(it->second));
+    } else if (typeid(T) == it->second.type()) {
+      return std::any_cast<T>(it->second);
+    } else {
+      throw TypeError("Invalid type for key '" + key + "'");
+    }
+  }
 
     /**
-     * @brief The class template Dict represents a map for Data. An instance of Dict at any given time holds a set of string-Data<Ts...> pairs
-     *
-     * @tparam Ts
+     * Get the value associated with a key, or a default value.
      */
-    template <typename... Ts>
-    class Dict
-    {
-    public:
-        using key_type = std::string;
-        using value_type = Data<Ts...>;
-        using container_type = std::map<key_type, value_type>;
+    template <typename T>
+    T get(const std::string &key, const T &default_value) {
+      try {
+        return get<T>(key);
+      } catch (const std::out_of_range &) {
+        return default_value;
+      } catch (const std::bad_any_cast &) {
+        throw TypeError("Invalid type for key '" + key + "'");
+      }
+    }
 
-        /**
-         * @brief Construct a new Dict object
-         *
-         */
-        Dict() : m_map(){};
+    /**
+     * Set a default value for a key if it is not already present.
+     */
+    template <typename T>
+    T setdefault(const std::string &key, const T &default_value) {
+      try {
+        return get<T>(key);
+      } catch (const std::out_of_range &) {
+        data[key] = default_value;
+        return default_value;
+      } catch (const std::bad_any_cast &) {
+        throw TypeError("Type of default_value not match type of key (type of "
+                        "default_value is `" +
+                        std::string(typeid(default_value).name()) +
+                        "` and key is `" +
+                        std::string(data[key].type().name()) + "`)");
+      }
+    }
 
-        /**
-         * @brief Construct a new Dict object
-         *
-         * @param map
-         */
-        Dict(const container_type &map) : m_map(map){};
+    /**
+     * Get a vector of all the keys in the dictionary.
+     */
+    std::vector<std::string> keys() const {
+      std::vector<std::string> keys;
+      for (const auto &pair : data) {
+        keys.push_back(pair.first);
+      }
+      return keys;
+    }
 
-        // copy constructor
-        Dict(const Dict &other) : m_map(other.m_map){};
+    /**
+     * Get a vector of all the values in the dictionary.
+     * Note: This method returns a vector of std::any objects.
+     * You must cast them to the correct type before use.
+     */
+    std::vector<std::any> values() const {
+      std::vector<std::any> values;
+      for (const auto &pair : data) {
+        values.push_back(pair.second);
+      }
+      return values;
+    }
 
-        // move constructor
-        Dict(Dict &&other) : m_map(std::move(other.m_map)){};
+    /**
+     * Update the dictionary with the contents of another dictionary.
+     */
+    void update(const Dict &other) {
+      for (const auto &pair : other.data) {
+        data[pair.first] = pair.second;
+      }
+    }
 
-        /**
-         * @brief Return the number of elements in the container
-         *
-         * @return size_t
-         */
-        size_t size() const
-        {
-            return m_map.size();
-        }
+    /**
+     * Operator overload for accessing dictionary values.
+     * Note: This will insert the key into the dictionary if it is not present.
+     */
+    std::any &operator[](const std::string &key) { return data[key]; }
 
-        /**
-         * @brief Set a value for a key
-         *
-         * @tparam T
-         * @param key
-         * @param value
-         */
-        template <typename T>
-        void set(const key_type &key, const T &value)
-        {
-            m_map[key] = value;
-        }
+    /**
+     * @brief Get size of dictionary
+     * 
+     */
+    size_t size() const { return data.size(); }
 
-        /**
-         * @brief Get a typed value for a key
-         *
-         * @tparam T
-         * @param key
-         * @return const T&
-         */
-        template <typename T>
-        T &get(const key_type &key)
-        {
-            auto it = m_map.find(key);
-            if (it == m_map.end())
-            {
-                throw KeyError("KeyError: " + key);
-            }
-            return it->second.template get<T>();
-        }
+    /**
+     * @brief Check if dictionary is empty
+     * 
+     */
+    bool empty() const { return data.empty(); }
 
-        template <typename T>
-        const T &get(const key_type &key) const
-        {
-            auto it = m_map.find(key);
-            if (it == m_map.end())
-            {
-                throw KeyError("KeyError: " + key);
-            }
-            return it->second.template get<T>();
-        }
+    /**
+     * @brief Clear dictionary
+     * 
+     */
+    void clear() { data.clear(); }
+  };
 
-        /**
-         * @brief Return a list of keys
-         *
-         * @return std::vector<key_type>
-         */
-        std::vector<key_type> keys() const
-        {
-            std::vector<key_type> keys;
-            for (const auto &pair : m_map)
-            {
-                keys.push_back(pair.first);
-            }
-            return keys;
-        }
-
-        /**
-         * @brief Return a list of values
-         *
-         * @return std::vector<value_type>
-         */
-        std::vector<value_type> values() const
-        {
-            std::vector<value_type> values;
-            for (const auto &pair : m_map)
-            {
-                values.push_back(pair.second);
-            }
-            return values;
-        }
-
-        /**
-         * @brief Check if the key exists
-         *
-         * @param key
-         * @return true
-         * @return false
-         */
-        bool has(const key_type &key) const
-        {
-            return m_map.find(key) != m_map.end();
-        }
-
-        /**
-         * @brief Get a value raw value for a key
-         *
-         * @param key
-         * @return value_type&
-         */
-        value_type &operator[](const key_type &key)
-        {
-            return m_map[key];
-        }
-
-        /**
-         * @brief Get a value raw value for a key
-         *
-         * @param key
-         * @return const value_type&
-         */
-        const value_type &operator[](const key_type &key) const
-        {
-            return m_map.at(key);
-        }
-
-        // operator=
-        Dict &operator=(const Dict &other)
-        {
-            m_map = other.m_map;
-            return *this;
-        }
-
-        Dict& operator=(const Dict&& rhs)
-        {
-            m_map = std::move(rhs.m_map);
-            return *this;
-        }
-
-        /**
-         * @brief Returns a read/write iterator that points to the first pair in the map
-         *
-         * @return auto
-         */
-        auto begin() const
-        {
-            return m_map.begin();
-        }
-
-        /**
-         * @brief Returns a read/write iterator that points one past the last pair in the map
-         *
-         * @return auto
-         */
-        auto end() const
-        {
-            return m_map.end();
-        }
-
-        /**
-         * @brief Get the map object
-         *
-         * @return container_type
-         */
-        container_type get_map() const
-        {
-            return m_map;
-        }
-
-    private:
-        container_type m_map;
-    };
-
-    // pre-defined dict type
-    using AtomPropertyDict = Dict<int, double, std::string, Vector3D>;
-    using AtomProperty = AtomPropertyDict::value_type;
-    using BondPropertyDict = Dict<int, double, std::string>;
-    using BondProperty = BondPropertyDict::value_type;
-
-}
+} // namespace molcpp

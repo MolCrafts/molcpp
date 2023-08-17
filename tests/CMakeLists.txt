@@ -9,6 +9,7 @@ add_executable(${TEST_EXE}
     test_vec3.cpp
     test_mat3.cpp
     test_geom.cpp
+    test_dict.cpp
 )
 
 find_package(doctest QUIET)
@@ -20,10 +21,10 @@ FetchContent_Declare(
   GIT_TAG        v2.4.11
 )
 FetchContent_MakeAvailable(DocTest)
-target_link_libraries(${TEST_EXE} PRIVATE doctest::doctest molcpp)
+
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(${TEST_EXE})
-else()
-target_link_libraries(${TEST_EXE} PRIVATE doctest::doctest)
 endif()
+
+target_link_libraries(${TEST_EXE} PRIVATE doctest::doctest molcpp)
 
