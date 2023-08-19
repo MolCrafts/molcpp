@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include <optional>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 namespace molcpp {
@@ -17,7 +17,7 @@ namespace molcpp {
  */
 class Dict {
 private:
-  std::unordered_map<std::string, std::any> data;
+  std::map<std::string, std::any> data;
 
 public:
   Dict() = default;
@@ -33,109 +33,93 @@ public:
    * Throws std::out_of_range if key is not present.
    */
   template <typename T> T get(const std::string &key) {
+    return std::any_cast<T>(data.at(key));
+  }
+
+  /**
+   * Get the value associated with a key, or a default value.
+   */
+  template <typename T> T get(const std::string &key, const T &default_value) {
+    auto it = data.find(key);
+    if (it == data.end())
+      return default_value;
+    else
+      return std::any_cast<T>(it->second);
+  }
+
+  /**
+   * Set a default value for a key if it is not already present.
+   */
+  template <typename T>
+  T setdefault(const std::string &key, const T &default_value) {
     auto it = data.find(key);
     if (it == data.end()) {
-      throw std::out_of_range("Key '" + key + "' not found");
-    }
-    // if value's type is char, return as std::string
-    if (typeid(T) == typeid(std::string) && it->second.type() == typeid(char)) {
-        return std::string(1, std::any_cast<char>(it->second));
-    } else if (typeid(T) == it->second.type()) {
-      return std::any_cast<T>(it->second);
+      data[key] = default_value;
+      return default_value;
     } else {
-      throw TypeError("Invalid type for key '" + key + "'");
+        if (it->second.type() != typeid(T)) {
+            throw TypeError("Type mismatch");
+        }
+      return std::any_cast<T>(it->second);
     }
   }
 
-    /**
-     * Get the value associated with a key, or a default value.
-     */
-    template <typename T>
-    T get(const std::string &key, const T &default_value) {
-      try {
-        return get<T>(key);
-      } catch (const std::out_of_range &) {
-        return default_value;
-      } catch (const std::bad_any_cast &) {
-        throw TypeError("Invalid type for key '" + key + "'");
-      }
+  /**
+   * Get a vector of all the keys in the dictionary.
+   */
+  std::vector<std::string> keys() const {
+    std::vector<std::string> keys;
+    for (const auto &pair : data) {
+      keys.push_back(pair.first);
     }
+    return keys;
+  }
 
-    /**
-     * Set a default value for a key if it is not already present.
-     */
-    template <typename T>
-    T setdefault(const std::string &key, const T &default_value) {
-      try {
-        return get<T>(key);
-      } catch (const std::out_of_range &) {
-        data[key] = default_value;
-        return default_value;
-      } catch (const std::bad_any_cast &) {
-        throw TypeError("Type of default_value not match type of key (type of "
-                        "default_value is `" +
-                        std::string(typeid(default_value).name()) +
-                        "` and key is `" +
-                        std::string(data[key].type().name()) + "`)");
-      }
+  /**
+   * Get a vector of all the values in the dictionary.
+   * Note: This method returns a vector of std::any objects.
+   * You must cast them to the correct type before use.
+   */
+  std::vector<std::any> values() const {
+    std::vector<std::any> values;
+    for (const auto &pair : data) {
+      values.push_back(pair.second);
     }
+    return values;
+  }
 
-    /**
-     * Get a vector of all the keys in the dictionary.
-     */
-    std::vector<std::string> keys() const {
-      std::vector<std::string> keys;
-      for (const auto &pair : data) {
-        keys.push_back(pair.first);
-      }
-      return keys;
+  /**
+   * Update the dictionary with the contents of another dictionary.
+   */
+  void update(const Dict &other) {
+    for (const auto &pair : other.data) {
+      data[pair.first] = pair.second;
     }
+  }
 
-    /**
-     * Get a vector of all the values in the dictionary.
-     * Note: This method returns a vector of std::any objects.
-     * You must cast them to the correct type before use.
-     */
-    std::vector<std::any> values() const {
-      std::vector<std::any> values;
-      for (const auto &pair : data) {
-        values.push_back(pair.second);
-      }
-      return values;
-    }
+  /**
+   * Operator overload for accessing dictionary values.
+   * Note: This will insert the key into the dictionary if it is not present.
+   */
+  std::any &operator[](const std::string &key) { return data[key]; }
 
-    /**
-     * Update the dictionary with the contents of another dictionary.
-     */
-    void update(const Dict &other) {
-      for (const auto &pair : other.data) {
-        data[pair.first] = pair.second;
-      }
-    }
+  /**
+   * @brief Get size of dictionary
+   *
+   */
+  size_t size() const { return data.size(); }
 
-    /**
-     * Operator overload for accessing dictionary values.
-     * Note: This will insert the key into the dictionary if it is not present.
-     */
-    std::any &operator[](const std::string &key) { return data[key]; }
+  /**
+   * @brief Check if dictionary is empty
+   *
+   */
+  bool empty() const { return data.empty(); }
 
-    /**
-     * @brief Get size of dictionary
-     * 
-     */
-    size_t size() const { return data.size(); }
-
-    /**
-     * @brief Check if dictionary is empty
-     * 
-     */
-    bool empty() const { return data.empty(); }
-
-    /**
-     * @brief Clear dictionary
-     * 
-     */
-    void clear() { data.clear(); }
-  };
+  /**
+   * @brief Clear dictionary
+   *
+   */
+  void clear() { data.clear(); }
+};
 
 } // namespace molcpp
