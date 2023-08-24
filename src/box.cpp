@@ -35,17 +35,17 @@ namespace molcpp
     //     return sin(deg2rad(theta));
     // }
 
-    Box::Box() : _matrix(Matrix3D::unit())
+    Box::Box() : _matrix(Mat3<double>::unit())
     {
         set_periodic(PBC::P, PBC::P, PBC::P);
     }
 
-    Box::Box(Vector3D lengths, Vector3D angles) : Box()
+    Box::Box(Vec3<double> lengths, Vec3<double> angles) : Box()
     {
         set_lengths_and_angles(lengths, angles);
     }
 
-    void Box::set_lengths_and_angles(Vector3D lengths, Vector3D angles)
+    void Box::set_lengths_and_angles(Vec3<double> lengths, Vec3<double> angles)
     {
         auto a = lengths[0];
         auto b = lengths[1];
@@ -74,17 +74,17 @@ namespace molcpp
 
     }
 
-    const Matrix3D Box::get_matrix() const
+    const Mat3<double> Box::get_matrix() const
     {
         return _matrix;
     }
 
-    const Matrix3D Box::get_inverse() const
+    const Mat3<double> Box::get_inverse() const
     {
         return _matrix.invert();
     }
 
-    const Vector3D Box::get_angles() const
+    const Vec3<double> Box::get_angles() const
     {
         auto tilts = get_tilts();
         double xy = tilts[0];
@@ -114,7 +114,7 @@ namespace molcpp
         return _pbc;
     }
 
-    const Vector3D Box::get_lengths() const
+    const Vec3<double> Box::get_lengths() const
     {
         auto tilts = get_tilts();
         double xy = tilts[0];
@@ -129,7 +129,7 @@ namespace molcpp
         return {a, b, c};
     }
 
-    const Vector3D Box::get_tilts() const
+    const Vec3<double> Box::get_tilts() const
     {
         double xy = _matrix[0][1];
         double xz = _matrix[0][2];
@@ -142,7 +142,7 @@ namespace molcpp
         return _matrix.determinant();
     }
 
-    std::vector<Vector3D> Box::wrap(std::vector<Vector3D>& positions)
+    std::vector<Vec3<double>> Box::wrap(std::vector<Vec3<double>>& positions)
     {
         // PBC are all P
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
@@ -154,11 +154,11 @@ namespace molcpp
             // return xt::transpose(real_r);
             auto natoms = positions.size();
             auto _inv_mat = _matrix.invert();
-            std::vector<Vector3D> _wrapped_positions(natoms);
+            std::vector<Vec3<double>> _wrapped_positions(natoms);
             for (size_t i = 0; i <natoms; i++)
             {
-                Vector3D reci_vec = _inv_mat * positions[i];
-                Vector3D wrapped_reci_vec = reci_vec - reci_vec.floor();
+                Vec3<double> reci_vec = _inv_mat * positions[i];
+                Vec3<double> wrapped_reci_vec = reci_vec - reci_vec.floor();
                 _wrapped_positions[i] = _matrix * wrapped_reci_vec;
             }
 
@@ -169,28 +169,28 @@ namespace molcpp
             throw NotImplementedError("Only PBC = P is implemented");
     }
 
-    Vector3D Box::wrap(Vector3D& position)
+    Vec3<double> Box::wrap(Vec3<double>& position)
     {
         // PBC are all P
         if (_pbc[0] == P && _pbc[1] == P && _pbc[2] == P)
         {
             auto _inv_mat = get_inverse();
-            Vector3D reci_vec = _inv_mat * position;
-            Vector3D wrapped_reci_vec = reci_vec - reci_vec.floor();
+            Vec3<double> reci_vec = _inv_mat * position;
+            Vec3<double> wrapped_reci_vec = reci_vec - reci_vec.floor();
             return _matrix * wrapped_reci_vec;
         }
         else
             throw NotImplementedError("Only PBC = P is implemented");
     }
 
-    double Box::calc_distance(Vector3D& r1, Vector3D& r2)
+    double Box::calc_distance(Vec3<double>& r1, Vec3<double>& r2)
     {
         auto dr = r1 - r2;
         auto wrapped_dr = wrap(dr);
         return wrapped_dr.norm();
     }
 
-    Vector3D Box::calc_displacement(Vector3D& r1, Vector3D& r2)
+    Vec3<double> Box::calc_displacement(Vec3<double>& r1, Vec3<double>& r2)
     {
         auto dr = r1 - r2;
         auto wrapped_dr = wrap(dr);
@@ -208,15 +208,15 @@ namespace molcpp
         return chemfiles_cell;
     }
 
-    std::unique_ptr<Box> create_Box(Vector3D lengths, Vector3D angles)
+    std::unique_ptr<Box> create_Box(Vec3<double> lengths, Vec3<double> angles)
     {
         return std::make_unique<Box>(lengths, angles);
     }
 
     std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell cell)
     {
-        Vector3D lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
-        Vector3D angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
+        Vec3<double> lengths {cell.lengths()[0], cell.lengths()[1], cell.lengths()[2]};
+        Vec3<double> angles {cell.angles()[0], cell.angles()[1], cell.angles()[2]};
         return std::make_unique<Box>(lengths, angles);
     }
 }

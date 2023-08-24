@@ -1,25 +1,23 @@
-#include "utils.h"
+#include <doctest/doctest.h>
 #include "box.h"
-#include "cellList.h"
-#include <gtest/gtest.h>
+#include "celllist.h"
 
 namespace molcpp
 {
-    TEST(TestCellList, test_init)
+    TEST_SUITE("TestCellList")
     {
-        Box* box = new Box({10, 10, 10});
+        TEST_CASE("test cellList init") {Box* box = new Box({10, 10, 10});
         CellList cellList(box, 3);
-        EXPECT_EQ(cellList.get_ncells(), 27);
-        EXPECT_EQ(cellList.get_atoms_in_cell(0).size(), 0);
+        CHECK_EQ(cellList.get_ncells(), 27);
+        CHECK_EQ(cellList.get_atoms_in_cell(0).size(), 0);
 
         auto xyz = std::vector<Vector3D>{{0, 0, 0}, {1, 1, 1}, {2, 2, 2}, {3, 3, 3}};
 
         cellList.build(xyz);
-        EXPECT_EQ(cellList.get_atoms_in_cell(0).size(), 4);
+        CHECK_EQ(cellList.get_atoms_in_cell(0).size(), 4);}
     }
 
-    TEST(TestCellList, test_homogenious)
-    {
+    TEST_CASE("test cellList build and update") {
         auto _traj = chemfiles::Trajectory( TEST_DATA_DIR / "lammps-data/solvated.lmp", 'r', "LAMMPS-Data");
 
         auto _frame = _traj.read();
@@ -35,9 +33,9 @@ namespace molcpp
         cellList->build(xyz);
 
         auto ncells = cellList->get_ncells();
-        EXPECT_EQ(ncells, 27);
+        CHECK_EQ(ncells, 27);
 
-        EXPECT_EQ(cellList->get_atoms_in_cell(0).size(), 4);
+        CHECK_EQ(cellList->get_atoms_in_cell(0).size(), 4);
 
     }
 

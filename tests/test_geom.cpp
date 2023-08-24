@@ -9,7 +9,7 @@
 // https://www.vcalc.com/wiki/vector-rotation
 // https://www.andre-gaschler.com/rotationconverter/
 
-namespace molpack {
+namespace molcpp {
 TEST_SUITE("geom") {
   TEST_CASE("rotate with matrix") {
     Vec3<double> v{1, 0, 0};
