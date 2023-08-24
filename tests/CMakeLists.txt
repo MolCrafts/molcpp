@@ -10,6 +10,7 @@ add_executable(${TEST_EXE}
     test_mat3.cpp
     test_geom.cpp
     test_dict.cpp
+    test_item.cpp
 )
 
 find_package(doctest QUIET)

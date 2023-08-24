@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include <optional>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 namespace molcpp {
@@ -17,7 +17,7 @@ namespace molcpp {
  */
 class Dict {
 private:
-  std::unordered_map<std::string, std::any> data;
+  std::map<std::string, std::any> data;
 
 public:
   Dict() = default;
@@ -37,14 +37,7 @@ public:
     if (it == data.end()) {
       throw std::out_of_range("Key '" + key + "' not found");
     }
-    // if value's type is char, return as std::string
-    if (typeid(T) == typeid(std::string) && it->second.type() == typeid(char)) {
-        return std::string(1, std::any_cast<char>(it->second));
-    } else if (typeid(T) == it->second.type()) {
-      return std::any_cast<T>(it->second);
-    } else {
-      throw TypeError("Invalid type for key '" + key + "'");
-    }
+    return std::any_cast<T>(it->second);
   }
 
     /**
@@ -56,8 +49,6 @@ public:
         return get<T>(key);
       } catch (const std::out_of_range &) {
         return default_value;
-      } catch (const std::bad_any_cast &) {
-        throw TypeError("Invalid type for key '" + key + "'");
       }
     }
 
@@ -71,12 +62,6 @@ public:
       } catch (const std::out_of_range &) {
         data[key] = default_value;
         return default_value;
-      } catch (const std::bad_any_cast &) {
-        throw TypeError("Type of default_value not match type of key (type of "
-                        "default_value is `" +
-                        std::string(typeid(default_value).name()) +
-                        "` and key is `" +
-                        std::string(data[key].type().name()) + "`)");
       }
     }
 
