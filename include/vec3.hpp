@@ -2,7 +2,7 @@
 #define MOLPACK_VEC3_H_
 #include <cmath>
 #include <type_traits>
-namespace molpack {
+namespace molcpp {
 
 template <typename T>
 class Vec3;

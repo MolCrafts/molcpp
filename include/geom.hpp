@@ -7,7 +7,7 @@
 #include "mat3.hpp"
 #include "vec3.hpp"
 
-namespace molpack {
+namespace molcpp {
 
 template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
 inline auto translate(Vec3<T>& v, Vec3<T>& t) {

@@ -7,7 +7,7 @@
 #include "mat3.hpp"
 #include "vec3.hpp"
 
-namespace molpack {
+namespace molcpp {
 
 template <typename T>
 static T abs(T value) {

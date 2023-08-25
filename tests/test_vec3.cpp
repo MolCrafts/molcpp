@@ -3,10 +3,10 @@
 
 TEST_SUITE("vec3") {
   TEST_CASE("testing the vec3 addition operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     auto v5 = v1 + v2;
     CHECK(v5.getX() == doctest::Approx(5.5));
@@ -75,10 +75,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 subtraction operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     auto v5 = v1 - v2;
     CHECK(v5.getX() == doctest::Approx(-3.3));
@@ -152,10 +152,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 multiplication operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     auto v5 = v1 * v2;
     CHECK(v5.getX() == doctest::Approx(4.84));
@@ -224,10 +224,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 division operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     auto v5 = v1 / v2;
     CHECK(v5.getX() == doctest::Approx(0.25));
@@ -296,10 +296,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 addition assignment operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     SUBCASE("") {
       v1 += v2;
@@ -345,10 +345,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 subtraction assignment operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     SUBCASE("") {
       v1 -= v2;
@@ -394,10 +394,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 multiplication assignment operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     SUBCASE("") {
       v1 *= v2;
@@ -443,10 +443,10 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 division assignment operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(4.4, 5.5, 6.6);
-    molpack::Vec3<int> v3(1, 2, 3);
-    molpack::Vec3<int> v4(4, 5, 6);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(4.4, 5.5, 6.6);
+    molcpp::Vec3<int> v3(1, 2, 3);
+    molcpp::Vec3<int> v4(4, 5, 6);
 
     SUBCASE("") {
       v1 /= v2;
@@ -492,8 +492,8 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 uniary operator") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<int> v2(1, 2, 3);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<int> v2(1, 2, 3);
 
     SUBCASE("") {
       v1 = -v1;
@@ -511,12 +511,12 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 equility") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v2(1.1, 2.2, 3.3);
-    molpack::Vec3<double> v3(1.1, 2.2, 3.4);
-    molpack::Vec3<int> v4(1, 2, 3);
-    molpack::Vec3<int> v5(1, 2, 3);
-    molpack::Vec3<int> v6(1, 2, 4);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v2(1.1, 2.2, 3.3);
+    molcpp::Vec3<double> v3(1.1, 2.2, 3.4);
+    molcpp::Vec3<int> v4(1, 2, 3);
+    molcpp::Vec3<int> v5(1, 2, 3);
+    molcpp::Vec3<int> v6(1, 2, 4);
 
     CHECK(v1 == v2);
     CHECK(v4 == v5);
@@ -525,16 +525,16 @@ TEST_SUITE("vec3") {
   }
 
   TEST_CASE("testing the vec3 function norm") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<int> v2(1, 2, 3);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<int> v2(1, 2, 3);
 
     CHECK(v1.norm() == doctest::Approx(4.1158231255));
     CHECK(v2.norm() == doctest::Approx(3.7416573868));
   }
 
   TEST_CASE("testing the vec3 function product") {
-    molpack::Vec3<double> v1(1.1, 2.2, 3.3);
-    molpack::Vec3<int> v2(1, 2, 3);
+    molcpp::Vec3<double> v1(1.1, 2.2, 3.3);
+    molcpp::Vec3<int> v2(1, 2, 3);
 
     CHECK(v1.product() == doctest::Approx(7.986));
     CHECK(v2.product() == 6);

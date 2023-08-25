@@ -1,4 +1,4 @@
-#include "cellList.h"
+#include "celllist.h"
 
 namespace molcpp
 {
@@ -12,37 +12,37 @@ namespace molcpp
         }
     }
 
-    size_t CellList::get_cell_index(std::array<size_t, 3> &cell_vector) const
+    size_t CellList::get_cell_index(Vec3<int> &cell_vector) const
     {
         // c = cxLcyLcz + cyLcz + cz
         return cell_vector[0] * _cell_length[1] * _cell_length[2] + cell_vector[1] * _cell_length[2] + cell_vector[2];
     }
 
-    std::array<size_t, 3> CellList::get_cell_vector(size_t cell_index) const
+    Vec3<int> CellList::get_cell_vector(size_t cell_index) const
     {
         // cx = c / (LcyLcz)
         // cy = (c / Lcz) - cxLcy or (c / Lcz) mod Lcy
         // cz = c mod Lcz
-        std::array<size_t, 3> cell_vector;
+        Vec3<int> cell_vector;
         cell_vector[0] = cell_index / (_cell_length[1] * _cell_length[2]);
         cell_vector[1] = std::fmod((cell_index / _cell_length[2]), _cell_length[1]);
         cell_vector[2] = std::fmod(cell_index, _cell_length[2]);
         return cell_vector;
     }
 
-    void CellList::build(std::vector<Vector3D> &xyz)
+    void CellList::build(std::vector<Vec3<double>> &xyz)
     {
 
         void reset();
 
-        void update(std::vector<Vector3D> & xyz);
+        void update(std::vector<Vec3<double>> & xyz);
     }
 
-    void CellList::update(std::vector<Vector3D> &xyz)
+    void CellList::update(std::vector<Vec3<double>> &xyz)
     {
         size_t n_atoms = xyz.size();
         _natoms += n_atoms;
-        std::array<size_t, 3> xyz_cell_index;
+        Vec3<int> xyz_cell_index;
         xyz = _box->wrap(xyz);
         for (size_t i = 0; i < n_atoms; i++)
         {
@@ -83,7 +83,7 @@ namespace molcpp
     std::vector<size_t> CellList::get_neighbors(size_t cell_index) const
     {
         std::vector<size_t> neighbors;
-        std::array<size_t, 3> cell_vector = get_cell_vector(cell_index);
+        Vec3<int> cell_vector = get_cell_vector(cell_index);
         for (size_t x = cell_vector[0] - 1; x <= cell_vector[0] + 1; x++)
         {
             for (size_t y = cell_vector[1] - 1; y <= cell_vector[1] + 1; y++)
@@ -118,7 +118,7 @@ namespace molcpp
                         z -= _cell_length[2];
                     }
 
-                    std::array<size_t, 3> neighbor_cell_vector = {x, y, z};
+                    Vec3<int> neighbor_cell_vector = {x, y, z};
                     size_t neighbor_cell_index = get_cell_index(neighbor_cell_vector);
                     if (neighbor_cell_index != cell_index)
                     {
