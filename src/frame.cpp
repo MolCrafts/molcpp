@@ -2,9 +2,17 @@
 
 namespace molcpp
 {
-    Frame::Frame() : _timestep(0), _cell(new Cell()) , _topology(new Topology())
+    Frame::Frame(size_t timestep) : _timestep(timestep), _box(new Box()) , _topology(new Topology())
     {
 
+    }
+
+    Frame::Frame(const chemfiles::Frame& chflFrame)
+    {
+        _timestep = chflFrame.step();
+        _box = from_chemfiles(chflFrame.cell());
+        _topology = from_chemfiles(chflFrame.topology());
+        _cell = from_chemfiles(chflFrame.cell());
     }
 
     size_t Frame::get_natoms() const

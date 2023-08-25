@@ -1,11 +1,13 @@
 #pragma once
 
+#include <cstddef>
 #include <vector>
 #include "atom.h"
 #include "topology.h"
 #include "itemtype.h"
-#include "cell.h"
+#include "box.h"
 #include "algo.h"
+#include "dict.h"
 namespace molcpp
 {
 
@@ -16,13 +18,9 @@ namespace molcpp
          * @brief Construct an empty frame
          *
          */
-        Frame();
+        Frame(size_t timestep = 0);
 
-        /**
-         * @brief Construct a new Frame from Chemfiles::Frame
-         *
-         */
-        // Frame(const chemfiles::Frame&);
+        Frame(const chemfiles::Frame&);
 
         /**
          * @brief Get the natoms object
@@ -87,9 +85,8 @@ namespace molcpp
 
     private:
         size_t _timestep;
-        Cell* _cell;
+        Box* _box;
         Topology* _topology;
-        // NeighborList _nblist;
     };
 
     std::unique_ptr<Frame> create_frame();

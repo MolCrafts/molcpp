@@ -4,9 +4,9 @@
 #include <any>
 #include <error.h>
 #include <initializer_list>
+#include <map>
 #include <optional>
 #include <string>
-#include <map>
 #include <vector>
 
 namespace molcpp {
@@ -57,9 +57,9 @@ public:
       data[key] = default_value;
       return default_value;
     } else {
-        if (it->second.type() != typeid(T)) {
-            throw TypeError("Type mismatch");
-        }
+      if (it->second.type() != typeid(T)) {
+        throw TypeError("Type mismatch");
+      }
       return std::any_cast<T>(it->second);
     }
   }

@@ -1,13 +1,15 @@
 #pragma once
 #include <chemfiles.hpp>
 #include <string>
+#include <map>
+#include <memory>
+#include "chemfiles/Trajectory.hpp"
 #include "frame.h"
 #include "algo.h"
 
 namespace molcpp
 {
 
-    using FrameVec = std::vector<Frame *>;
     class Trajectory
     {
 
@@ -18,7 +20,7 @@ namespace molcpp
          * @brief Construct an empty Trajectory
          * 
          */
-        Trajectory();
+        explicit Trajectory(std::string path, char mode = 'r', const std::string& format = "");
         
         /**
          * @brief add a frame(pointer) to the trajectory
@@ -26,7 +28,7 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        bool add_frame(Frame*);
+        void add_frame(std::unique_ptr<Frame> frame);
         
         /**
          * @brief Get the number of frames this trajectory has
@@ -41,27 +43,8 @@ namespace molcpp
          * @return Frame*& 
          */
         Frame* get_step(size_t);
-        
-        /**
-         * @brief Get a frame with its index in vector
-         * 
-         * @return Frame*& 
-         */
-        Frame* get_by_index(size_t);
 
-        /**
-         * @brief Get the read-only std::vector<Frame*>
-         * 
-         * @return const FrameVec& 
-         */
-        FrameVec get_frames() const;
-
-        /**
-         * @brief Opon a Chemfiles::Trajectory
-         * 
-         */
-        // void open(std::string, char, const std::string &);
-        void load(std::string, char, const std::string&);
+        std::map<size_t, std::unique_ptr<Frame>> get_frames() const;
 
         /**
          * @brief Write frames in this trajectory to a file
@@ -75,13 +58,13 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        // bool is_open();
+        bool is_open();
         
         /**
          * @brief Close a Chemfiles::Trajectory
          * 
          */
-        // void close();
+        void close();
         
         /**
          * @brief Check if all the frames in this trajectory have been read, i.e. if the last read frame is the last frame of the trajectory
@@ -102,12 +85,12 @@ namespace molcpp
         // Frame read_step(size_t step);
 
     private:
-        FrameVec _frames;
-        // TODO: cache for frames converted from chemfiles
+        chemfiles::Trajectory _chflTraj;
+        std::map<size_t, std::unique_ptr<Frame>> _frames;
+        
     };
 
-    std::unique_ptr<Trajectory> new_trajectory();
-    std::unique_ptr<Trajectory> new_trajectory(chemfiles::Trajectory&);
+    std::unique_ptr<Trajectory> new_trajectory(std::string path, char mode = 'r', const std::string& format = "");
 
     chemfiles::Trajectory to_chemfiles(Trajectory*, std::string, char, const std::string&);
 

@@ -1,66 +1,29 @@
 #include "trajectory.h"
+#include <memory>
 
 namespace molcpp
 {
-    Trajectory::Trajectory()
+    Trajectory::Trajectory(std::string path, char mode = 'r', const std::string& format = "") : _chflTraj(path, mode, format)
     {
 
     }
 
-    bool Trajectory::add_frame(Frame* frame)
+    void Trajectory::add_frame(std::unique_ptr<Frame> frame)
     {
-        _frames.push_back(frame);
-        return true;
+        size_t timestep = frame->get_timestep();
+        _frames[timestep] = frame;
     }
 
     size_t Trajectory::get_nsteps() const
     {
-        return _frames.size();
+        return _chflTraj.nsteps();
     }
 
     Frame* Trajectory::get_step(size_t step) 
     {
-        auto result = std::find_if(_frames.begin(), _frames.end(), [step](Frame* frame)
-                                    { return frame->get_timestep() == step; });
-        if (result == _frames.end())
-        {
-            throw KeyError("No such step");
-        }
-        else
-        {
-            return *result;
-        }
-    }
-
-    Frame* Trajectory::get_by_index(size_t index)
-    {
-        if (index >= _frames.size())
-        {
-            throw IndexError("Index out of range");
-        }
-        else
-        {
-            return _frames[index];
-        }
-    }
-
-    FrameVec Trajectory::get_frames() const
-    {
-        return _frames;
-    }
-
-    void Trajectory::load(std::string path, char mode, const std::string &format)
-    {
-        auto _traj = chemfiles::Trajectory(path, mode, format);
-        auto _nsteps = _traj.nsteps();
-
-        for (size_t i = 0; i < _nsteps; i++)
-        {
-            auto _frame = _traj.read();
-            auto _frame_ptr = from_chemfiles(_frame);
-            _frames.push_back(_frame_ptr.release());
-        }
-
+        auto _frame = _chflTraj.read_step(step);
+        auto _frame_ptr = from_chemfiles(_frame);
+        return _frame_ptr.get();
     }
 
     void Trajectory::write(std::string path, const std::string& format)
@@ -68,29 +31,24 @@ namespace molcpp
         auto _traj = chemfiles::Trajectory(path, 'w', format);
         for (auto _frame : _frames)
         {
-            auto chflFrame = to_chemfiles(_frame);
+            auto chflFrame = to_chemfiles(_frame.second.get());
             _traj.write(chflFrame);
         }
     }
 
-    std::unique_ptr<Trajectory> new_trajectory()
+    bool Trajectory::is_open()
     {
-        return std::make_unique<Trajectory>();
+        return _chflTraj.is_open();
     }
 
-    std::unique_ptr<Trajectory> new_trajectory(chemfiles::Trajectory& chflTraj)
+    void Trajectory::close()
     {
-        auto _traj = new_trajectory();
-        auto _nsteps = chflTraj.nsteps();
+        _chflTraj.close();
+    }
 
-        for (size_t i = 0; i < _nsteps; i++)
-        {
-            auto _frame = chflTraj.read();
-            auto _frame_ptr = from_chemfiles(_frame);
-            _traj->add_frame(_frame_ptr.release());
-        }
-
-        return _traj;
+    std::unique_ptr<Trajectory> new_trajectory(std::string path, char mode = 'r', const std::string& format = "")
+    {
+        return std::make_unique<Trajectory>(path, mode, format);
     }
 
     chemfiles::Trajectory to_chemfiles(Trajectory* traj, std::string path, char mode, const std::string &format)
