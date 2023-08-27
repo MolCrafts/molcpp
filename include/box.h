@@ -1,16 +1,14 @@
 #pragma once
 
-#include <chemfiles.hpp>
 #include <vector>
-#include "log.h"
-#include "error.h"
-#include "vec3.hpp"
-#include "mat3.hpp"
+#include <array>
+#include <cmath>
+
+#include "vec3.h"
+#include "mat3.h"
 
 namespace molcpp
 {
-
-
     class Box
     {
 
@@ -31,11 +29,11 @@ namespace molcpp
             const Vec3<double> get_lengths() const;
             const Vec3<double> get_angles() const;
             const Vec3<double> get_tilts() const;
-            const double get_volume() const;
-            std::vector<Vec3<double>> wrap(std::vector<Vec3<double>>&);
-            Vec3<double> wrap(Vec3<double>&);
-            double calc_distance(Vec3<double>&, Vec3<double>&);
-            Vec3<double> calc_displacement(Vec3<double>&, Vec3<double>&);
+            double get_volume() const;
+            std::vector<Vec3<double>> wrap(std::vector<Vec3<double>>& points);
+            Vec3<double> wrap(Vec3<double>& point);
+            double calc_distance(Vec3<double>& point1, Vec3<double>& point2);
+            Vec3<double> calc_vector(Vec3<double>&, Vec3<double>&);
 
         private:
 
@@ -43,9 +41,5 @@ namespace molcpp
             std::array<PBC, 3> _pbc;
 
     };
-
-    std::unique_ptr<Box> create_box(Vec3<double> lengths = {0, 0, 0}, Vec3<double> angles = {90, 90, 90});
-    std::unique_ptr<Box> from_chemfiles(chemfiles::UnitCell Cell);
-    chemfiles::UnitCell to_chemfiles(Box* Box);
 
 }

@@ -4,8 +4,8 @@
 #include <type_traits>
 #include <vector>
 
-#include "mat3.hpp"
-#include "vec3.hpp"
+#include "mat3.h"
+#include "vec3.h"
 
 namespace molcpp {
 

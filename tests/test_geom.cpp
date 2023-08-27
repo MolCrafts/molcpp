@@ -1,9 +1,9 @@
 #include <doctest/doctest.h>
 #include "geom.hpp"
 
-#include "approx.hpp"
-#include "mat3.hpp"
-#include "vec3.hpp"
+#include "approx.h"
+#include "mat3.h"
+#include "vec3.h"
 
 // Ref:
 // https://www.vcalc.com/wiki/vector-rotation

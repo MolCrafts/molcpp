@@ -1,65 +1,54 @@
-#include "utils.h"
+#include "approx.h"
 #include "box.h"
-#include "linalg.hpp"
+#include "mat3.h"
+#include "vec3.h"
+#include <doctest/doctest.h>
 
-namespace molcpp
-{
-    TEST(TestBox, test_init)
-    {
-        Box box1;
-        EXPECT_EQ(box1.get_lengths(), Vector3D(1, 1, 1));
-        EXPECT_EQ(box1.get_tilts(), Vector3D(0, 0, 0));
-        EXPECT_EQ(box1.get_angles(), Vector3D(90, 90, 90));
-        EXPECT_EQ(box1.get_volume(), 1);
+namespace molcpp {
+TEST_SUITE("TestBox") {
+  TEST_CASE("test_init") {
+    Box box1;
+    CHECK_EQ(box1.get_lengths(), Vec3<double>(1, 1, 1));
+    CHECK_EQ(box1.get_tilts(), Vec3<double>(0, 0, 0));
+    CHECK_EQ(box1.get_angles(), Vec3<double>(90, 90, 90));
+    CHECK_EQ(box1.get_volume(), 1);
 
-        Box box2({1, 2, 3}, {90, 90, 90});
-        EXPECT_EQ(box2.get_lengths(), Vector3D(1, 2, 3));
-        EXPECT_TRUE(allclose(box2.get_tilts(), Vector3D(0, 0, 0)));
-        EXPECT_EQ(box2.get_angles(), Vector3D(90, 90, 90));
-        EXPECT_EQ(box2.get_volume(), 6);
+    Box box2({1, 2, 3}, {90, 90, 90});
+    CHECK_EQ(box2.get_lengths(), Vec3<double>(1, 2, 3));
+    CHECK(approx_eq(box2.get_tilts(), Vec3<double>(0, 0, 0)));
+    CHECK_EQ(box2.get_angles(), Vec3<double>(90, 90, 90));
+    CHECK_EQ(box2.get_volume(), 6);
 
-        Box box3({1, 1, 1}, {45, 45, 45});
-        EXPECT_EQ(box3.get_lengths(), Vector3D(1, 1, 1));
-        EXPECT_TRUE(allclose(box3.get_tilts(), Vector3D(0.707, 0.707, 0.293), 1e-03));
-        EXPECT_EQ(box3.get_angles(), Vector3D(45, 45, 45));
-        EXPECT_FLOAT_EQ(box3.get_volume(), 0.45508987);
+    Box box3({1, 1, 1}, {45, 45, 45});
+    CHECK_EQ(box3.get_lengths(), Vec3<double>(1, 1, 1));
+    CHECK(
+        approx_eq(box3.get_tilts(), Vec3<double>(0.707, 0.707, 0.293), 1e-03));
+    CHECK_EQ(box3.get_angles(), Vec3<double>(45, 45, 45));
+    CHECK(approx_eq(box3.get_volume(), 0.45509, 1e-05));
+  }
 
-    }
+  TEST_CASE("test_orth_wrap") {
 
-    TEST(TestBox, test_orth_wrap)
-    {
+    Box box({2, 2, 2});
+    std::vector<Vec3<double>> points = {{0.5, 0.5, 0.5},
+                                        {1.5, 1.5, 1.5},
+                                        {-0.5, -0.5, -0.5},
+                                        {-1.5, -1.5, -1.5}};
+    std::vector<Vec3<double>> expected = {
+        {0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {1.5, 1.5, 1.5}, {0.5, 0.5, 0.5}};
+    auto wrapped_points = box.wrap(points);
+    CHECK(std::equal(wrapped_points.begin(), wrapped_points.end(),
+                     expected.begin()));
+  }
 
-        Box box({2, 2, 2});
-        std::vector<Vector3D> points = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {-0.5, -0.5, -0.5}, {-1.5, -1.5, -1.5}};
-        std::vector<Vector3D> expected = {{0.5, 0.5, 0.5}, {1.5, 1.5, 1.5}, {1.5, 1.5, 1.5}, {0.5, 0.5, 0.5}};
-        auto wrapped_points = box.wrap(points);
-        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
-    }
+  TEST_CASE("test_tric_wrap") {
 
-    TEST(TestBox, test_tric_wrap)
-    {
-            
-        Box box({2, 2, 2}, {45, 45, 45});
-        std::vector<Vector3D> points = {{2, 1, 0}};
-        std::vector<Vector3D> expected = {{2, 1, 0}};  // TODO: need more tests
-        auto wrapped_points = box.wrap(points);
-        EXPECT_TRUE(std::equal(wrapped_points.begin(), wrapped_points.end(), expected.begin()));
-    
-    }
-
-    TEST(TestBox, test_to_chemfiles)
-    {
-        auto box = create_box({2, 2, 2}, {90, 90, 90});
-        chemfiles::UnitCell chem_box = to_chemfiles(box.release());
-        auto expected_lengths = chemfiles::Vector3D(2, 2, 2);
-        auto expected_angles = chemfiles::Vector3D(90, 90, 90);
-        auto lengths = chem_box.lengths();
-        auto angles = chem_box.angles();
-        EXPECT_FLOAT_EQ(lengths[0], expected_lengths[0]);
-        EXPECT_FLOAT_EQ(lengths[1], expected_lengths[1]);
-        EXPECT_FLOAT_EQ(lengths[2], expected_lengths[2]);
-        EXPECT_FLOAT_EQ(angles[0], expected_angles[0]);
-        EXPECT_FLOAT_EQ(angles[1], expected_angles[1]);
-        EXPECT_FLOAT_EQ(angles[2], expected_angles[2]);
-    }
+    Box box({2, 2, 2}, {45, 45, 45});
+    std::vector<Vec3<double>> points = {{2, 1, 0}};
+    std::vector<Vec3<double>> expected = {{2, 1, 0}}; // TODO: need more tests
+    auto wrapped_points = box.wrap(points);
+    CHECK(std::equal(wrapped_points.begin(), wrapped_points.end(),
+                     expected.begin()));
+  }
 }
+} // namespace molcpp

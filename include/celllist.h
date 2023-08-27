@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "error.h"
-#include "vec3.hpp"
+#include "vec3.h"
 #include "box.h"
 
 namespace molcpp
