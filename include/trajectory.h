@@ -3,7 +3,6 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "chemfiles/Trajectory.hpp"
 #include "frame.h"
 #include "algo.h"
 
@@ -21,6 +20,12 @@ namespace molcpp
          * 
          */
         explicit Trajectory(std::string path, char mode = 'r', const std::string& format = "");
+
+        /**
+         * @brief Construct a Trajectory from a Chemfiles::Trajectory
+         * 
+         */
+        Trajectory(const chemfiles::Trajectory&);
         
         /**
          * @brief add a frame(pointer) to the trajectory
@@ -28,7 +33,7 @@ namespace molcpp
          * @return true 
          * @return false 
          */
-        void add_frame(std::unique_ptr<Frame> frame);
+        void add_frame(const Frame& frame);
         
         /**
          * @brief Get the number of frames this trajectory has
@@ -40,9 +45,9 @@ namespace molcpp
         /**
          * @brief Get a frame with a specific timestep
          * 
-         * @return Frame*& 
+         * @return Frame& 
          */
-        Frame* get_step(size_t);
+        Frame& get_step(size_t);
 
         std::map<size_t, std::unique_ptr<Frame>> get_frames() const;
 
@@ -52,14 +57,6 @@ namespace molcpp
          */
         void write(std::string, const std::string&);
 
-        /**
-         * @brief If open a Chemfiles::Trajectory
-         * 
-         * @return true 
-         * @return false 
-         */
-        bool is_open();
-        
         /**
          * @brief Close a Chemfiles::Trajectory
          * 
@@ -86,12 +83,11 @@ namespace molcpp
 
     private:
         chemfiles::Trajectory _chflTraj;
-        std::map<size_t, std::unique_ptr<Frame>> _frames;
+        std::map<size_t, Frame> _frames;
         
     };
 
-    std::unique_ptr<Trajectory> new_trajectory(std::string path, char mode = 'r', const std::string& format = "");
-
-    chemfiles::Trajectory to_chemfiles(Trajectory*, std::string, char, const std::string&);
+    Trajectory from_chemfiles(const chemfiles::Trajectory&);
+    chemfiles::Trajectory to_chemfiles(const Trajectory&);
 
 }

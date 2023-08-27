@@ -1,181 +1,197 @@
 #pragma once
-#include <vector>
+#include "algo.h"
+#include "error.h"
 #include <map>
 #include <set>
-#include "algo.h"
-#include "mperror.h"
+#include <vector>
+
 namespace molcpp
 {
-    using BondConnect = std::vector<std::tuple<size_t, size_t>>;
-    using AngleConnect = std::vector<std::tuple<size_t, size_t, size_t>>;
-    using DihedralConnect = std::vector<std::tuple<size_t, size_t, size_t, size_t>>;
-    class Graph
+
+
+class Graph
+{
+
+    using BondIdx = std::tuple<size_t, size_t>;
+    using AngleIdx = std::tuple<size_t, size_t, size_t>;
+    using DihedralIdx = std::tuple<size_t, size_t, size_t, size_t>;
+
+    using BondConnects = std::vector<BondIdx>;
+    using AngleConnects = std::vector<AngleIdx>;
+    using DihedralConnects = std::vector<DihedralIdx>;
+    using index = size_t;
+
+  public:
+    void add_node(index node)
     {
-    public:
-        void add_node(int node)
-        {
-            _nodes.insert(node);
-        }
+        _adj[node] = std::set<index>();
+    }
 
-        void add_edge(int from, int to)
-        {
-            if (from == to)
-                throw ValueError("Self-loop is not allowed.");
-            _edges[from].insert(to);
-            _edges[to].insert(from);
-        }
+    void add_edge(index from, index to)
+    {
+        _adj[from].insert(to);
+        _adj[to].insert(from);
+    }
 
-        void del_edge(int from, int to)
-        {
-            _edges[from].erase(to);
-            _edges[to].erase(from);
-        }
+    void del_edge(index from, index to)
+    {
+        _adj[from].erase(to);
+        _adj[to].erase(from);
+    }
 
-        void del_node(int node)
+    void del_node(index node)
+    {
+        for (auto &nbrs : _adj[node])
         {
-            _nodes.erase(node);
-            _edges.erase(node);
-            for (auto &[from, tos] : _edges)
+            _adj[nbrs].erase(node);
+        }
+        _adj.erase(node);
+    }
+
+    std::vector<index> get_nodes()
+    {
+        std::vector<index> nodes(_adj.size());
+        for (auto &[node, _] : _adj)
+        {
+            nodes.push_back(node);
+        }
+        return nodes;
+    }
+
+    std::map<index, std::set<index>> get_adj()
+    {
+        return _adj;
+    }
+
+    std::set<index> &get_adj_of(index node)
+    {
+        return _adj[node];
+    }
+
+    bool has_node(index node)
+    {
+        return _adj.find(node) != _adj.end();
+    }
+
+    bool has_edge(index from, index to)
+    {
+        bool a_side = _adj[from].find(to) != _adj[from].end();
+        bool b_side = _adj[to].find(from) != _adj[to].end();
+        if (a_side && b_side)
+        {
+            return true;
+        }
+        else
+        {
+            throw InternalError("Graph is not bi-directional for edge " + std::to_string(from) + " " +
+                                std::to_string(to));
+        }
+    }
+
+    void add_subgraph(Graph &subgraph)
+    {
+        for (auto &node : subgraph.get_nodes())
+        {
+            add_node(node);
+        }
+        for (auto &[from, tos] : subgraph.get_adj())
+        {
+            for (auto &to : tos)
             {
-                tos.erase(node);
+                add_edge(from, to);
             }
         }
+    }
 
-        std::set<int> get_nodes()
+    void del_subgraph(Graph &subgraph)
+    {
+        for (auto &node : subgraph.get_nodes())
         {
-            return _nodes;
+            del_node(node);
         }
-
-        std::map<int, std::set<int>> get_edges()
+        for (auto &[from, tos] : subgraph.get_adj())
         {
-            return _edges;
-        }
-
-        std::vector<int> get_edges_of(int node)
-        {
-            std::vector<int> edges_vec;
-            for (auto &edge : _edges[node])
+            for (auto &to : tos)
             {
-                edges_vec.push_back(edge);
+                del_edge(from, to);
             }
-            return edges_vec;
         }
+    }
 
-        bool has_node(int node)
+    BondConnects get_bonds()
+    {
+        size_t nbonds = 0;
+        for (auto &[from, tos] : _adj)
         {
-            return _nodes.find(node) != _nodes.end();
+            nbonds += tos.size();
         }
-
-        bool has_edge(int from, int to)
+        BondConnects bonds;
+        bonds.reserve(nbonds);
+        for (auto &[from, tos] : _adj)
         {
-            return _edges[from].find(to) != _edges[from].end();
-        }
-
-        void add_subgraph(Graph &subgraph)
-        {
-            for (auto &node : subgraph.get_nodes())
+            for (auto &to : tos)
             {
-                add_node(node);
-            }
-            for (auto &[from, tos] : subgraph.get_edges())
-            {
-                for (auto &to : tos)
+                if (from < to)
                 {
-                    add_edge(from, to);
+                    bonds.push_back(std::make_tuple(from, to));
                 }
             }
         }
+        return bonds;
+    }
 
-        void del_subgraph(Graph &subgraph)
+    AngleConnects get_angles()
+    {
+        size_t nangles = 0;
+        for (auto &[i, tos] : _adj)
         {
-            for (auto &node : subgraph.get_nodes())
-            {
-                del_node(node);
-            }
-            for (auto &[from, tos] : subgraph.get_edges())
-            {
-                for (auto &to : tos)
-                {
-                    del_edge(from, to);
-                }
-            }
+            nangles += C(tos.size(), 2);
         }
-
-        BondConnect get_bonds()
+        AngleConnects angles;
+        angles.reserve(nangles);
+        for (auto &[j, edge] : _adj)
         {
-            size_t nbonds = 0;
-            for (auto &[from, tos] : _edges)
-            {
-                nbonds += tos.size();
-            }
-            BondConnect bonds;
-            bonds.reserve(nbonds);
-            for (auto &[from, tos] : _edges)
-            {
-                for (auto &to : tos)
-                {
-                    if (from < to)
-                    {
-                        bonds.push_back(std::make_tuple(from, to));
-                    }
-                }
-            }
-            return bonds;
-        }
-
-        AngleConnect get_angles()
-        {
-            size_t nangles = 0;
-            for (auto &[i, tos] : _edges)
-            {
-                nangles += C(tos.size(), 2);
-            }
-            AngleConnect angles;
-            angles.reserve(nangles);
-            for (auto &[j, edge] : _edges)
-            {
-                for (auto &i : edge)
-                {
-                    for (auto &k : edge)
-                    {
-                        if (i < k)
-                        {
-                            angles.push_back(std::make_tuple(i, j, k));
-                        }
-                    }
-                }
-            }
-            return angles;
-        }
-
-        DihedralConnect get_dihedrals()
-        {
-            DihedralConnect dihedrals;
-            for (auto &[j, edge] : _edges)
+            for (auto &i : edge)
             {
                 for (auto &k : edge)
                 {
-                    if (j > k)
-                        continue;
-                    for (auto &i : edge)
+                    if (i < k)
                     {
-                        if (i == k)
-                            continue;
-                        for (auto &l : _edges[k])
-                        {
-                            if (l == j)
-                                continue;
-
-                            dihedrals.push_back(std::make_tuple(i, j, k, l));
-                        }
+                        angles.push_back(std::make_tuple(i, j, k));
                     }
                 }
             }
-            return dihedrals;
         }
+        return angles;
+    }
 
-    private:
-        std::set<int> _nodes;
-        std::map<int, std::set<int>> _edges;
-    };
-}
+    DihedralConnects get_dihedrals()
+    {
+        DihedralConnects dihedrals;
+        for (auto &[j, edge] : _adj)
+        {
+            for (auto &k : edge)
+            {
+                if (j > k)
+                    continue;
+                for (auto &i : edge)
+                {
+                    if (i == k)
+                        continue;
+                    for (auto &l : _adj[k])
+                    {
+                        if (l == j)
+                            continue;
+
+                        dihedrals.push_back(std::make_tuple(i, j, k, l));
+                    }
+                }
+            }
+        }
+        return dihedrals;
+    }
+
+  private:
+    std::map<index, std::set<index>> _adj;
+};
+} // namespace molcpp

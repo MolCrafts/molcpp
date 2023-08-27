@@ -122,4 +122,22 @@ namespace molcpp
     private:
         std::string m_message;
     };
+
+    class InternalError : public std::exception
+    {
+    public:
+        InternalError(const std::string &message) : m_message(message)
+        {
+            LOG_ERROR(m_message);
+        }
+
+        const char *what() const noexcept override
+        {   
+            std::string msg = "Internal Error: " + m_message + "\n---!Please report this error to the developers!---";
+            return m_message.c_str();
+        }
+
+    private:
+        std::string m_message;
+    };
 }

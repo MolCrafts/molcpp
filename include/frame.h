@@ -1,97 +1,99 @@
 #pragma once
 
-#include <cstddef>
 #include <vector>
-#include "atom.h"
-#include "topology.h"
-#include "itemtype.h"
-#include "box.h"
+
+#include <chemfiles.hpp>
+
 #include "algo.h"
+#include "box.h"
+#include "config.h"
+#include "connectivity.h"
 #include "dict.h"
+#include "graph.h"
+
 namespace molcpp
 {
 
-    class Frame
+class Frame
+{
+  public:
+    /**
+     * @brief Construct an empty frame
+     *
+     */
+    Frame(size_t timestep = 0);
+
+    /**
+     * @brief Get the natoms object
+     *
+     * @return size_t
+     */
+    size_t get_natoms() const;
+
+    /**
+     * @brief Get the nbonds object
+     *
+     * @return size_t
+     */
+    size_t get_nbonds() const;
+
+    /**
+     * @brief Get the timestep object
+     *
+     * @return size_t
+     */
+    size_t get_timestep() const;
+
+    /**
+     * @brief Set the timestep object
+     *
+     */
+    void set_timestep(size_t);
+
+    /** TODO:
+     * @brief Get the topology object
+     *
+     * @return Topology&
+     */
+    // Topology* get_topology() const;
+
+    /** TODO:
+     * @brief Set the topology object
+     *
+     */
+    // void set_topology(Topology* topology);
+
+    template <typename T> void set(const std::string &key, const std::vector<std::optional<T>> &values = {})
     {
-    public:
-        /**
-         * @brief Construct an empty frame
-         *
-         */
-        Frame(size_t timestep = 0);
+        _atom_properties[key] = values;
+    }
 
-        Frame(const chemfiles::Frame&);
+    template<typename T> void set(const std::string& key, const std::vector<T>& values = {})
+    {
+        _atom_properties[key] = values;
+    }
 
-        /**
-         * @brief Get the natoms object
-         *
-         * @return size_t
-         */
-        size_t get_natoms() const;
+    template<typename T> T& get(const std::string& key)
+    {
+        return _atom_properties.get<T>(key);
+    }
 
-        /**
-         * @brief Get the nbonds object
-         *
-         * @return size_t
-         */
-        size_t get_nbonds() const;
+    void add_bond(size_t i, size_t j, BondOrder order);
 
-        /**
-         * @brief Get the timestep object
-         *
-         * @return size_t
-         */
-        size_t get_timestep() const;
+    // void add_angle(size_t i, size_t j, size_t k);
 
-        /**
-         * @brief Set the timestep object
-         *
-         */
-        void set_timestep(size_t);
+    // void add_dihedral(size_t i, size_t j, size_t k, size_t l);
 
-        /**
-         * @brief Get the topology object
-         *
-         * @return Topology&
-         */
-        Topology* get_topology() const;
+    // void add_improper(size_t i, size_t j, size_t k, size_t l);
 
-        /**
-         * @brief Set the topology object
-         *
-         */
-        void set_topology(Topology* topology);
+  private:
+    size_t _timestep;
+    Box *_box;
+    Dict _atom_properties;
+    Connectivity _connectivity;
+};
 
-        /**
-         * @brief Get a property by key
-         *
-         * @tparam T
-         * @param key
-         * @return T
-         */
-        template <typename T>
-        std::vector<T> get(const std::string &key)
-        {
-            return _topology->get<T>(key);
-        };
+Frame from_chemfiles(const chemfiles::Frame &);
+chemfiles::Frame to_chemfiles(const Frame &);
 
-        void set(const std::string&, const std::vector<AtomProperty>&);
-
-        void set_cell(Cell*);
-
-        void set_cell(Vector3D lengths, Vector3D titles = {0, 0, 0});
-
-        Cell* get_cell() const;
-
-    private:
-        size_t _timestep;
-        Box* _box;
-        Topology* _topology;
-    };
-
-    std::unique_ptr<Frame> create_frame();
-    std::unique_ptr<Frame> from_chemfiles(const chemfiles::Frame &);
-
-    chemfiles::Frame to_chemfiles(Frame*);
-
-}
+} // namespace molcpp

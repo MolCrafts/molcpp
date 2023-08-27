@@ -1,6 +1,8 @@
 #pragma once
+#include <chemfiles.hpp>
 #include <cmath>
 #include <type_traits>
+
 namespace molcpp
 {
 
@@ -14,6 +16,7 @@ template <typename T> struct is_arithmetic_vec3<Vec3<T>> : std::is_arithmetic<T>
 {
 };
 
+
 template <typename T> class Vec3
 {
   private:
@@ -26,6 +29,10 @@ template <typename T> class Vec3
     }
     template <typename U, typename = std::enable_if<std::is_arithmetic_v<U>>>
     Vec3<T>(const Vec3<U> &vec) : inner_{static_cast<T>(vec[0]), static_cast<T>(vec[1]), static_cast<T>(vec[2])}
+    {
+    }
+
+    Vec3<double>(const chemfiles::Vector3D &vec) : inner_{vec[0], vec[1], vec[2]}
     {
     }
 
@@ -279,4 +286,5 @@ template <typename T, typename = std::enable_if_t<is_arithmetic_vec3<T>::value>>
 {
     return {std::floor(vec[0]), std::floor(vec[1]), std::floor(vec[2])};
 }
+
 } // namespace molcpp

@@ -4,9 +4,8 @@ set(POSITION_INDEPENDENT_CODE ON)
 
 set(SOURCE_CODE
     box.cpp
-
-    # frame.cpp
-    # trajectory.cpp
+    trajectory.cpp
+    frame.cpp
 )
 
 if(BUILD_SHARED_LIBS MATCHES ON)
