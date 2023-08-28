@@ -41,6 +41,11 @@ class Dict
         return std::any_cast<T>(data.at(key));
     }
 
+    template <typename T> T get(const std::string &key) const
+    {
+        return std::any_cast<T>(data.at(key));
+    }
+    
     /**
      * Get the value associated with a key, or a default value.
      */
@@ -53,10 +58,6 @@ class Dict
             return std::any_cast<T>(it->second);
     }
 
-    template <typename T> T get(const std::string &key) const
-    {
-        return std::any_cast<T>(data.at(key));
-    }
 
     bool has(const std::string &key) const
     {

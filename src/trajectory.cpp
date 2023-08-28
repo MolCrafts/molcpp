@@ -1,5 +1,4 @@
 #include "trajectory.h"
-#include <memory>
 
 namespace molcpp
 {
@@ -30,10 +29,10 @@ namespace molcpp
     void Trajectory::write(std::string path, const std::string& format)
     {
         chemfiles::Trajectory _traj = chemfiles::Trajectory(path, 'w', format);
-        for (auto& frame : _frames)
-        {
-            _traj.write(to_chemfiles(frame.second));
-        }
+        // for (auto& frame : _frames)
+        // {
+        //     _traj.write(to_chemfiles(frame.second));
+        // }
     }
 
     void Trajectory::close()

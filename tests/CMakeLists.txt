@@ -8,6 +8,7 @@ add_executable(${TEST_EXE}
   test_mat3.cpp
   test_approx.cpp
   test_box.cpp
+  test_topology.cpp
 )
 
 find_package(doctest QUIET)

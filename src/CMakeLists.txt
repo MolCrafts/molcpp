@@ -6,6 +6,8 @@ set(SOURCE_CODE
     box.cpp
     trajectory.cpp
     frame.cpp
+    topology.cpp
+    connectivity.cpp
 )
 
 if(BUILD_SHARED_LIBS MATCHES ON)

@@ -1,7 +1,5 @@
 #include "box.h"
-#include "vec3.h"
-#include <cstddef>
-#include <stdexcept>
+#include <error.h>
 
 namespace molcpp
 {
@@ -165,7 +163,7 @@ Vec3<double> Box::wrap(Vec3<double> &position)
         return _matrix * wrapped_reci_vec;
     }
     else
-        throw std::runtime_error("Only PBC = P is implemented");
+        throw NotImplementedError("Only PBC = P is implemented");
 }
 
 double Box::calc_distance(Vec3<double> &r1, Vec3<double> &r2)

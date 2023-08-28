@@ -21,7 +21,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_subdirectory(tests)
 endif()
 
-find_package(chemfiles QUIET)
+find_package(chemfiles)
 if(NOT chemfiles_FOUND)
     message(STATUS "chemfiles not found, clone from github")
     include(FetchContent)
@@ -31,6 +31,7 @@ if(NOT chemfiles_FOUND)
         GIT_TAG 0.10.4
     )
     FetchContent_MakeAvailable(chemfiles)
+else()
+    message(STATUS "chemfiles found")
+    target_link_libraries(molcpp chemfiles)
 endif()
-
-target_link_libraries(molcpp PRIVATE chemfiles)

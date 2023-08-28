@@ -6,6 +6,7 @@
 
 #include "vec3.h"
 #include "mat3.h"
+#include "error.h"
 
 namespace molcpp
 {

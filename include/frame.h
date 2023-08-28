@@ -73,7 +73,7 @@ class Frame
         _atom_properties[key] = values;
     }
 
-    template<typename T> T& get(const std::string& key)
+    template<typename T> T get(const std::string& key)
     {
         return _atom_properties.get<T>(key);
     }
@@ -94,6 +94,6 @@ class Frame
 };
 
 Frame from_chemfiles(const chemfiles::Frame &);
-chemfiles::Frame to_chemfiles(const Frame &);
+// chemfiles::Frame to_chemfiles(const Frame &);
 
 } // namespace molcpp

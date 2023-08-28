@@ -87,7 +87,4 @@ namespace molcpp
         
     };
 
-    Trajectory from_chemfiles(const chemfiles::Trajectory&);
-    chemfiles::Trajectory to_chemfiles(const Trajectory&);
-
 }
