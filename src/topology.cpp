@@ -1,7 +1,21 @@
 #include "topology.h"
+#include <cstddef>
 
 namespace molcpp
 {
+
+std::vector<std::string> split(const std::string& input, char delimiter) {
+    std::vector<std::string> result;
+    std::istringstream stream(input);
+    std::string token;
+
+    while (std::getline(stream, token, delimiter)) {
+        result.push_back(token);
+    }
+
+    return result;
+}
+
 Atom &Topology::new_atom(std::string name)
 {
     auto [iterator, result] = _atoms.insert({name, Atom(name)});
@@ -13,15 +27,20 @@ void Topology::del_atom(std::string name)
     _atoms.erase(name);
 }
 
-Atom &Topology::add_atom(Atom &atom)
+void Topology::add_atom(Atom &atom)
 {
-    auto [iterator, result] = _atoms.insert({atom.get_name(), atom});
-    return iterator->second;
+    _atoms.insert({atom.get_name(), atom});
 }
 
 Atom &Topology::get_atom(std::string name)
 {
-    return _atoms.at(name);
+    auto paths = split(name, '/');
+    auto subtopo = *this;
+    for (size_t depth = 0; depth < paths.size() - 1; depth++)
+    {
+        subtopo = subtopo._topos.at(paths[depth]);
+    }
+    return subtopo._atoms.at(paths.back());
 }
 
 size_t Topology::get_natoms() const
@@ -40,10 +59,9 @@ void Topology::del_bond(Bond &bond)
     _bonds.erase(std::remove(_bonds.begin(), _bonds.end(), bond), _bonds.end());
 }
 
-Bond &Topology::add_bond(Bond &bond)
+void Topology::add_bond(Bond &bond)
 {
     _bonds.push_back(bond);
-    return _bonds.back();
 }
 
 Bond &Topology::get_bond(Atom &a1, Atom &a2)
@@ -85,7 +103,13 @@ Topology &Topology::add_topo(Topology &topo)
 
 Topology &Topology::get_topo(std::string name)
 {
-    return _topos.at(name);
+    auto paths = split(name, '/');
+    auto subtopo = *this;
+    for (size_t depth = 0; depth < paths.size() - 1; depth++)
+    {
+        subtopo = subtopo._topos.at(paths[depth]);
+    }
+    return subtopo._topos.at(paths.back());
 }
 
 std::string Topology::get_name() const

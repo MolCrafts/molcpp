@@ -22,14 +22,14 @@ namespace molcpp
             // Atom Section
             Atom& new_atom(std::string name);
             void del_atom(std::string name);
-            Atom& add_atom(Atom& atom);
+            void add_atom(Atom& atom);
             Atom& get_atom(std::string name);
             size_t get_natoms() const;
 
             // Bond Section
             Bond& new_bond(Atom& a1, Atom& a2);
             void del_bond(Bond& bond);
-            Bond& add_bond(Bond& bond);
+            void add_bond(Bond& bond);
             Bond& get_bond(Atom& a1, Atom& a2);
             void del_bond(Atom& a1, Atom& a2);
             size_t get_nbonds() const;
