@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <memory>
 
+#include "connectivity.h"
 #include "dict.h"
 
 namespace molcpp
@@ -21,6 +22,13 @@ class Item
     Item(const Item &other) : _id(gen_id()), _props(other._props){};
 
     Item(Item &&other) : _id(other._id), _props(std::move(other._props)){};
+
+    Item &operator=(const Item &other)
+    {
+        _id = gen_id();
+        _props = other._props;
+        return *this;
+    }
 
     size_t get_id() const
     {
@@ -86,6 +94,11 @@ class Atom : public Item
         return Atom(*this);
     }
 
+    std::string get_name() const
+    {
+        return _name;
+    }
+
   private:
     std::string _name;
 };
@@ -109,6 +122,12 @@ class Bond : public Item
     Atom *get_j() const
     {
         return _j;
+    }
+
+    inline bool operator==(const Bond& rhs)
+    {
+        return (_i == rhs.get_i() && _j == rhs.get_j()) ||
+               (_i == rhs.get_j() && _j == rhs.get_i());
     }
 
   private:
