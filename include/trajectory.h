@@ -47,7 +47,7 @@ namespace molcpp
          * 
          * @return Frame& 
          */
-        Frame& get_step(size_t);
+        Frame& read_step(size_t);
 
         std::map<size_t, std::unique_ptr<Frame>> get_frames() const;
 
