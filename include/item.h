@@ -1,3 +1,4 @@
+#pragma once
 #include <any>
 #include <initializer_list>
 #include <memory>
@@ -7,11 +8,6 @@
 
 namespace molcpp
 {
-
-static size_t gen_id()
-{
-    return reinterpret_cast<size_t>(new size_t);
-}
 
 class Item
 {
@@ -79,6 +75,10 @@ class Item
     }
 
   private:
+    size_t gen_id()
+    {
+        return reinterpret_cast<size_t>(this);
+    }
     size_t _id;
     Dict _props;
 };
@@ -124,10 +124,9 @@ class Bond : public Item
         return _j;
     }
 
-    inline bool operator==(const Bond& rhs)
+    inline bool operator==(const Bond &rhs)
     {
-        return (_i == rhs.get_i() && _j == rhs.get_j()) ||
-               (_i == rhs.get_j() && _j == rhs.get_i());
+        return (_i == rhs.get_i() && _j == rhs.get_j()) || (_i == rhs.get_j() && _j == rhs.get_i());
     }
 
   private:

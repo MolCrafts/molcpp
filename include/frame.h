@@ -9,7 +9,7 @@
 #include "config.h"
 #include "connectivity.h"
 #include "dict.h"
-#include "graph.h"
+#include "item.h"
 
 namespace molcpp
 {
@@ -30,12 +30,16 @@ class Frame
      */
     size_t get_natoms() const;
 
+    std::vector<Atom> get_atoms();
+
     /**
      * @brief Get the nbonds object
      *
      * @return size_t
      */
     size_t get_nbonds() const;
+
+    std::vector<BondIdx> get_bonds();
 
     /**
      * @brief Get the timestep object
@@ -78,6 +82,8 @@ class Frame
         return _atom_properties.get<T>(key);
     }
 
+    Box& get_box();
+
     void add_bond(size_t i, size_t j, BondOrder order);
 
     // void add_angle(size_t i, size_t j, size_t k);
@@ -88,12 +94,9 @@ class Frame
 
   private:
     size_t _timestep;
-    Box *_box;
+    Box _box;
     Dict _atom_properties;
     Connectivity _connectivity;
 };
-
-Frame from_chemfiles(const chemfiles::Frame &);
-// chemfiles::Frame to_chemfiles(const Frame &);
 
 } // namespace molcpp

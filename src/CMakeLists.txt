@@ -8,6 +8,8 @@ set(SOURCE_CODE
     frame.cpp
     topology.cpp
     connectivity.cpp
+
+    io/loader.cpp
 )
 
 if(BUILD_SHARED_LIBS MATCHES ON)
@@ -36,4 +38,5 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/io
 )

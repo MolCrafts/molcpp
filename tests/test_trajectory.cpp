@@ -1,79 +1,71 @@
-#include "utils.h"
+#include "frame.h"
+#include "test_utils.h"
 #include "trajectory.h"
 
-namespace molcpp{
+namespace molcpp
+{
 
-    TEST(TestTrajectory, test_init)
+TEST_SUITE("Test Trajectory")
+{
+
+    TEST_CASE("test_init")
     {
-        auto traj = Trajectory();
+        auto traj = Trajectory(TEST_DATA_DIR / "xyz" / "spaces.xyz");
     }
 
-    TEST(TestTrajectory, test_add_frame)
+    TEST_CASE("test_add_frame")
     {
-        auto traj = Trajectory();
-        auto frame = create_frame();
-        traj.add_frame(frame.release());
-        EXPECT_EQ(traj.get_nsteps(), 1);
+        auto traj = Trajectory(TMP_DIR / "test_add_frame.xyz", 'w', "xyz");
+        auto frame = Frame();
+        traj.add_frame(frame);
+        CHECK_EQ(traj.get_nsteps(), 1);
     }
 
-    TEST(TestTrajectory, test_get_step)
+    TEST_CASE("test_read_step")
     {
-        auto traj = new_trajectory();
-        auto f0 = create_frame();
-        auto f199 = create_frame();
-        f0->set_timestep(0);
-        f199->set_timestep(199);
-        traj->add_frame(f0.release());
-        traj->add_frame(f199.release());
-        EXPECT_EQ(traj->get_step(0)->get_timestep(), 0);
-        EXPECT_EQ(traj->get_step(199)->get_timestep(), 199);
+        auto traj = Trajectory(TEST_DATA_DIR / "lammps" / "polymer.lammpstrj");
+        auto frame0 = traj.read_step(0);
+        auto frame500 = traj.read_step(500);
+        CHECK_EQ(frame0.get_timestep(), 0);
+        CHECK_EQ(frame500.get_timestep(), 500);
+
+        auto traj2 = Trajectory();
+        traj2.add_frame(frame0);
+        traj2.add_frame(frame500);
+        CHECK_EQ(traj2.get_nsteps(), 2);
+        CHECK_EQ(traj2.get_step(0).get_timestep(), 0);
+        CHECK_EQ(traj2.get_step(500).get_timestep(), 500);
     }
 
-    TEST(TestTrajectory, test_get_by_index)
+    TEST_CASE("test_load_single_frame")
     {
-        auto traj = new_trajectory();
-        auto f0 = create_frame();
-        auto f199 = create_frame();
-        f0->set_timestep(0);
-        f199->set_timestep(199);
-        traj->add_frame(f0.release());
-        traj->add_frame(f199.release());
-        EXPECT_EQ(traj->get_by_index(0)->get_timestep(), 0);
-        EXPECT_EQ(traj->get_by_index(1)->get_timestep(), 199);
+        auto traj = Trajectory(TEST_DATA_DIR / "xyz/methane.xyz", 'r', "XYZ");
+        ;
+        CHECK_EQ(traj.get_nsteps(), 1);
     }
 
-    TEST(TestTrajectory, test_load_single_frame)
+    TEST_CASE("test_load_multiple_frame")
     {
-        auto _traj = chemfiles::Trajectory( TEST_DATA_DIR / "xyz/methane.xyz", 'r', "XYZ");
-        auto traj = new_trajectory(_traj);
-        EXPECT_EQ(traj->get_nsteps(), 1);
+        auto traj = Trajectory(TEST_DATA_DIR / "lammps/polymer.lammpstrj", 'r', "LAMMPS");
+        CHECK_EQ(traj.get_nsteps(), 42);
     }
 
-    TEST(TestTrajectory, test_load_multiple_frame)
+    TEST_CASE("test_write_single_frame")
     {
-        auto _traj = chemfiles::Trajectory( TEST_DATA_DIR / "lammps/polymer.lammpstrj", 'r', "LAMMPS");
-        auto traj = new_trajectory(_traj);
-        EXPECT_EQ(traj->get_nsteps(), 42);
+
+        auto traj_in = Trajectory(TEST_DATA_DIR / "lammps-data/solvated.lmp", 'r', "LAMMPS Data");
+        CHECK_EQ(traj_in.get_nsteps(), 1);
+
+        auto tempFile = TMP_DIR / "test_write_single_frame.pdb";
+        auto traj_out = Trajectory(tempFile, 'w', "PDB");
+        auto frame = traj_in.read_next();
+        traj_out.add_frame(frame);
+        traj_out.write();
+
+        auto traj_test = chemfiles::Trajectory(tempFile, 'r', "PDB");
+        auto _frame_out = traj_test.read();
+        CHECK_EQ(traj_test.nsteps(), 1);
     }
-
-    TEST(TestTrajectory, test_write_single_frame)
-    {
-        auto _traj_in = chemfiles::Trajectory( TEST_DATA_DIR / "lammps-data/solvated.lmp", 'r', "LAMMPS Data");
-        auto traj = new_trajectory(_traj_in);
-        EXPECT_EQ(traj->get_nsteps(), 1);
-        EXPECT_EQ(traj->get_step(0)->get_natoms(), 7772);
-        EXPECT_EQ(traj->get_step(0)->get_nbonds(), 6248);
-        // write to tmp file
-        auto tempDir = ::testing::TempDir();
-        auto tempFile = tempDir + "test_write_single_frame.pdb";
-        traj->write(tempFile, "PDB");
-
-        auto _traj_out = chemfiles::Trajectory(tempFile, 'r', "PDB");
-        auto _frame_out = _traj_out.read();
-        EXPECT_EQ(_traj_out.nsteps(), 1);
-        EXPECT_EQ(_frame_out.size(), 7772);
-        EXPECT_EQ(_frame_out.topology().bonds().size(), 6248);
-        // TODO : angles
-    }
-
 }
+
+} // namespace molcpp

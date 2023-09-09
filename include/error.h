@@ -22,6 +22,14 @@ namespace molcpp
         std::string m_message;
     };
 
+    class FileStatusError : public MolCppError 
+    {
+    public:
+        FileStatusError(const std::string &message) : MolCppError(message)
+        {
+        }
+    };
+
     class KeyError : public std::exception
     {
     public:
