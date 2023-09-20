@@ -48,9 +48,8 @@ std::vector<BondIdx> Frame::get_bonds()
 {
     std::vector<BondIdx> bonds;
     bonds.reserve(get_nbonds());
-    std::transform(_connectivity.bonds().begin(), _connectivity.bonds().end(), bonds.begin(), [](auto &bond) {
-        return BondIdx(bond[0], bond[1]);
-    });
+    std::transform(_connectivity.bonds().begin(), _connectivity.bonds().end(), bonds.begin(),
+                   [](auto &bond) { return BondIdx(bond[0], bond[1]); });
     return bonds;
 }
 
@@ -58,7 +57,7 @@ size_t Frame::get_timestep() const
 {
     return _timestep;
 }
-
+ 
 void Frame::set_timestep(size_t timestep)
 {
     _timestep = timestep;
