@@ -30,11 +30,12 @@ namespace molcpp
             const Vec3<double> get_lengths() const;
             const Vec3<double> get_angles() const;
             const Vec3<double> get_tilts() const;
+            const std::array<Vec3<double>, 8> get_vertices() const;
             double get_volume() const;
             std::vector<Vec3<double>> wrap(std::vector<Vec3<double>>& points);
             Vec3<double> wrap(Vec3<double>& point);
-            double calc_distance(Vec3<double>& point1, Vec3<double>& point2);
-            Vec3<double> calc_vector(Vec3<double>&, Vec3<double>&);
+            double dist(Vec3<double>& point1, Vec3<double>& point2);
+            Vec3<double> diff(Vec3<double>&, Vec3<double>&);
 
         private:
 

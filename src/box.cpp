@@ -84,6 +84,29 @@ const Mat3<double> Box::get_inverse() const
     return _matrix.invert();
 }
 
+const std::array<Vec3<double>, 8> Box::get_vertices() const
+{
+    auto lengths = get_lengths();
+    auto tilts = get_tilts();
+    double xy = tilts[0];
+    double xz = tilts[1];
+    double yz = tilts[2];
+    double lx = lengths[0];
+    double ly = lengths[1];
+    double lz = lengths[2];
+
+    Vec3<double> a1 = {lx, 0, 0};
+    Vec3<double> a2 = {xy, ly, 0};
+    Vec3<double> a3 = {xz, yz, lz};
+    Vec3<double> a4 = {lx + xy, ly + yz, lz};
+    Vec3<double> a5 = {0, ly, 0};
+    Vec3<double> a6 = {xy, ly + yz, lz};
+    Vec3<double> a7 = {0, 0, lz};
+    Vec3<double> a8 = {xz, yz, lz};
+
+    return {a1, a2, a3, a4, a5, a6, a7, a8};
+}
+
 const Vec3<double> Box::get_angles() const
 {
     auto tilts = get_tilts();
@@ -163,17 +186,17 @@ Vec3<double> Box::wrap(Vec3<double> &position)
         return _matrix * wrapped_reci_vec;
     }
     else
-        throw NotImplementedError("Only PBC = P is implemented");
+        throw NotImplementedError("Only PBC == P is implemented");
 }
 
-double Box::calc_distance(Vec3<double> &r1, Vec3<double> &r2)
+double Box::dist(Vec3<double> &r1, Vec3<double> &r2)
 {
     auto dr = r1 - r2;
     auto wrapped_dr = wrap(dr);
     return norm(wrapped_dr);
 }
 
-Vec3<double> Box::calc_vector(Vec3<double> &r1, Vec3<double> &r2)
+Vec3<double> Box::diff(Vec3<double> &r1, Vec3<double> &r2)
 {
     auto dr = r1 - r2;
     auto wrapped_dr = wrap(dr);

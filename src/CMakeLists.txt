@@ -4,12 +4,12 @@ set(POSITION_INDEPENDENT_CODE ON)
 
 set(SOURCE_CODE
     box.cpp
-    trajectory.cpp
-    frame.cpp
-    topology.cpp
-    connectivity.cpp
+    # trajectory.cpp
+    # frame.cpp
+    # topology.cpp
+    # connectivity.cpp
 
-    io/loader.cpp
+    # io/loader.cpp
 )
 
 if(BUILD_SHARED_LIBS MATCHES ON)

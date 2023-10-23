@@ -366,6 +366,12 @@ template <typename T> class Mat3
                     inner_[1][2], inner_[2][2]);
     }
 
+    template <typename = std::enable_if_t<std::is_arithmetic_v<T>>> inline std::array<T, 9> flatten()
+    {
+        return {inner_[0][0], inner_[0][1], inner_[0][2], inner_[1][0], inner_[1][1], inner_[1][2], inner_[2][0],
+                inner_[2][1], inner_[2][2]};
+    }
+
     template <typename U, typename = std::enable_if<std::is_arithmetic_v<T>>> inline auto dot(const U &rhs) const
     {
         if constexpr (is_arithmetic_vec3<U>::value)

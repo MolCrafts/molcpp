@@ -32,7 +32,7 @@ template <typename T> class Vec3
     {
     }
 
-    Vec3<double>(const chemfiles::Vector3D &vec) : inner_{vec[0], vec[1], vec[2]}
+    Vec3<T>(const chemfiles::Vector3D &vec) : inner_{vec[0], vec[1], vec[2]}
     {
     }
 
