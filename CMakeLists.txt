@@ -5,8 +5,8 @@ include(cmake/prelude.cmake)
 project(
     molcore
     VERSION 0.1.0
-    DESCRIPTION "Short description"
-    HOMEPAGE_URL "https://example.com/"
+    DESCRIPTION "cross-platform molecular dynamics data structure and algorithm"
+    HOMEPAGE_URL "https://github.com/Roy-Kid/molcore.git"
     LANGUAGES CXX
 )
 
