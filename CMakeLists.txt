@@ -18,6 +18,7 @@ include(cmake/variables.cmake)
 add_library(
     molcore_molcore
     source/molcore.cpp
+    source/space.cpp
 )
 add_library(molcore::molcore ALIAS molcore_molcore)
 
