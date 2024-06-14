@@ -28,8 +28,6 @@ target_compile_features(molcore_test PRIVATE cxx_std_20)
 include(Catch)
 catch_discover_tests(molcore_test)
 
-# add_test(NAME molcore_test COMMAND molcore_test)
-
 # ---- End-of-file commands ----
 
 add_folders(Test)

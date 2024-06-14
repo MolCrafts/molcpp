@@ -1,14 +1,19 @@
 #include <catch2/catch_test_macros.hpp>
+#include <xtensor/xarray.hpp>
 
 #include "molcore/space.hpp"
 
 namespace molcore
 {
 
-TEST_CASE("Test Space", "[Box]")
+TEST_CASE("Test Box", "test_box_init")
 {
-  auto box = Box();
-  CHECK(box.isin(1, 2, 3));
+    auto box = Box();
+    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
+    box = Box({10.0, 10.0, 10.0});
+    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
+    box = Box(xt::xarray<double>({10.0, 10.0, 10.0}));
+    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
 }
 
-}  // namespace molcore
+} // namespace molcore

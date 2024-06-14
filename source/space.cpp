@@ -1,12 +1,21 @@
 #include "molcore/space.hpp"
+#include <xtensor/xbuilder.hpp>
+#include <xtensor/xfixed.hpp>
 
 namespace molcore
 {
 
-Box::Box() {}
+Box::Box() : _matrix{xt::eye<double>(3)}, _style{Style::ORTHORHOMBIC} {}
 
-bool Box::isin(const double x, const double y, const double z) const
+Box::Box(const xt::xtensor_fixed<double, xt::xshape<3>> &lengths): _matrix{xt::diag(lengths)}, _style{Style::ORTHORHOMBIC} {}
+
+auto Box::get_style() const -> Style
 {
-  return true;
+    return _style;
 }
-}  // namespace molcore
+
+bool Box::isin(const xt::xarray<double> &xyz) const
+{
+    return true;
+}
+} // namespace molcore

@@ -15,11 +15,7 @@ include(cmake/variables.cmake)
 
 # ---- Declare library ----
 
-add_library(
-    molcore_molcore
-    source/molcore.cpp
-    source/space.cpp
-)
+add_subdirectory(source)
 add_library(molcore::molcore ALIAS molcore_molcore)
 
 include(GenerateExportHeader)
