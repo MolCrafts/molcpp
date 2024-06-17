@@ -51,8 +51,7 @@
  *
  * Please see the note above for considerations when creating shared libraries.
  */
-class MOLCORE_EXPORT exported_class
-{
+class MOLCORE_EXPORT exported_class {
 public:
   /**
    * @brief Initializes the name field to the name of the project
@@ -62,7 +61,7 @@ public:
   /**
    * @brief Returns a non-owning pointer to the string stored in this class
    */
-  auto name() const -> char const*;
+  auto name() const -> char const *;
 
 private:
   MOLCORE_SUPPRESS_C4251
