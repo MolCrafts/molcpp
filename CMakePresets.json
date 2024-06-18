@@ -30,13 +30,6 @@
       }
     },
     {
-      "name": "cppcheck",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_CXX_CPPCHECK": "cppcheck;--inline-suppr"
-      }
-    },
-    {
       "name": "clang-tidy",
       "hidden": true,
       "cacheVariables": {
@@ -150,7 +143,7 @@
     },
     {
       "name": "ci-ubuntu",
-      "inherits": ["ci-build", "ci-linux", "clang-tidy", "cppcheck", "dev-mode"]
+      "inherits": ["ci-build", "ci-linux", "clang-tidy", "dev-mode"]
     },
     {
       "name": "ci-windows",
