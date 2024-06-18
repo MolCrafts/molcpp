@@ -13,7 +13,7 @@ elseif()
 
 endif()
 
-find_package(Catch2 3 REQUIRED)
+find_package(Catch2 3 QUIET)
 # ---- Tests ----
 
 # TODO: auto find tests starts with "test_"
