@@ -19,6 +19,10 @@ git clone https://github.com/doctest/doctest --depth 1 -b master /opt/doctest
 mkdir /opt/doctest/build
 cmake -S /opt/doctest -B /opt/doctest/build && cmake --build /opt/doctest/build --target install
 
+# git clone https://github.com/doxygen/doxygen.git --depth 1 -b master /opt/doxygen
+# mkdir /opt/doxygen/build
+# cmake -S /opt/doxygen -B /opt/doxygen/build && cmake --build /opt/doxygen/build --target install
+
 # Define arguments
 base_tag=jammy
 llvm_version=16

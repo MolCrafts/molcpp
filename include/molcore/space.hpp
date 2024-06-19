@@ -70,33 +70,6 @@ class Box : public Region, public Boundary
     /// Construct an `INFINITY` box, with all lengths set to 0
     Box();
 
-    /// Construct an `ORTHORHOMBIC` box with the given box `lengths`
-    // static auto lengths_angles(const xt::xtensor_fixed<double, xt::xshape<3>>
-    // &lengths,
-    //                            const xt::xtensor_fixed<double, xt::xshape<3>>
-    //                            &angles) -> Box;
-
-    // static auto lengths_tilts(const xt::xtensor_fixed<double, xt::xshape<3>>
-    // &lengths,
-    //                           const xt::xtensor_fixed<double, xt::xshape<3>>
-    //                           &tilts) -> Box;
-
-    /// Construct a box with the given box `lengths` and `angles`
-    ///
-    /// If all lengths are set to 0, then the box is `INFINITE`. If at least
-    /// one length is not zero and all angles are 90.0, then the box is
-    /// `ORTHORHOMBIC`.  Else a `TRICLINIC` box is created.
-    // Box(const xt::xtensor_fixed<double, xt::xshape<3>> &lengths, const
-    // xt::xtensor_fixed<double, xt::xshape<3>> &angles);
-
-    /// Construct a box from matrix.
-    ///
-    /// If `matrix` contains only zeros, then an infinite box is created. If
-    /// only the diagonal of the matrix is non-zero, then the box is
-    /// `ORTHORHOMBIC`.  Else a `TRICLINIC` box is created. The matrix entries
-    /// should be in Angstroms.
-    // explicit Box(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix);
-
     explicit Box(const xt::xarray<double> &matrix);
 
     Box(const std::initializer_list<std::initializer_list<double>> &matrix);
