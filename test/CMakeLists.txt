@@ -13,20 +13,18 @@ elseif()
 
 endif()
 
-find_package(Catch2 3 REQUIRED)
+find_package(doctest REQUIRED)
 # ---- Tests ----
-
-# TODO: auto find tests starts with "test_"
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "source/*.cpp")
 message(STATUS "find test sources: ${TEST_SOURCES}")
 
 add_executable(molcore_test ${TEST_SOURCES})
 target_link_libraries(molcore_test PRIVATE molcore::molcore)
-target_link_libraries(molcore_test PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(molcore_test PRIVATE doctest::doctest)
 target_compile_features(molcore_test PRIVATE cxx_std_20)
 
-include(Catch)
-catch_discover_tests(molcore_test)
+include(doctest)
+doctest_discover_tests(molcore_test)
 
 # ---- End-of-file commands ----
 

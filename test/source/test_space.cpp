@@ -1,15 +1,13 @@
-#include <catch2/catch_test_macros.hpp>
+#include "doctest/doctest.h"
+#include <iostream>
 #include <initializer_list>
 #include <xtensor/xarray.hpp>
-
 #include "molcore/space.hpp"
-#include "xtensor/xio.hpp"
-#include <iostream>
 
 namespace molcore
 {
 
-TEST_CASE("Test Box", "test_box_init")
+TEST_CASE("Test Box")
 {
 
     const double box_length = 10.0;

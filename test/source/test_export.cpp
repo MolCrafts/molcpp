@@ -1,10 +1,10 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "doctest/doctest.h"
+
 #include <string>
-
-#include <catch2/catch_test_macros.hpp>
-
 #include "molcore/molcore.hpp"
 
-TEST_CASE("Exported Class", "[exported]")
+TEST_CASE("Test Exported Class")
 {
   auto const exported = exported_class {};
 
