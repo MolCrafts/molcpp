@@ -62,13 +62,12 @@ endif()
 
 # ---- Developer mode ----
 
-if(NOT molcore_DEVELOPER_MODE)
-  return()
-elseif(NOT PROJECT_IS_TOP_LEVEL)
+if(molcore_DEVELOPER_MODE)
+  if(NOT PROJECT_IS_TOP_LEVEL)
   message(
-      AUTHOR_WARNING
-      "Developer mode is intended for developers of molcore"
+    AUTHOR_WARNING
+    "Developer mode is intended for developers of molcore"
   )
+  endif()
+  include(cmake/dev-mode.cmake)
 endif()
-
-include(cmake/dev-mode.cmake)

@@ -9,8 +9,6 @@ include(../cmake/folders.cmake)
 if(PROJECT_IS_TOP_LEVEL)
   find_package(molcore REQUIRED)
   enable_testing()
-elseif()
-
 endif()
 
 find_package(doctest REQUIRED)

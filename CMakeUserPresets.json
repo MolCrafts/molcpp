@@ -11,7 +11,7 @@
       "hidden": true,
       "inherits": ["dev-mode", "clang-tidy"],
       "cacheVariables": {
-        "BUILD_MCSS_DOCS": "ON"
+        "BUILD_DOCS": "ON"
       }
     },
     {
