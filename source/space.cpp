@@ -1,7 +1,9 @@
-#include "molcore/space.hpp"
-
+#include "molcpp/space.hpp"
 #include "xtensor-blas/xlinalg.hpp"
 #include <xtensor/xmath.hpp>
+#include <xtensor/xarray.hpp>
+
+namespace molcpp {
 
 constexpr double pi = 3.141592653589793238463;
 
@@ -45,13 +47,12 @@ static bool is_diagonal(const xt::xarray<double> &matrix)
 
 static bool is_upper_triangular(const xt::xarray<double> &matrix)
 {
-    return xt::allclose(xt::tril(matrix, -1), 0);
+    bool is_diag = is_diagonal(matrix);
+    bool is_upper_zero = !xt::allclose(matrix(0, 1), 0) || !xt::allclose(matrix(0, 2), 0) || !xt::allclose(matrix(1, 2), 0);
+    return is_diag && is_upper_zero;
 }
 
-namespace molcore
-{
-
-Box::Box() : _matrix{xt::eye<double>(3)}, _style{Style::INFINITE}
+Box::Box() : _matrix{xt::zeros<double>({3, 3})}, _style{Style::INFINITE}
 {
 }
 
@@ -61,18 +62,13 @@ Box::Box(const xt::xarray<double> &matrix)
     {
         throw std::runtime_error("Matrix must be 3x3");
     }
-
-    if (xt::isclose(xt::linalg::det(matrix), 0))
-    {
-        throw std::runtime_error("Matrix is singular");
-    }
     _matrix = matrix;
-    if (is_diagonal(_matrix))
-        _style = Style::ORTHORHOMBIC;
+    if (xt::allclose(matrix, 0))
+        _style = Style::INFINITE;
     else if (is_upper_triangular(_matrix))
         _style = Style::TRICLINIC;
-    else if (xt::allclose(matrix, 0))
-        _style = Style::INFINITE;
+    else if (is_diagonal(_matrix))
+        _style = Style::ORTHOGONAL;
 }
 
 Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix) : Box(xt::xtensor<double, 2>(matrix))
@@ -81,31 +77,19 @@ Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix) : B
 
 Box Box::set_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles)
 {
-    return Box(calc_cell_matrix_from_lengths_angles(lengths, angles));
+    return Box(calc_matrix_from_lengths_angles(lengths, angles));
 }
 
 // Box Box::lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts)
 // {
 // }
 
-xt::xarray<double> Box::calc_cell_matrix_from_lengths_angles(const xt::xarray<double> &lengths,
-                                                             const xt::xarray<double> &angles)
+xt::xarray<double> Box::calc_matrix_from_lengths_angles(const xt::xarray<double> &lengths,
+                                                        const xt::xarray<double> &angles)
 {
     if (lengths.size() != 3 || angles.size() != 3)
     {
         throw std::runtime_error("Lengths and angles must have size 3");
-    }
-    if (angles[0] <= 0 || angles[1] <= 0 || angles[2] <= 0)
-    {
-        throw std::runtime_error("Angles must be positive");
-    }
-    if (lengths[0] <= 0 || lengths[1] <= 0 || lengths[2] <= 0)
-    {
-        throw std::runtime_error("Lengths must be positive");
-    }
-    if (angles[0] >= 180.0 || angles[1] >= 180.0 || angles[2] >= 180.0)
-    {
-        throw std::runtime_error("Angles must be less than 180");
     }
     auto matrix = xt::xtensor_fixed<double, xt::xshape<3, 3>>::from_shape({3, 3});
 
@@ -132,7 +116,33 @@ xt::xarray<double> Box::calc_cell_matrix_from_lengths_angles(const xt::xarray<do
     return matrix;
 }
 
-xt::xarray<double> Box::get_matrix() const
+xt::xtensor_fixed<double, xt::xshape<3>> Box::calc_lengths_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix)
+{
+    xt::xtensor_fixed<double, xt::xshape<3>> result;
+    result(0) = xt::linalg::norm(xt::view(matrix, xt::all(), 0));
+    result(1) = xt::linalg::norm(xt::view(matrix, xt::all(), 1));
+    result(2) = xt::linalg::norm(xt::view(matrix, xt::all(), 2));
+    return result;
+}
+
+xt::xtensor_fixed<double, xt::xshape<3>> Box::calc_angles_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix)
+{
+
+    auto v1 = xt::view(matrix, xt::all(), 0);
+    auto v2 = xt::view(matrix, xt::all(), 1);
+    auto v3 = xt::view(matrix, xt::all(), 2);
+
+    auto norm_v1 = xt::linalg::norm(v1);
+    auto norm_v2 = xt::linalg::norm(v2);
+    auto norm_v3 = xt::linalg::norm(v3);
+    return xt::concatenate(xt::xtuple(
+        xt::rad2deg(xt::acos(xt::linalg::dot(v2, v3) / (norm_v2 * norm_v3))),
+        xt::rad2deg(xt::acos(xt::linalg::dot(v1, v3) / (norm_v1 * norm_v3))),
+        xt::rad2deg(xt::acos(xt::linalg::dot(v1, v2) / (norm_v1 * norm_v2)))
+    ), 1);
+}
+
+xt::xtensor_fixed<double, xt::xshape<3, 3>> Box::get_matrix() const
 {
     return _matrix;
 }
@@ -142,8 +152,55 @@ auto Box::get_style() const -> Style
     return _style;
 }
 
+auto Box::get_lengths() const -> xt::xtensor_fixed<double, xt::xshape<3>>
+{
+    switch(_style) {
+        case INFINITE:
+            return {0, 0, 0};
+        case ORTHOGONAL:
+            return {_matrix(0, 0), _matrix(1, 1), _matrix(2, 2)};
+        case TRICLINIC:
+            return Box::calc_lengths_from_matrix(_matrix); 
+    }
+    
+}
+
+auto Box::get_angles() const -> xt::xtensor_fixed<double, xt::xshape<3>>
+{
+    switch(_style) {
+        case INFINITE:
+        case ORTHOGONAL:
+            return {90, 90, 90};
+        case TRICLINIC:
+            return Box::calc_angles_from_matrix(_matrix); 
+    }
+}
+
+auto Box::get_volume() const -> double
+{
+    switch (_style)
+    {
+    case INFINITE:
+        return 0;
+    case ORTHOGONAL:
+    case TRICLINIC:
+        return xt::linalg::det(_matrix);
+    }
+}
+
 bool Box::isin(const xt::xarray<double> &xyz) const
 {
     return true;
 }
-} // namespace molcore
+
+bool operator==(const Box& rhs, const Box& lhs) {
+    if (lhs.get_style() != rhs.get_style()) {
+        return false;
+    }
+    return xt::allclose(rhs.get_matrix(), lhs.get_matrix());
+}
+
+bool operator!=(const Box& rhs, const Box& lhs) {
+    return !(rhs == lhs);
+}
+}  // namespace molcpp

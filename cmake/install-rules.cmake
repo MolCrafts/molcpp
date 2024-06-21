@@ -1,6 +1,6 @@
 if(PROJECT_IS_TOP_LEVEL)
   set(
-      CMAKE_INSTALL_INCLUDEDIR "include/molcore-${PROJECT_VERSION}"
+      CMAKE_INSTALL_INCLUDEDIR "include/molcpp-${PROJECT_VERSION}"
       CACHE STRING ""
   )
   set_property(CACHE CMAKE_INSTALL_INCLUDEDIR PROPERTY TYPE PATH)
@@ -10,26 +10,26 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 # find_package(<package>) call for consumers to find this project
-set(package molcore)
+set(package molcpp)
 
 install(
     DIRECTORY
     include/
     "${PROJECT_BINARY_DIR}/export/"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    COMPONENT molcore_Development
+    COMPONENT molcpp_Development
 )
 
 install(
-    TARGETS molcore_molcore
-    EXPORT molcoreTargets
+    TARGETS molcpp_molcpp
+    EXPORT molcppTargets
     RUNTIME #
-    COMPONENT molcore_Runtime
+    COMPONENT molcpp_Runtime
     LIBRARY #
-    COMPONENT molcore_Runtime
-    NAMELINK_COMPONENT molcore_Development
+    COMPONENT molcpp_Runtime
+    NAMELINK_COMPONENT molcpp_Development
     ARCHIVE #
-    COMPONENT molcore_Development
+    COMPONENT molcpp_Development
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
@@ -41,30 +41,30 @@ write_basic_package_version_file(
 
 # Allow package maintainers to freely override the path for the configs
 set(
-    molcore_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${package}"
+    molcpp_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/${package}"
     CACHE STRING "CMake package config location relative to the install prefix"
 )
-set_property(CACHE molcore_INSTALL_CMAKEDIR PROPERTY TYPE PATH)
-mark_as_advanced(molcore_INSTALL_CMAKEDIR)
+set_property(CACHE molcpp_INSTALL_CMAKEDIR PROPERTY TYPE PATH)
+mark_as_advanced(molcpp_INSTALL_CMAKEDIR)
 
 install(
     FILES cmake/install-config.cmake
-    DESTINATION "${molcore_INSTALL_CMAKEDIR}"
+    DESTINATION "${molcpp_INSTALL_CMAKEDIR}"
     RENAME "${package}Config.cmake"
-    COMPONENT molcore_Development
+    COMPONENT molcpp_Development
 )
 
 install(
     FILES "${PROJECT_BINARY_DIR}/${package}ConfigVersion.cmake"
-    DESTINATION "${molcore_INSTALL_CMAKEDIR}"
-    COMPONENT molcore_Development
+    DESTINATION "${molcpp_INSTALL_CMAKEDIR}"
+    COMPONENT molcpp_Development
 )
 
 install(
-    EXPORT molcoreTargets
-    NAMESPACE molcore::
-    DESTINATION "${molcore_INSTALL_CMAKEDIR}"
-    COMPONENT molcore_Development
+    EXPORT molcppTargets
+    NAMESPACE molcpp::
+    DESTINATION "${molcpp_INSTALL_CMAKEDIR}"
+    COMPONENT molcpp_Development
 )
 
 if(PROJECT_IS_TOP_LEVEL)

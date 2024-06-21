@@ -1,49 +1,39 @@
 #include "doctest/doctest.h"
-#include <iostream>
+#include "molcpp/space.hpp"
 #include <initializer_list>
+#include <iostream>
 #include <xtensor/xarray.hpp>
-#include "molcore/space.hpp"
+#include <xtensor/xbuilder.hpp>
+#include <xtensor/xio.hpp>
 
-namespace molcore
+using namespace molcpp;
+
+TEST_CASE("TestBoxInit")
 {
 
-TEST_CASE("Test Box")
-{
+    // SUBCASE("test_infinite") {
 
-    const double box_length = 10.0;
+    //     auto infinite = Box();
+    //     CHECK(infinite.get_style() == Box::Style::INFINITE);
+    //     CHECK(infinite.get_lengths() == xt::zeros<double>({3}));
+    //     CHECK(infinite.get_angles() == xt::xarray<double>({90., 90., 90.}));
+    //     CHECK(infinite.get_volume() == 0);
 
-    auto box = Box();
-    CHECK(box.get_style() == Box::Style::INFINITE);
+    //     auto matrix = xt::zeros<double>({3, 3});
+    //     CHECK(Box(matrix) == Box());
+    //     CHECK(Box::set_lengths_angles({0, 0, 0}, {90, 90, 90}) == Box());
+    //     // TODO: set_lengths_tilts
+    // }
 
-    std::initializer_list<std::initializer_list<double>> orth_matrix = {
-        {box_length,        0.0,        0.0},
-        {       0.0, box_length,        0.0},
-        {       0.0,        0.0, box_length}
-    };
-    box = Box(orth_matrix);
-    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
+    SUBCASE("test_orthogonal") {
 
-    auto xarray = xt::xarray<double>(orth_matrix);
-    box = Box(xarray);
-    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
+        auto matrix = xt::diag(xt::xarray<double>({10, 11, 12}));
+        auto orth = Box(matrix);
+        CHECK(orth.get_style() == Box::Style::ORTHOGONAL);
+        std::cout << orth.get_matrix() << std::endl;
+        std::cout << xt::diag(orth.get_matrix()) << std::endl;
+        CHECK(orth.get_lengths() == xt::xarray<double>({10., 11., 12.}));
+        CHECK(orth.get_volume() == 10 * 11 * 12);
 
-    auto xtensor_fixed = xt::xtensor_fixed<double, xt::xshape<3, 3>>(xarray);
-    box = Box(xtensor_fixed);
-    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
-
-    auto xtensor = xt::xtensor<double, 2>(xarray);
-    box = Box(xtensor);
-    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
-
-    xt::xarray<double> lengths = {box_length, box_length, box_length};
-    xt::xarray<double> orth_angles = {90.0, 90.0, 90.0};
-    xt::xarray<double> tric_angles = {60.0, 60.0, 60.0};
-    xt::xarray<double> tilts = {1.0, 2.0, 3.0};
-    box = Box::set_lengths_angles(lengths, orth_angles);
-    CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
-    box = Box::set_lengths_angles(lengths, tric_angles);
-    CHECK(box.get_style() == Box::Style::TRICLINIC);
-    // box = Box::set_lengths_tilts(lengths, tilts);
+    }
 }
-
-} // namespace molcore

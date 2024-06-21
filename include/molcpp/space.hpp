@@ -1,13 +1,13 @@
 #pragma once
 
+#include <initializer_list>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xbuilder.hpp>
 #include <xtensor/xfixed.hpp>
-#include <xtensor/xtensor.hpp>
-#include <initializer_list>
 #include <xtensor/xmath.hpp>
+#include <xtensor/xtensor.hpp>
 
-namespace molcore
+namespace molcpp
 {
 
 class Region
@@ -62,9 +62,9 @@ class Box : public Region, public Boundary
   public:
     enum Style
     {
-        ORTHORHOMBIC,
-        TRICLINIC,
-        INFINITE
+        INFINITE,
+        ORTHOGONAL,
+        TRICLINIC
     };
 
     /// Construct an `INFINITY` box, with all lengths set to 0
@@ -74,24 +74,42 @@ class Box : public Region, public Boundary
 
     Box(const std::initializer_list<std::initializer_list<double>> &matrix);
 
+    ~Box() override = default;
+    Box(const Box& other) = default;
+    Box& operator=(const Box& other) = default;
+    Box(Box& other) noexcept = default;
+    Box& operator=(Box&& other) noexcept = default;
+
     static Box set_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles);
 
     // static Box set_lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts);
 
-    static xt::xarray<double> calc_cell_matrix_from_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles);
+    static xt::xarray<double> calc_matrix_from_lengths_angles(const xt::xarray<double> &lengths,
+                                                              const xt::xarray<double> &angles);
 
-    // static xt::xarray<double> calc_cell_matrix_from_lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts);
+    static xt::xtensor_fixed<double, xt::xshape<3>> calc_lengths_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix);
 
+    static xt::xtensor_fixed<double, xt::xshape<3>> calc_angles_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix);
 
     auto isin(const xt::xarray<double> &xyz) const -> bool override;
 
     // box style getter
     auto get_style() const -> Style;
 
-    auto get_matrix() const -> xt::xarray<double>;
+    auto get_matrix() const -> xt::xtensor_fixed<double, xt::xshape<3, 3>>;
+
+    auto get_lengths() const -> xt::xtensor_fixed<double, xt::xshape<3>>;
+
+    auto get_angles() const -> xt::xtensor_fixed<double, xt::xshape<3>>;
+
+    auto get_volume() const -> double;
 
   private:
     xt::xtensor_fixed<double, xt::xshape<3, 3>> _matrix;
     Style _style;
 };
-} // namespace molcore
+
+bool operator==(const Box& rhs, const Box& lhs);
+bool operator!=(const Box& rhs, const Box& lhs);
+
+} // namespace molcpp

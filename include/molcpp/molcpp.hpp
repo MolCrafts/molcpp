@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "molcore/molcore_export.hpp"
+#include "molcpp/molcpp_export.hpp"
 
 /**
  * A note about the MSVC warning C4251:
@@ -51,7 +51,7 @@
  *
  * Please see the note above for considerations when creating shared libraries.
  */
-class MOLCORE_EXPORT exported_class {
+class MOLCPP_EXPORT exported_class {
 public:
   /**
    * @brief Initializes the name field to the name of the project
@@ -64,6 +64,6 @@ public:
   auto name() const -> char const *;
 
 private:
-  MOLCORE_SUPPRESS_C4251
+  MOLCPP_SUPPRESS_C4251
   std::string m_name;
 };

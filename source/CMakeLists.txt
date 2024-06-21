@@ -1,10 +1,10 @@
-message("Configuring molcore/source...")
+message("Configuring molcpp/source...")
 include(FetchContent)
 
-file(GLOB_RECURSE MOLCORE_SRC "./*.cpp")
+file(GLOB_RECURSE MOLCPP_SRC "./*.cpp")
 add_library(
-    molcore_molcore
-    ${MOLCORE_SRC}
+    molcpp_molcpp
+    ${MOLCPP_SRC}
 )
 
 add_definitions(-DHAVE_CBLAS=1)
@@ -17,7 +17,7 @@ else()
 endif()
 message(STATUS "BLAS VENDOR:    " ${BLA_VENDOR})
 message(STATUS "BLAS LIBRARIES: " ${BLAS_LIBRARIES})
-target_link_libraries(molcore_molcore ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+target_link_libraries(molcpp_molcpp ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 
 find_package(xtl QUIET)
 find_package(xtensor QUIET)

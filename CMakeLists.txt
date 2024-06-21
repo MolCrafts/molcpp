@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.14)
 include(cmake/prelude.cmake)
 
 project(
-    molcore
+    molcpp
     VERSION 0.1.0
     DESCRIPTION "cross-platform molecular dynamics data structure and algorithm"
-    HOMEPAGE_URL "https://github.com/Roy-Kid/molcore.git"
+    HOMEPAGE_URL "https://github.com/Roy-Kid/molcpp.git"
     LANGUAGES CXX
 )
 
@@ -16,43 +16,43 @@ include(cmake/variables.cmake)
 # ---- Declare library ----
 
 add_subdirectory(source)
-add_library(molcore::molcore ALIAS molcore_molcore)
+add_library(molcpp::molcpp ALIAS molcpp_molcpp)
 
 include(GenerateExportHeader)
 generate_export_header(
-    molcore_molcore
-    BASE_NAME molcore
-    EXPORT_FILE_NAME export/molcore/molcore_export.hpp
+    molcpp_molcpp
+    BASE_NAME molcpp
+    EXPORT_FILE_NAME export/molcpp/molcpp_export.hpp
     CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(molcore_molcore PUBLIC MOLCORE_STATIC_DEFINE)
+  target_compile_definitions(molcpp_molcpp PUBLIC MOLCPP_STATIC_DEFINE)
 endif()
 
 set_target_properties(
-    molcore_molcore PROPERTIES
+    molcpp_molcpp PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN YES
     VERSION "${PROJECT_VERSION}"
     SOVERSION "${PROJECT_VERSION_MAJOR}"
-    EXPORT_NAME molcore
-    OUTPUT_NAME molcore
+    EXPORT_NAME molcpp
+    OUTPUT_NAME molcpp
 )
 
 target_include_directories(
-    molcore_molcore ${warning_guard}
+    molcpp_molcpp ${warning_guard}
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
 
 target_include_directories(
-    molcore_molcore SYSTEM
+    molcpp_molcpp SYSTEM
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
 
-target_compile_features(molcore_molcore PUBLIC cxx_std_20)
+target_compile_features(molcpp_molcpp PUBLIC cxx_std_20)
 
 # ---- Install rules ----
 
@@ -62,11 +62,11 @@ endif()
 
 # ---- Developer mode ----
 
-if(molcore_DEVELOPER_MODE)
+if(molcpp_DEVELOPER_MODE)
   if(NOT PROJECT_IS_TOP_LEVEL)
   message(
     AUTHOR_WARNING
-    "Developer mode is intended for developers of molcore"
+    "Developer mode is intended for developers of molcpp"
   )
   endif()
   include(cmake/dev-mode.cmake)

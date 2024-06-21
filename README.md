@@ -1,6 +1,6 @@
-# molcore
+# molcpp
 
-This is the molcore project.
+This is the molcpp project.
 
 # Building and installing
 
