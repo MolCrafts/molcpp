@@ -4,9 +4,7 @@
 # modernize-use-nodiscard: too aggressive, attribute is situationally useful
 Checks: "cppcoreguidelines-*, clang-analyzer-*"
 CheckOptions:
-  - key: cppcoreguidelines-avoid-magic-numbers.IgnoreAllFloatingPointValues
-    value: true
-  - key: cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues
+  - key: cppcoreguidelines-avoid-magic-numbers
     value: true
 HeaderFilterRegex: ""
 FormatStyle: none

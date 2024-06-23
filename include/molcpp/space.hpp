@@ -80,7 +80,7 @@ class Box : public Region, public Boundary
     Box(Box& other) noexcept = default;
     Box& operator=(Box&& other) noexcept = default;
 
-    static Box set_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles);
+    static Box from_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles);
 
     // static Box set_lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts);
 

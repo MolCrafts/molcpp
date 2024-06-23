@@ -1,5 +1,5 @@
 #pragma once
 
-#include "molcpp/exports.h"
+#include "molcpp/export.hpp"
 
 #include "molcpp/space.hpp"

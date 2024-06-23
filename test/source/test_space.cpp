@@ -21,7 +21,7 @@ TEST_CASE("TestBoxInit")
 
         auto matrix = xt::zeros<double>({3, 3});
         CHECK(Box(matrix) == Box());
-        CHECK(Box::set_lengths_angles({0, 0, 0}, {90, 90, 90}) == Box());
+        CHECK(Box::from_lengths_angles({0, 0, 0}, {90, 90, 90}) == Box());
         // TODO: set_lengths_tilts
     }
 

@@ -22,7 +22,7 @@ include(GenerateExportHeader)
 generate_export_header(
     molcpp_molcpp
     BASE_NAME molcpp
-    EXPORT_FILE_NAME export/molcpp/molcpp_export.hpp
+    EXPORT_FILE_NAME export/molcpp/export.hpp
     CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
@@ -52,7 +52,7 @@ target_include_directories(
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
 
-target_compile_features(molcpp_molcpp PUBLIC cxx_std_20)
+target_compile_features(molcpp_molcpp PUBLIC cxx_std_20 c_std_99)
 
 # ---- Install rules ----
 

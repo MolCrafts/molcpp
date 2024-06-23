@@ -77,7 +77,7 @@ Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix) : B
 {
 }
 
-Box Box::set_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles)
+Box Box::from_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles)
 {
     return Box(calc_matrix_from_lengths_angles(lengths, angles));
 }
