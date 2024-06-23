@@ -6,5 +6,7 @@ Checks: "cppcoreguidelines-*, clang-analyzer-*"
 CheckOptions:
   - key: cppcoreguidelines-avoid-magic-numbers.IgnoreAllFloatingPointValues
     value: true
+  - key: cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues
+    value: true
 HeaderFilterRegex: ""
 FormatStyle: none
