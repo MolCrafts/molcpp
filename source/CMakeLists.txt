@@ -7,6 +7,8 @@ add_library(
     ${MOLCPP_SRC}
 )
 
+set_target_properties(molcpp_molcpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 add_definitions(-DHAVE_CBLAS=1)
 if (WIN32)
     find_package(OpenBLAS REQUIRED)

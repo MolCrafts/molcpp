@@ -17,6 +17,7 @@ file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "source/*.cpp")
 message(STATUS "find test sources: ${TEST_SOURCES}")
 
 add_executable(molcpp_test ${TEST_SOURCES})
+set_target_properties(molcpp_test PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(molcpp_test PRIVATE molcpp::molcpp)
 target_link_libraries(molcpp_test PRIVATE doctest::doctest)
 target_compile_features(molcpp_test PRIVATE cxx_std_20)

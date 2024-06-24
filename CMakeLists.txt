@@ -61,13 +61,14 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 endif()
 
 # ---- Developer mode ----
-
 if(molcpp_DEVELOPER_MODE)
   if(NOT PROJECT_IS_TOP_LEVEL)
-  message(
-    AUTHOR_WARNING
-    "Developer mode is intended for developers of molcpp"
-  )
+    message(
+      AUTHOR_WARNING
+      "Developer mode is intended for developers of molcpp"
+    )
   endif()
   include(cmake/dev-mode.cmake)
+else()
+  include(cmake/rel-mode.cmake)
 endif()

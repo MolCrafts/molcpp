@@ -46,6 +46,15 @@
       "name": "dev-coverage",
       "binaryDir": "${sourceDir}/build/coverage",
       "inherits": ["dev-mode", "coverage-linux"]
+    },
+    {
+      "name": "release",
+      "inherits": ["release-mode", "ci-linux"],
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "On",
+        "BUILD_TESTING": true
+      }
     }
   ],
   "buildPresets": [
@@ -53,6 +62,12 @@
       "name": "dev",
       "configurePreset": "dev",
       "configuration": "Debug",
+      "jobs": 12
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "configuration": "Release",
       "jobs": 12
     }
   ],

@@ -30,6 +30,13 @@
       }
     },
     {
+      "name": "release-mode",
+      "hidden": true,
+      "cacheVariables": {
+        "molcpp_DEVELOPER_MODE": "OFF"
+      }
+    },
+    {
       "name": "clang-tidy",
       "hidden": true,
       "cacheVariables": {
