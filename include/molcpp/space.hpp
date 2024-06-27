@@ -1,16 +1,20 @@
 #pragma once
 
+#include "molcpp/export.hpp"
+#include "molcpp/types.hpp"
+
 #include <initializer_list>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xbuilder.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xmath.hpp>
 #include <xtensor/xtensor.hpp>
+#include "xtensor-blas/xlinalg.hpp"
 
 namespace molcpp
 {
 
-class Region
+class MOLCPP_EXPORT Region
 {
   public:
     /// Default constructor
@@ -31,12 +35,12 @@ class Region
     auto operator=(Region &&) -> Region & = default;
 
     /// Check if points is inside the region
-    virtual auto isin(const xt::xarray<double> &xyz) const -> bool = 0;
+    virtual auto isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool> = 0;
 
   private:
 };
 
-class Boundary
+class MOLCPP_EXPORT Boundary
 {
   public:
     /// Default constructor
@@ -55,14 +59,16 @@ class Boundary
 
     /// Declare move assignment operator
     auto operator=(Boundary &&) -> Boundary & = default;
+
+    virtual auto wrap(const xt::xarray<double> &) const -> xt::xarray<double> = 0;
 };
 
-class Box : public Region, public Boundary
+class MOLCPP_EXPORT Box : public Region, public Boundary
 {
   public:
     enum Style
     {
-        INFINITE,
+        FREE,
         ORTHOGONAL,
         TRICLINIC
     };
@@ -70,46 +76,68 @@ class Box : public Region, public Boundary
     /// Construct an `INFINITY` box, with all lengths set to 0
     Box();
 
-    explicit Box(const xt::xarray<double> &matrix);
+    explicit Box(const Mat3 &matrix);
 
+    Box(const std::initializer_list<double> &lengths);
     Box(const std::initializer_list<std::initializer_list<double>> &matrix);
 
     ~Box() override = default;
-    Box(const Box& other) = default;
-    Box& operator=(const Box& other) = default;
-    Box(Box& other) noexcept = default;
-    Box& operator=(Box&& other) noexcept = default;
+    Box(const Box &other) = default;
+    Box &operator=(const Box &other) = default;
+    Box(Box &other) noexcept = default;
+    Box &operator=(Box &&other) noexcept = default;
 
-    static Box from_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles);
+    static Box from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 
-    // static Box set_lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts);
+    // static Box set_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
 
-    static xt::xarray<double> calc_matrix_from_lengths_angles(const xt::xarray<double> &lengths,
-                                                              const xt::xarray<double> &angles);
+    static Mat3 calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 
-    static xt::xtensor_fixed<double, xt::xshape<3>> calc_lengths_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix);
+    static Vec3 calc_lengths_from_matrix(const Mat3 &matrix);
 
-    static xt::xtensor_fixed<double, xt::xshape<3>> calc_angles_from_matrix(const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix);
+    static Vec3 calc_angles_from_matrix(const Mat3 &matrix);
 
-    auto isin(const xt::xarray<double> &xyz) const -> bool override;
+    static auto calc_style_from_matrix(const Mat3 &matrix) -> Style;
 
-    // box style getter
+    static auto check_matrix(const Mat3 &matrix) -> Mat3;
+
+    void set_lengths(const Vec3 &lengths);
+
+    void set_angles(const Vec3 &angles);
+
+    void set_matrix(const Mat3 &matrix);
+
+    void set_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
+
+    auto isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool> override;
+
+    auto wrap(const xt::xarray<double> &xyz) const -> xt::xarray<double> override;
+
+    auto wrap_orth(const xt::xarray<double> &xyz) const -> xt::xarray<double>;
+
+    auto wrap_tric(const xt::xarray<double> &xyz) const -> xt::xarray<double>;
+
+    auto wrap_free(const xt::xarray<double> &xyz) const -> xt::xarray<double>;
+
     auto get_style() const -> Style;
 
-    auto get_matrix() const -> xt::xtensor_fixed<double, xt::xshape<3, 3>>;
+    auto get_matrix() const -> Mat3;
 
-    auto get_lengths() const -> xt::xtensor_fixed<double, xt::xshape<3>>;
+    auto get_inv() const -> Mat3 {
+        return xt::linalg::inv(_matrix);
+    }
 
-    auto get_angles() const -> xt::xtensor_fixed<double, xt::xshape<3>>;
+    auto get_lengths() const -> Vec3;
+
+    auto get_angles() const -> Vec3;
 
     auto get_volume() const -> double;
 
   private:
-    xt::xtensor_fixed<double, xt::xshape<3, 3>> _matrix;
-    Style _style;
+    Mat3 _matrix;
 };
 
-bool operator==(const Box& rhs, const Box& lhs);
-bool operator!=(const Box& rhs, const Box& lhs);
+bool MOLCPP_EXPORT operator==(const Box &rhs, const Box &lhs);
+bool MOLCPP_EXPORT operator!=(const Box &rhs, const Box &lhs);
 
 } // namespace molcpp

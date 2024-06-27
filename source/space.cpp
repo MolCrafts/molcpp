@@ -40,13 +40,13 @@ static double sind(double theta)
 //     return fabs(value - 90.0) < 1e-3;
 // }
 
-static bool is_diagonal(const xt::xarray<double> &matrix)
+static bool is_diagonal(const Mat3 &matrix)
 {
 
     return xt::allclose(xt::triu(matrix, 1), 0) && xt::allclose(tril(matrix, -1), 0);
 }
 
-static bool is_upper_triangular(const xt::xarray<double> &matrix)
+static bool is_upper_triangular(const Mat3 &matrix)
 {
     bool is_diag = is_diagonal(matrix);
     bool is_upper_zero =
@@ -54,46 +54,60 @@ static bool is_upper_triangular(const xt::xarray<double> &matrix)
     return is_diag && is_upper_zero;
 }
 
-Box::Box() : _matrix{xt::zeros<double>({3, 3})}, _style{Style::INFINITE}
+Box::Box() : _matrix{xt::zeros<double>({3, 3})}
 {
 }
 
-Box::Box(const xt::xarray<double> &matrix)
+Box::Box(const Mat3 &matrix)
 {
     if (matrix.shape()[0] != 3 || matrix.shape()[1] != 3)
     {
         throw std::runtime_error("Matrix must be 3x3");
     }
-    _matrix = matrix;
-    if (xt::allclose(matrix, 0))
-        _style = Style::INFINITE;
-    else if (is_upper_triangular(_matrix))
-        _style = Style::TRICLINIC;
-    else if (is_diagonal(_matrix))
-        _style = Style::ORTHOGONAL;
+    set_matrix(matrix);
 }
 
-Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix) : Box(xt::xtensor<double, 2>(matrix))
+Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix)
 {
+    set_matrix(Mat3(matrix));
 }
 
-Box Box::from_lengths_angles(const xt::xarray<double> &lengths, const xt::xarray<double> &angles)
+Box::Box(const std::initializer_list<double> &lengths)
 {
+    Vec3 _lengths = Vec3(lengths);
+    if (xt::any(_lengths < 0)) {
+        throw std::runtime_error("Lengths must be positive");
+    }
+    set_lengths(_lengths);
+}
+
+Box Box::from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
+{
+    if (xt::all(lengths < 0))
+    {
+        throw std::runtime_error("Lengths must be positive");
+    } else if (xt::all(angles < 0))
+    {
+        throw std::runtime_error("Angles must be positive");
+    } else if (xt::any(xt::equal(angles, 0)))
+    {
+        throw std::runtime_error("Angles can not have 0°");
+    }
+    
     return Box(calc_matrix_from_lengths_angles(lengths, angles));
 }
 
-// Box Box::lengths_tilts(const xt::xarray<double> &lengths, const xt::xarray<double> &tilts)
+// Box Box::lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
 // {
 // }
 
-xt::xarray<double> Box::calc_matrix_from_lengths_angles(const xt::xarray<double> &lengths,
-                                                        const xt::xarray<double> &angles)
+Mat3 Box::calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
 {
     if (lengths.size() != 3 || angles.size() != 3)
     {
         throw std::runtime_error("Lengths and angles must have size 3");
     }
-    auto matrix = xt::xtensor_fixed<double, xt::xshape<3, 3>>::from_shape({3, 3});
+    auto matrix = Mat3::from_shape({3, 3});
 
     matrix(0, 0) = lengths[0];
     matrix(1, 0) = 0.0;
@@ -118,18 +132,16 @@ xt::xarray<double> Box::calc_matrix_from_lengths_angles(const xt::xarray<double>
     return matrix;
 }
 
-xt::xtensor_fixed<double, xt::xshape<3>> Box::calc_lengths_from_matrix(
-    const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix)
+Vec3 Box::calc_lengths_from_matrix(const Mat3 &matrix)
 {
-    xt::xtensor_fixed<double, xt::xshape<3>> result;
+    Vec3 result;
     result(0) = xt::linalg::norm(xt::view(matrix, xt::all(), 0));
     result(1) = xt::linalg::norm(xt::view(matrix, xt::all(), 1));
     result(2) = xt::linalg::norm(xt::view(matrix, xt::all(), 2));
     return result;
 }
 
-xt::xtensor_fixed<double, xt::xshape<3>> Box::calc_angles_from_matrix(
-    const xt::xtensor_fixed<double, xt::xshape<3, 3>> &matrix)
+Vec3 Box::calc_angles_from_matrix(const Mat3 &matrix)
 {
 
     auto v1 = xt::view(matrix, xt::all(), 0);
@@ -145,21 +157,79 @@ xt::xtensor_fixed<double, xt::xshape<3>> Box::calc_angles_from_matrix(
                            1);
 }
 
-xt::xtensor_fixed<double, xt::xshape<3, 3>> Box::get_matrix() const
+auto Box::calc_style_from_matrix(const Mat3& matrix) -> Box::Style {
+    if (xt::allclose(matrix, 0))
+        return Box::Style::FREE;
+    else if (is_upper_triangular(matrix))
+        return Box::Style::TRICLINIC;
+    else if (is_diagonal(matrix))
+        return Box::Style::ORTHOGONAL;
+}
+
+auto Box::check_matrix(const Mat3 &matrix) -> Mat3
+{
+    if (matrix.shape()[0] != 3 || matrix.shape()[1] != 3)
+    {
+        throw std::runtime_error("Matrix must be 3x3");
+    }
+    if (xt::linalg::det(matrix)==0) {
+        throw std::runtime_error("Matrix must be invertible");
+    } 
+    return matrix;
+}
+
+void Box::set_lengths(const Vec3 &lengths)
+{
+    if (lengths.size() != 3)
+    {
+        throw std::runtime_error("Lengths must have size 3");
+    }
+    auto angles = get_angles();
+    _matrix = calc_matrix_from_lengths_angles(lengths, angles);
+}
+
+void Box::set_angles(const Vec3 &angles)
+{
+    if (angles.size() != 3)
+    {
+        throw std::runtime_error("Angles must have size 3");
+    }
+    if (xt::any(angles > 180)) {
+        throw std::runtime_error("Angles must be less than 180");
+    }
+    auto lengths = get_lengths();
+    _matrix = calc_matrix_from_lengths_angles(lengths, angles);
+}
+
+void Box::set_matrix(const Mat3 &matrix)
+{
+    _matrix = check_matrix(matrix);
+}
+
+void Box::set_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
+{
+    if (lengths.size() != 3 || angles.size() != 3)
+    {
+        throw std::runtime_error("Lengths and angles must have size 3");
+    }
+    _matrix = calc_matrix_from_lengths_angles(lengths, angles);
+}
+
+Mat3 Box::get_matrix() const
 {
     return _matrix;
 }
 
 auto Box::get_style() const -> Style
 {
-    return _style;
+    return calc_style_from_matrix(_matrix);
 }
 
-auto Box::get_lengths() const -> xt::xtensor_fixed<double, xt::xshape<3>>
+auto Box::get_lengths() const -> Vec3
 {
-    switch (_style)
+    switch (calc_style_from_matrix(_matrix))
     {
-    case INFINITE:
+    case FREE:
         return {0, 0, 0};
     case ORTHOGONAL:
         return {_matrix(0, 0), _matrix(1, 1), _matrix(2, 2)};
@@ -168,11 +238,11 @@ auto Box::get_lengths() const -> xt::xtensor_fixed<double, xt::xshape<3>>
     }
 }
 
-auto Box::get_angles() const -> xt::xtensor_fixed<double, xt::xshape<3>>
+auto Box::get_angles() const -> Vec3
 {
-    switch (_style)
+    switch (calc_style_from_matrix(_matrix))
     {
-    case INFINITE:
+    case FREE:
     case ORTHOGONAL:
         return {90, 90, 90};
     case TRICLINIC:
@@ -182,9 +252,9 @@ auto Box::get_angles() const -> xt::xtensor_fixed<double, xt::xshape<3>>
 
 auto Box::get_volume() const -> double
 {
-    switch (_style)
+    switch (calc_style_from_matrix(_matrix))
     {
-    case INFINITE:
+    case FREE:
         return 0;
     case ORTHOGONAL:
     case TRICLINIC:
@@ -192,9 +262,34 @@ auto Box::get_volume() const -> double
     }
 }
 
-bool Box::isin(const xt::xarray<double> &xyz) const
+auto Box::isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool>
 {
     return true;
+}
+
+auto Box::wrap(const xt::xarray<double> &xyz) const -> xt::xarray<double> {
+    switch (calc_style_from_matrix(_matrix)) {
+        case FREE:
+            return wrap_free(xyz);
+        case ORTHOGONAL:
+            return wrap_orth(xyz);
+        case TRICLINIC:
+            return wrap_tric(xyz);
+    }
+}
+
+auto Box::wrap_free(const xt::xarray<double> &xyz) const -> xt::xarray<double> {
+    return xt::xarray<double>(xyz);
+}
+
+auto Box::wrap_orth(const xt::xarray<double> &xyz) const -> xt::xarray<double> {
+    auto lengths = this->get_lengths();
+    return xyz - xt::round(xyz / lengths) * lengths;
+}
+
+auto Box::wrap_tric(const xt::xarray<double> &xyz) const -> xt::xarray<double> {
+    auto fractional = this->get_inv() * xyz;
+    return get_matrix() * fractional - xt::round(fractional);
 }
 
 bool operator==(const Box &rhs, const Box &lhs)

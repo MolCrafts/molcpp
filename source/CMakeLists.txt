@@ -1,11 +1,12 @@
 message("Configuring molcpp/source...")
 include(FetchContent)
 
-file(GLOB_RECURSE MOLCPP_SRC "./**.cpp")
+file(GLOB_RECURSE MOLCPP_SRC "**.cpp")
 add_library(
     molcpp_molcpp
     ${MOLCPP_SRC}
 )
+message("${MOLCPP_SRC}")
 
 set_target_properties(molcpp_molcpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
