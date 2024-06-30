@@ -3,16 +3,64 @@
 #include "molcpp/export.hpp"
 #include "molcpp/types.hpp"
 
+#include "xtensor-blas/xlinalg.hpp"
 #include <initializer_list>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xbuilder.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xmath.hpp>
 #include <xtensor/xtensor.hpp>
-#include "xtensor-blas/xlinalg.hpp"
 
 namespace molcpp
 {
+
+constexpr double pi = 3.141592653589793238463;
+
+static double deg2rad(double x)
+{
+    return x * pi / 180.0;
+}
+
+// static double rad2deg(double x)
+// {
+//     return x * 180.0 / pi;
+// }
+
+static double cosd(double theta)
+{
+    return cos(deg2rad(theta));
+}
+
+static double sind(double theta)
+{
+    return sin(deg2rad(theta));
+}
+
+static bool is_close_zero(double value)
+{
+    // We think that 0.00001 is close enough to 0
+    return fabs(value) < 1e-5;
+}
+
+// static bool is_roughly_90(double value)
+// {
+//     // We think that 89.999° is close enough to 90°
+//     return fabs(value - 90.0) < 1e-3;
+// }
+
+static bool is_upper_triangular(const Mat3 &matrix)
+{
+    bool is_tril_zero = is_close_zero(matrix(1, 0)) && is_close_zero(matrix(2, 0)) && is_close_zero(matrix(2, 1));
+    return is_tril_zero;
+}
+
+static bool is_diagonal(const Mat3 &matrix)
+{
+
+    bool is_tril_zero = is_upper_triangular(matrix);
+    bool is_triu_zero = is_close_zero(matrix(0, 1)) && is_close_zero(matrix(0, 2)) && is_close_zero(matrix(1, 2));
+    return is_tril_zero && is_triu_zero;
+}
 
 class MOLCPP_EXPORT Region
 {
@@ -123,7 +171,8 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     auto get_matrix() const -> Mat3;
 
-    auto get_inv() const -> Mat3 {
+    auto get_inv() const -> Mat3
+    {
         return xt::linalg::inv(_matrix);
     }
 

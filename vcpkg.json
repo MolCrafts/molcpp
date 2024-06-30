@@ -1,0 +1,8 @@
+{
+  "dependencies": [
+    "igraph",
+    "xtensor",
+    "xtensor-blas",
+    "doctest"
+  ]
+}

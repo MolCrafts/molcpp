@@ -14,6 +14,7 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
 # ---- Declare library ----
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 add_subdirectory(source)
 add_library(molcpp::molcpp ALIAS molcpp_molcpp)
@@ -52,7 +53,7 @@ target_include_directories(
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
 
-target_compile_features(molcpp_molcpp PUBLIC cxx_std_20 c_std_99)
+target_compile_features(molcpp_molcpp PUBLIC cxx_std_20)
 
 # ---- Install rules ----
 

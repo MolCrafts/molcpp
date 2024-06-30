@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # Clone and build xtl
-git clone https://github.com/xtensor-stack/xtl.git --depth 1 -b master /opt/xtl
-mkdir /opt/xtl/build
-cmake -S /opt/xtl -B /opt/xtl/build && cmake --build /opt/xtl/build --target install
+# git clone https://github.com/xtensor-stack/xtl.git --depth 1 -b master /opt/xtl
+# mkdir /opt/xtl/build
+# cmake -S /opt/xtl -B /opt/xtl/build && cmake --build /opt/xtl/build --target install
 
-# Clone and build xtensor
-git clone https://github.com/xtensor-stack/xtensor.git --depth 1 -b master /opt/xtensor
-mkdir /opt/xtensor/build
-cmake -S /opt/xtensor -B /opt/xtensor/build && cmake --build /opt/xtensor/build --target install
+# # Clone and build xtensor
+# git clone https://github.com/xtensor-stack/xtensor.git --depth 1 -b master /opt/xtensor
+# mkdir /opt/xtensor/build
+# cmake -S /opt/xtensor -B /opt/xtensor/build && cmake --build /opt/xtensor/build --target install
 
-# Clone and build xtensor-blas
-git clone https://github.com/xtensor-stack/xtensor-blas.git --depth 1 -b master /opt/xtensor-blas
-mkdir /opt/xtensor-blas/build
-cmake -S /opt/xtensor-blas -B /opt/xtensor-blas/build && cmake --build /opt/xtensor-blas/build --target install
+# # Clone and build xtensor-blas
+# git clone https://github.com/xtensor-stack/xtensor-blas.git --depth 1 -b master /opt/xtensor-blas
+# mkdir /opt/xtensor-blas/build
+# cmake -S /opt/xtensor-blas -B /opt/xtensor-blas/build && cmake --build /opt/xtensor-blas/build --target install
 
-git clone https://github.com/doctest/doctest --depth 1 -b master /opt/doctest
-mkdir /opt/doctest/build
-cmake -S /opt/doctest -B /opt/doctest/build && cmake --build /opt/doctest/build --target install
+# git clone https://github.com/doctest/doctest --depth 1 -b master /opt/doctest
+# mkdir /opt/doctest/build
+# cmake -S /opt/doctest -B /opt/doctest/build && cmake --build /opt/doctest/build --target install
 
 # git clone https://github.com/doxygen/doxygen.git --depth 1 -b master /opt/doxygen
 # mkdir /opt/doxygen/build
