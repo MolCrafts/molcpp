@@ -5,6 +5,7 @@ namespace molcpp
 
     Topology::Topology()
     {
+        igraph_empty(&_graph, 0, IGRAPH_UNDIRECTED);
     }
 
     Topology::~Topology()

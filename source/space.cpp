@@ -30,42 +30,33 @@ Box::Box(const std::initializer_list<std::initializer_list<double>> &matrix)
 Box::Box(const std::initializer_list<double> &lengths): _matrix{xt::zeros<double>({3, 3})}
 {
     Vec3 _lengths = Vec3(lengths);
-    if (xt::any(_lengths < 0))
-    {
-        throw std::runtime_error("Lengths must be positive");
-    }
     set_lengths(_lengths);
 }
 
 Box Box::from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
 {
-    if (xt::any(lengths < 0))
-    {
-        throw std::runtime_error("Lengths must be positive");
-    }
-    else if (xt::any(angles < 0))
-    {
-        throw std::runtime_error("Angles must be positive");
-    }
-    else if (xt::any(xt::equal(angles, 0)))
-    {
-        throw std::runtime_error("Angles can not have 0°");
-    }
-
     return Box(calc_matrix_from_lengths_angles(lengths, angles));
 }
 
-// Box Box::lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
-// {
-// }
+Box Box::from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
+{
+}
 
 Mat3 Box::calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
 {
-    if (lengths.size() != 3 || angles.size() != 3)
+    if (xt::any(lengths < 0))
     {
-        throw std::runtime_error("Lengths and angles must have size 3");
+        throw std::runtime_error("Lengths must >= 0");
     }
-    auto matrix = Mat3::from_shape({3, 3});
+    else if (xt::any(angles <= 0))
+    {
+        throw std::runtime_error("Angles can not <= 0°");
+    }
+    else if (xt::any(angles >= 180))
+    {
+        throw std::runtime_error("Angles can not >= 180°");
+    }
+    Mat3 matrix;
 
     matrix(0, 0) = lengths[0];
     matrix(1, 0) = 0.0;
@@ -89,6 +80,22 @@ Mat3 Box::calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angle
     }
 
     return matrix;
+}
+
+Mat3 Box::calc_matrix_from_size_tilts(const Vec3 &sizes, const Vec3 &tilts)
+{
+    double xz = tilts(1);
+    double yz = tilts(2);
+    double xy = tilts(0);
+    double a = sizes(0);
+    double b = sqrt(sizes(1) * sizes(1) + xy * xy);
+    double c = sqrt(sizes(2)*sizes(2) + xz*xz + yz*yz);
+
+    double alpha = acos(xy*xz + sizes(1) * yz) / (b * c);
+    double beta = acos(xz / c);
+    double gamma = acos(xy / b);
+
+    return calc_matrix_from_lengths_angles({a, b, c}, {alpha, beta, gamma});
 }
 
 Vec3 Box::calc_lengths_from_matrix(const Mat3 &matrix)
@@ -130,7 +137,7 @@ auto Box::check_matrix(const Mat3 &matrix) -> Mat3
     {
         throw std::runtime_error("Matrix must be 3x3");
     }
-    if (xt::linalg::det(matrix) == 0)
+    if (xt::linalg::det(matrix) <= 0)
     {
         throw std::runtime_error("Matrix must be invertible");
     }
@@ -149,14 +156,6 @@ void Box::set_lengths(const Vec3 &lengths)
 
 void Box::set_angles(const Vec3 &angles)
 {
-    if (angles.size() != 3)
-    {
-        throw std::runtime_error("Angles must have size 3");
-    }
-    if (xt::any(angles > 180))
-    {
-        throw std::runtime_error("Angles must be less than 180");
-    }
     auto lengths = get_lengths();
     _matrix = calc_matrix_from_lengths_angles(lengths, angles);
 }
@@ -175,14 +174,9 @@ void Box::set_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
     _matrix = calc_matrix_from_lengths_angles(lengths, angles);
 }
 
-Mat3 Box::get_matrix() const
+void Box::set_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
 {
-    return _matrix;
-}
-
-auto Box::get_style() const -> Style
-{
-    return calc_style_from_matrix(_matrix);
+    _matrix = calc_matrix_from_size_tilts(lengths, tilts);
 }
 
 auto Box::get_lengths() const -> Vec3
@@ -253,8 +247,8 @@ auto Box::wrap_orth(const xt::xarray<double> &xyz) const -> xt::xarray<double>
 
 auto Box::wrap_tric(const xt::xarray<double> &xyz) const -> xt::xarray<double>
 {
-    auto fractional = this->get_inv() * xyz;
-    return get_matrix() * fractional - xt::round(fractional);
+    auto fractional = xt::linalg::dot(xyz, this->get_inv());
+    return xt::linalg::dot(fractional - xt::round(fractional), get_matrix());
 }
 
 bool operator==(const Box &rhs, const Box &lhs)

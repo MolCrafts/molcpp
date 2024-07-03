@@ -38,7 +38,7 @@ namespace molcpp
 
       private:
 
-        Topology _topology;
+        // Topology _topology;
 
         StructProps _atoms;
         StructProps _bonds;

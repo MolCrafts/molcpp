@@ -85,12 +85,12 @@ class MOLCPP_EXPORT Topology
     {
         auto bond_to_be_delete = Bond(i, j, 0);
         _bonds.erase(std::remove_if(_bonds.begin(), _bonds.end(),
-                                    [bond_to_be_delete](Bond &b) { return b == bond_to_be_delete; }));
+                                    [bond_to_be_delete](Bond &b) { return b == bond_to_be_delete; }), _bonds.end());
     }
 
     void del_bond(id_t id)
     {
-        _bonds.erase(std::remove_if(_bonds.begin(), _bonds.end(), [id](Bond &b) { return b.id == id; }));
+        _bonds.erase(std::remove_if(_bonds.begin(), _bonds.end(), [id](Bond &b) { return b.id == id; }), _bonds.end());
     }
 
     void del_angle(idx_t i, idx_t j, idx_t k)

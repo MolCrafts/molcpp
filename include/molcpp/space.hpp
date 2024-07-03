@@ -126,8 +126,8 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     explicit Box(const Mat3 &matrix);
 
-    Box(const std::initializer_list<double> &lengths);
-    Box(const std::initializer_list<std::initializer_list<double>> &matrix);
+    explicit Box(const std::initializer_list<double> &lengths);
+    explicit Box(const std::initializer_list<std::initializer_list<double>> &matrix);
 
     ~Box() override = default;
     Box(const Box &other) = default;
@@ -137,9 +137,11 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     static Box from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 
-    // static Box set_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
+    static Box from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
 
     static Mat3 calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
+
+    static Mat3 calc_matrix_from_size_tilts(const Vec3 &lengths, const Vec3 &tilts);
 
     static Vec3 calc_lengths_from_matrix(const Mat3 &matrix);
 
@@ -157,6 +159,8 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     void set_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 
+    void set_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
+
     auto isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool> override;
 
     auto wrap(const xt::xarray<double> &xyz) const -> xt::xarray<double> override;
@@ -167,9 +171,14 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     auto wrap_free(const xt::xarray<double> &xyz) const -> xt::xarray<double>;
 
-    auto get_style() const -> Style;
+    auto get_style() const -> Style{
+        return calc_style_from_matrix(_matrix);
+    }
 
-    auto get_matrix() const -> Mat3;
+    auto get_matrix() const -> Mat3
+    {
+      return _matrix;
+    }
 
     auto get_inv() const -> Mat3
     {
