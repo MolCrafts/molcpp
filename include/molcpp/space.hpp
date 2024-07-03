@@ -191,6 +191,8 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     auto get_volume() const -> double;
 
+    auto get_distance_between_faces() const -> Vec3;
+
   private:
     Mat3 _matrix;
 };

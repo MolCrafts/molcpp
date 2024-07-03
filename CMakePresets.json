@@ -33,6 +33,12 @@
       }
     },
     {
+      "name": "vcpkg_toolchain",
+      "environment": {
+        "VCPKG_ROOT": "/opt/vcpkg"
+      }
+    },
+    {
       "name": "dev-base",
       "hidden": true,
       "inherits": ["cmake-base", "cmake-pedantic"],

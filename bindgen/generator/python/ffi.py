@@ -4,11 +4,11 @@
 This module generate the Python interface declaration for the functions it
 finds in a C header. It only handle edge cases for the chemfiles.h header.
 """
-from .constants import BEGINING
+from . import BEGINING
 from .convert import type_to_python
 
-from generator.types import StringType
-from generator.functions import MOL_TYPES
+from ..ctype import StringType
+from .. import MOL_TYPES
 
 BEGINING += """
 # flake8: noqa
@@ -27,32 +27,6 @@ HAND_WRITTEN_TYPES = """
 # Some hand-defined type. Make sure to edit the bindgen code to make this
 # correspond to the current chemfiles.h header
 mol_vec3 = ARRAY(c_double, 3)
-
-# chfl_warning_callback = CFUNCTYPE(None, c_char_p)
-
-# class chfl_match(Structure):
-#     _fields_ = [
-#         ('size', c_uint64),
-#         ('atoms', ARRAY(c_uint64, 4))
-#     ]
-
-# class chfl_format_metadata(Structure):
-#     _fields_ = [
-#         ('name', c_char_p),
-#         ('extension', c_char_p),
-#         ('description', c_char_p),
-#         ('reference', c_char_p),
-
-#         ('read', c_bool),
-#         ('write', c_bool),
-#         ('memory', c_bool),
-#         ('positions', c_bool),
-#         ('velocities', c_bool),
-#         ('unit_cell', c_bool),
-#         ('atoms', c_bool),
-#         ('bonds', c_bool),
-#         ('residues', c_bool),
-#     ]
 
 # end of hand-defined types
 """

@@ -3,7 +3,7 @@ import os
 from pycparser import parse_file
 
 from .functions import FunctionVisitor
-from .types import EnumsVisitor
+from .ctype import EnumsVisitor
 
 PRIVATE_INCLUDE = os.path.join(os.path.dirname(__file__), "include")
 

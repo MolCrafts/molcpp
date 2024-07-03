@@ -2,14 +2,8 @@
 import os
 from pycparser import c_ast
 
-from generator.types import Ctype, ArrayType, StringType, PtrToArrayType
-
-# All the functions not associated with a type.
-# FREE_FUNCTIONS = ["chfl_strerror", "chfl_last_error", "chfl_warning_callback"]
-
-MOL_TYPES = [
-    "MOL_BOX",
-]
+from .ctype import Ctype, ArrayType, StringType, PtrToArrayType
+from . import MOL_TYPES
 
 
 class Argument:

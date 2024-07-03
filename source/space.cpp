@@ -57,25 +57,25 @@ Mat3 Box::calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angle
         throw std::runtime_error("Angles can not >= 180°");
     }
     Mat3 matrix;
+    matrix.fill(0.0);
 
-    matrix(0, 0) = lengths[0];
+    matrix(0, 0) = lengths(0);
     matrix(1, 0) = 0.0;
     matrix(2, 0) = 0.0;
 
-    matrix(0, 1) = lengths[1] * cosd(angles[2]);
-    matrix(1, 1) = lengths[1] * sind(angles[2]);
+    matrix(0, 1) = lengths(1) * cosd(angles(2));
+    matrix(1, 1) = lengths(1) * sind(angles(2));
     matrix(2, 1) = 0.0;
 
-    matrix(0, 2) = cosd(angles[1]);
-    matrix(1, 2) = (cosd(angles[0]) - cosd(angles[1]) * cosd(angles[2])) / sind(angles[2]);
+    matrix(0, 2) = cosd(angles(1));
+    matrix(1, 2) = (cosd(angles(0)) - cosd(angles(1)) * cosd(angles(2))) / sind(angles(2));
     matrix(2, 2) = sqrt(1 - matrix(0, 2) * matrix(0, 2) - matrix(1, 2) * matrix(1, 2));
-    matrix(0, 2) *= lengths[2];
-    matrix(1, 2) *= lengths[2];
-    matrix(2, 2) *= lengths[2];
+    matrix(0, 2) *= lengths(2);
+    matrix(1, 2) *= lengths(2);
+    matrix(2, 2) *= lengths(2);
 
     if (!is_upper_triangular(matrix))
     {
-        std::cout << matrix << std::endl;
         throw std::runtime_error("Matrix is not upper triangular");
     }
 
@@ -216,6 +216,38 @@ auto Box::get_volume() const -> double
     }
 }
 
+auto Box::get_distance_between_faces() const -> Vec3
+{
+    switch (calc_style_from_matrix(_matrix))
+    {
+    case FREE:
+        return {0, 0, 0};
+    case ORTHOGONAL:
+        return {xt::linalg::norm(xt::view(_matrix, xt::all(), 0)),
+                xt::linalg::norm(xt::view(_matrix, xt::all(), 1)),
+                xt::linalg::norm(xt::view(_matrix, xt::all(), 2))};
+    case TRICLINIC:
+        auto a = xt::view(_matrix, xt::all(), 0);
+        auto b = xt::view(_matrix, xt::all(), 1);
+        auto c = xt::view(_matrix, xt::all(), 2);
+
+        std::cout << _matrix << std::endl;
+
+        auto na = xt::linalg::cross(b, c);
+        auto nb = xt::linalg::cross(c, a);
+        auto nc = xt::linalg::cross(a, b);
+
+        na /= xt::linalg::norm(na);
+        nb /= xt::linalg::norm(nb);
+        nc /= xt::linalg::norm(nc);
+
+        return xt::concatenate(xt::xtuple(xt::linalg::dot(na, a),
+                                          xt::linalg::dot(nb, b),
+                                          xt::linalg::dot(nc, c)));
+    }
+
+}
+
 auto Box::isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool>
 {
     return true;
@@ -247,8 +279,8 @@ auto Box::wrap_orth(const xt::xarray<double> &xyz) const -> xt::xarray<double>
 
 auto Box::wrap_tric(const xt::xarray<double> &xyz) const -> xt::xarray<double>
 {
-    auto fractional = xt::linalg::dot(xyz, this->get_inv());
-    return xt::linalg::dot(fractional - xt::round(fractional), get_matrix());
+    auto fractional = xt::linalg::dot(this->get_inv(), xt::transpose(xyz));
+    return xt::transpose(xt::linalg::dot(get_matrix(), fractional - xt::round(fractional)));
 }
 
 bool operator==(const Box &rhs, const Box &lhs)

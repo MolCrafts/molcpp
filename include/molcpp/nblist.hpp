@@ -24,6 +24,7 @@ namespace molcpp
         xt::xarray<size_t> update(const xt::xarray<double> &xyz, const Box &box); 
 
         private:
+            double _cutoff;
 
     };
 

@@ -1,27 +1,69 @@
+# -* coding: utf-8 -*
+
 from pycparser import c_ast
+
+"""
+Representing C types
+"""
+
 
 class Ctype(object):
     '''Representing a C type, in a simple way'''
 
-    def __init__(self, type, name, is_ptr=False, is_const=False):
-        self.type = type
-        self.name = name
+    def __init__(self, ctype, cname, is_ptr=False, is_const=False):
+        self.ctype = ctype
+        self.cname = cname
         self.is_ptr = is_ptr
         self.is_const = is_const
         self.is_optional = False
 
     def __str__(self):
-        return self.name
+        return self.cname
 
     def __repr__(self):
         res = "const " if self.is_const else ""
-        res += self.name
+        res += self.cname
         res += "*" if self.is_ptr else ""
         return res
-    
+
+
 class StringType(Ctype):
     '''Representing a C string type'''
     pass
+
+
+class ArrayType(Ctype):
+    '''Representing array type, with various dimensions'''
+
+    def __init__(self, *args, **kwargs):
+        super(ArrayType, self).__init__(*args, **kwargs)
+        # Do we have a compile-time unknown dimension here ?
+        self.unknown_dims = False
+        self.all_dims = []
+        self.is_ptr = True
+
+    def set_dimensions(self, *all_dims):
+        '''
+        Set the array dimensions. For example, the C declaration
+        `int (*bar)[3]` should be declared by calling in this function as
+        `array_type.set_dimensions(-1, 3)`
+
+        The -1 value indicate a dimension with unknown size at compile-time
+        '''
+        for dim_size in all_dims:
+            self.all_dims.append(dim_size)
+            if dim_size == -1:
+                self.unknown_dims = True
+
+
+class PtrToArrayType(ArrayType):
+    '''
+    A pointer to an array. This is used in chemfiles to provide view into
+    memory owned by the C++ library.
+    '''
+
+    def __init__(self, *args, **kwargs):
+        super(PtrToArrayType, self).__init__(*args, **kwargs)
 
 class Enumerator:
     '''A value in a enum'''
@@ -58,9 +100,10 @@ class Enum:
 
 
 ENUM_NAMES = {
-    "MOL_BOX_ORTHORHOMBIC": "mol_box_style",
-    "MOL_BOX_TRICLINIC": "mol_box_style",
-    "MOL_BOX_INFINITE": "mol_box_style"
+    "CHFL_SUCCESS": "chfl_status",
+    "CHFL_CELL_ORTHORHOMBIC": "chfl_cellshape",
+    "CHFL_PROPERTY_BOOL": "chfl_property_kind",
+    "CHFL_BOND_UNKNOWN": "chfl_bond_order",
 }
 
 
@@ -73,42 +116,10 @@ class EnumsVisitor(c_ast.NodeVisitor):
         super(EnumsVisitor, self).visit(*args, **kwargs)
         return self.enums
 
-    def visit_Enum(self, node):
+    def visit_enum(self, node):
         first_value = node.values.enumerators[0].name
         name = ENUM_NAMES[first_value]
         enum = Enum(name)
         for enumerator in node.values.enumerators:
             enum.append(enumerator.name, enumerator.value)
         self.enums.append(enum)
-
-class ArrayType(Ctype):
-    '''Representing array type, with various dimensions'''
-
-    def __init__(self, *args, **kwargs):
-        super(ArrayType, self).__init__(*args, **kwargs)
-        # Do we have a compile-time unknown dimension here ?
-        self.unknown_dims = False
-        self.all_dims = []
-        self.is_ptr = True
-
-    def set_dimensions(self, *all_dims):
-        '''
-        Set the array dimensions. For example, the C declaration
-        `int (*bar)[3]` should be declared by calling in this function as
-        `array_type.set_dimensions(-1, 3)`
-
-        The -1 value indicate a dimension with unknown size at compile-time
-        '''
-        for dim_size in all_dims:
-            self.all_dims.append(dim_size)
-            if dim_size == -1:
-                self.unknown_dims = True
-
-class PtrToArrayType(ArrayType):
-    '''
-    A pointer to an array. This is used in chemfiles to provide view into
-    memory owned by the C++ library.
-    '''
-
-    def __init__(self, *args, **kwargs):
-        super(PtrToArrayType, self).__init__(*args, **kwargs)

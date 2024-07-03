@@ -219,8 +219,21 @@ TEST_CASE("TestBoxBoundary")
         CHECK(xt::allclose(ortho.wrap(v), Vec3({2.0, -4.0, 5.8}), 1e-5));
         CHECK(xt::allclose(ortho.wrap(v), triclinic_algo.wrap_tric(v), 1e-5));
         CHECK(xt::allclose(triclinic.wrap(v), Vec3({3.91013, -4.16711, 5.8}), 1e-5));
-        std::cout << triclinic.wrap(v) << std::endl;
-        CHECK(xt::allclose(tilted.wrap(Vec3({6, 8, -7})), Vec3({4.26352, -0.08481, -1.37679}), 1e-5));
-        std::cout << tilted.wrap(Vec3({6, 8, -7})) << std::endl;
+        CHECK(xt::allclose(tilted.wrap(Vec3({6, 8, -7})), Vec3({4.263518, -0.084808, -1.376788}), 1e-5));
+    }
+}
+
+TEST_CASE("TestBoxDimension")
+{
+    SUBCASE("test_distance_between_faces")
+    {
+        Box infinite;
+        CHECK(xt::allclose(infinite.get_distance_between_faces(), Vec3({0, 0, 0}), 1e-5));
+
+        Box orth({10, 10, 10});
+        CHECK(xt::allclose(orth.get_distance_between_faces(), Vec3({10, 10, 10}), 1e-5));
+
+        Box triclinic = Box::from_lengths_angles({10, 11, 12}, {90, 90, 80});
+        CHECK(xt::allclose(triclinic.get_distance_between_faces(), Vec3({10*sind(80), 11*sind(80), 12}), 1e-5));
     }
 }
