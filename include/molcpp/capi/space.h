@@ -19,6 +19,10 @@ typedef enum {  // NOLINT: this is both a C and C++ file
 
 MOLCPP_EXPORT MOL_BOX* mol_box_free();
 
+MOLCPP_EXPORT MOL_BOX* mol_box_from_lengths_angles(const mol_array lengths, const mol_array angles);
+
+MOLCPP_EXPORT mol_array mol_box_wrap(const MOL_BOX* box, const mol_array xyz);
+
 // MOLCPP_EXPORT MOL_BOX* mol_box(const mol_vec3 matrix[3]);
 
 // MOLCPP_EXPORT MOL_BOX* mol_box_from_lengths_angles(const mol_vec3 lengths, const mol_vec3 angles);

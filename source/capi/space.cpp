@@ -1,7 +1,8 @@
-#include "molcpp/capi/types.h"
 #include "molcpp/capi/space.h"
-#include "molcpp/types.hpp"
+#include "molcpp/capi/types.h"
+#include "molcpp/capi/utils.hpp"
 #include "molcpp/space.hpp"
+#include "molcpp/types.hpp"
 #include <memory>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
@@ -10,7 +11,7 @@ using namespace molcpp;
 
 static_assert(sizeof(mol_box_style) == sizeof(int), "Wrong size for mol_box_style");
 
-extern "C" MOL_BOX* mol_box_free()
+extern "C" MOL_BOX *mol_box_free()
 {
     return new Box();
 }
@@ -24,8 +25,13 @@ extern "C" MOL_BOX* mol_box_free()
 //     }))
 // }
 
-// extern "C" MOL_BOX *mol_box_from_lengths_angles(const mol_vec3 lengths, const mol_vec3 angles)
-// {
-//     return new Box(Box::from_lengths_angles(xt::adapt(lengths, 3, xt::acquire_ownership(), {3}),
-//                                             xt::adapt(angles, 3, xt::acquire_ownership(), {3})));
-// }
+extern "C" MOL_BOX *mol_box_from_lengths_angles(const mol_array lengths, const mol_array angles)
+{
+    return new Box(Box::from_lengths_angles(to_xarray(lengths), to_xarray(angles)));
+}
+
+extern "C" mol_array mol_box_wrap(const MOL_BOX* box, const mol_array xyz)
+{
+    auto wrapped = box->wrap(to_xarray(xyz));
+    return to_molarr(wrapped);
+}
