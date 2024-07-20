@@ -137,7 +137,7 @@ class MOLCPP_EXPORT Box : public Region, public Boundary
 
     static Box from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 
-    static Box from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
+    // static Box from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts);
 
     static Mat3 calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles);
 

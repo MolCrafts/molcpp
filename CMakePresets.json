@@ -8,7 +8,7 @@
   "configurePresets": [
     {
       "name": "cmake-base",
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_CXX_EXTENSIONS": "OFF",
         "CMAKE_CXX_STANDARD": "20",
@@ -21,21 +21,15 @@
       "hidden": true,
       "inherits": "cmake-base",
       "warnings": {
-        "dev": true,
+        "dev": false,
         "deprecated": true,
         "uninitialized": true,
         "unusedCli": true,
         "systemVars": false
       },
       "errors": {
-        "dev": true,
+        "dev": false,
         "deprecated": true
-      }
-    },
-    {
-      "name": "vcpkg_toolchain",
-      "environment": {
-        "VCPKG_ROOT": "/opt/vcpkg"
       }
     },
     {
@@ -70,7 +64,6 @@
       "inherits": ["dev-base"],
       "binaryDir": "${sourceDir}/build/dev",
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "",
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }

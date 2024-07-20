@@ -23,7 +23,6 @@ TEST_CASE("TestTopologyAddDeleteBond")
     CHECK(bond.i == 0);
     CHECK(bond.j == 1);
     CHECK(bond.id == 0);
-    std::cout << topo.get_n_bonds() << std::endl;
     topo.del_bond(0, 1);
     CHECK(topo.get_n_bonds() == 1);
     topo.del_bond(1);

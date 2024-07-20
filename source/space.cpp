@@ -38,9 +38,9 @@ Box Box::from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
     return Box(calc_matrix_from_lengths_angles(lengths, angles));
 }
 
-Box Box::from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
-{
-}
+// Box Box::from_lengths_tilts(const Vec3 &lengths, const Vec3 &tilts)
+// {
+// }
 
 Mat3 Box::calc_matrix_from_lengths_angles(const Vec3 &lengths, const Vec3 &angles)
 {
@@ -129,6 +129,8 @@ auto Box::calc_style_from_matrix(const Mat3 &matrix) -> Box::Style
         return Box::Style::ORTHOGONAL;
     else if (is_upper_triangular(matrix))
         return Box::Style::TRICLINIC;
+    else
+        throw std::runtime_error("Matrix is valid");
 }
 
 auto Box::check_matrix(const Mat3 &matrix) -> Mat3
@@ -189,6 +191,8 @@ auto Box::get_lengths() const -> Vec3
         return {_matrix(0, 0), _matrix(1, 1), _matrix(2, 2)};
     case TRICLINIC:
         return Box::calc_lengths_from_matrix(_matrix);
+    default:
+        throw std::runtime_error("Invalid Style");
     }
 }
 
@@ -201,6 +205,8 @@ auto Box::get_angles() const -> Vec3
         return {90, 90, 90};
     case TRICLINIC:
         return Box::calc_angles_from_matrix(_matrix);
+    default:
+        throw std::runtime_error("Invalid Style");
     }
 }
 
@@ -213,6 +219,8 @@ auto Box::get_volume() const -> double
     case ORTHOGONAL:
     case TRICLINIC:
         return xt::linalg::det(_matrix);
+    default:
+        throw std::runtime_error("Invalid Style");
     }
 }
 
@@ -226,12 +234,10 @@ auto Box::get_distance_between_faces() const -> Vec3
         return {xt::linalg::norm(xt::view(_matrix, xt::all(), 0)),
                 xt::linalg::norm(xt::view(_matrix, xt::all(), 1)),
                 xt::linalg::norm(xt::view(_matrix, xt::all(), 2))};
-    case TRICLINIC:
+    case TRICLINIC:{
         auto a = xt::view(_matrix, xt::all(), 0);
         auto b = xt::view(_matrix, xt::all(), 1);
         auto c = xt::view(_matrix, xt::all(), 2);
-
-        std::cout << _matrix << std::endl;
 
         auto na = xt::linalg::cross(b, c);
         auto nb = xt::linalg::cross(c, a);
@@ -243,7 +249,9 @@ auto Box::get_distance_between_faces() const -> Vec3
 
         return xt::concatenate(xt::xtuple(xt::linalg::dot(na, a),
                                           xt::linalg::dot(nb, b),
-                                          xt::linalg::dot(nc, c)));
+                                          xt::linalg::dot(nc, c)));}
+    default:
+        throw std::runtime_error("Invalid Style");
     }
 
 }
@@ -263,6 +271,8 @@ auto Box::wrap(const xt::xarray<double> &xyz) const -> xt::xarray<double>
         return wrap_orth(xyz);
     case TRICLINIC:
         return wrap_tric(xyz);
+    default:
+        throw std::runtime_error("Invalid Style");
     }
 }
 
