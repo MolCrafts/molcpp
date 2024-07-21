@@ -3,8 +3,6 @@
 #include <xtensor/xarray.hpp>
 #include <xtensor/xmath.hpp>
 
-#include <iostream>
-#include <xtensor/xio.hpp>
 
 namespace molcpp
 {

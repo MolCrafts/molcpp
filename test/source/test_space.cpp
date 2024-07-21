@@ -2,10 +2,8 @@
 #include "molcpp/space.hpp"
 #include "molcpp/types.hpp"
 
-#include <iostream>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xbuilder.hpp>
-#include <xtensor/xio.hpp>
 
 using namespace molcpp;
 
