@@ -1,0 +1,12 @@
+{
+    "version": 4,
+    "env": {
+        "myIncludePath": ["${workspaceFolder}/include", "${workspaceFolder}/src"]
+    },
+    "configurations": [
+        {
+            "name": "linux",
+            "intelliSenseMode": "linux-gcc-x86"
+        }
+    ]
+}

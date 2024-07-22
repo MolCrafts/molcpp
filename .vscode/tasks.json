@@ -1,0 +1,47 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "config-dev-linux",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "dev-linux"
+            ],
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "build-dev-linux",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "dev-linux"
+            ],
+            "group": {
+                "kind": "build"
+            },
+        },
+        {
+            "label": "test-dev-linux",
+            "type": "shell",
+            "command": "ctest",
+            "args": [
+                "--preset",
+                "dev-linux"
+            ],
+            "dependsOn": [
+                "config-dev-linux",
+                "build-dev-linux"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}

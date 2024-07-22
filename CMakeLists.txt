@@ -14,6 +14,7 @@ include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
 # ---- Declare library ----
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 add_subdirectory(source)
 add_library(molcpp::molcpp ALIAS molcpp_molcpp)
@@ -22,12 +23,12 @@ include(GenerateExportHeader)
 generate_export_header(
     molcpp_molcpp
     BASE_NAME molcpp
-    EXPORT_FILE_NAME export/molcpp/molcpp_export.hpp
+    EXPORT_FILE_NAME export/molcpp/export.hpp
     CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(molcpp_molcpp PUBLIC MOLCORE_STATIC_DEFINE)
+  target_compile_definitions(molcpp_molcpp PUBLIC MOLCPP_STATIC_DEFINE)
 endif()
 
 set_target_properties(
@@ -61,14 +62,14 @@ if(NOT CMAKE_SKIP_INSTALL_RULES)
 endif()
 
 # ---- Developer mode ----
-
-if(NOT molcpp_DEVELOPER_MODE)
-  return()
-elseif(NOT PROJECT_IS_TOP_LEVEL)
-  message(
+if(molcpp_DEVELOPER_MODE)
+  if(NOT PROJECT_IS_TOP_LEVEL)
+    message(
       AUTHOR_WARNING
       "Developer mode is intended for developers of molcpp"
-  )
+    )
+  endif()
+  include(cmake/dev-mode.cmake)
+else()
+  include(cmake/rel-mode.cmake)
 endif()
-
-include(cmake/dev-mode.cmake)

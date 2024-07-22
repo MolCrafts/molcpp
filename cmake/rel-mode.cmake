@@ -1,7 +1,10 @@
+message("release config")
+
 include(cmake/folders.cmake)
 
-include(CTest)
+option(ENABLE_COVERAGE "Enable coverage support separate from CTest's" OFF)
 if(BUILD_TESTING)
+  include(CTest)
   add_subdirectory(test)
 endif()
 
@@ -10,12 +13,10 @@ option(BUILD_DOCS "Build documentation using Doxygen" OFF)
 #   include(cmake/docs.cmake)
 # endif()
 
-option(ENABLE_COVERAGE "Enable coverage support separate from CTest's" OFF)
-if(ENABLE_COVERAGE)
-  include(cmake/coverage.cmake)
+# --- build bindings ---
+if(molcpp_BUILD_PYTHON)
+  add_subdirectory(bindings/python)
 endif()
 
-include(cmake/lint-targets.cmake)
-include(cmake/spell-targets.cmake)
 
 add_folders(Project)

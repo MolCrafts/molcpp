@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "doctest",
+    "igraph",
+    "xtensor",
+    "xtensor-blas",
+    "pybind11"
+  ]
+}
