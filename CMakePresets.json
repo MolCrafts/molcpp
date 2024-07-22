@@ -62,7 +62,7 @@
     {
       "name": "dev-linux",
       "inherits": ["dev-base"],
-      "binaryDir": "${sourceDir}/build/dev_linux",
+      "binaryDir": "${sourceDir}/build/dev-linux",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
