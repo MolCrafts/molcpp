@@ -258,9 +258,6 @@ auto Box::isin(const xt::xarray<double> &xyz) const -> xt::xarray<bool>
 {
     return true;
 }
-<<<<<<< HEAD
-} // namespace molcpp
-=======
 
 auto Box::wrap(const xt::xarray<double> &xyz) const -> xt::xarray<double>
 {
@@ -308,4 +305,3 @@ bool operator!=(const Box &rhs, const Box &lhs)
     return !(rhs == lhs);
 }
 } // namespace molcpp
->>>>>>> origin/dev

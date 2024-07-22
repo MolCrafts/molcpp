@@ -58,9 +58,6 @@ TEST_CASE("TestBoxUtils")
     }
 }
 
-<<<<<<< HEAD
-} // namespace molcpp
-=======
 TEST_CASE("TestBoxInit")
 {
 
@@ -238,4 +235,3 @@ TEST_CASE("TestBoxDimension")
         CHECK(xt::allclose(triclinic.get_distance_between_faces(), Vec3({10*sind(80), 11*sind(80), 12}), 1e-5));
     }
 }
->>>>>>> origin/dev

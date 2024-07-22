@@ -27,7 +27,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "test-dev-linux"
+            "preLaunchTask": "build-dev-linux"
         }
 
     ]
