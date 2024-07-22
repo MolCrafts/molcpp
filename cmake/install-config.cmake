@@ -1,1 +1,1 @@
-include("${CMAKE_CURRENT_LIST_DIR}/molcoreTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/molcppTargets.cmake")

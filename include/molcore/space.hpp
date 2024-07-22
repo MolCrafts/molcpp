@@ -4,7 +4,7 @@
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xtensor.hpp>
 
-namespace molcore
+namespace molcpp
 {
 
 class Region
@@ -65,4 +65,4 @@ class Box : public Region, public Boundary
     xt::xtensor_fixed<double, xt::xshape<3, 3>> _matrix;
     Style _style;
 };
-} // namespace molcore
+} // namespace molcpp

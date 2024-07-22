@@ -1,4 +1,4 @@
-message(STATUS "Configuring molcore/source...")
+message(STATUS "Configuring molcpp/source...")
 
 # introduce deps
 
@@ -8,9 +8,9 @@ find_package(xtensor REQUIRED)
 
 file(GLOB_RECURSE MOLCORE_SRC "./*.cpp")
 add_library(
-    molcore_molcore
+    molcpp_molcpp
     ${MOLCORE_SRC}
 )
 
-target_include_directories(molcore_molcore PUBLIC ${xtensor_INCLUDE_DIRS})
-target_link_libraries(molcore_molcore PUBLIC xtensor)
+target_include_directories(molcpp_molcpp PUBLIC ${xtensor_INCLUDE_DIRS})
+target_link_libraries(molcpp_molcpp PUBLIC xtensor)

@@ -1,9 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 #include <xtensor/xarray.hpp>
 
-#include "molcore/space.hpp"
+#include "molcpp/space.hpp"
 
-namespace molcore
+namespace molcpp
 {
 
 TEST_CASE("Test Box", "test_box_init")
@@ -16,4 +16,4 @@ TEST_CASE("Test Box", "test_box_init")
     CHECK(box.get_style() == Box::Style::ORTHORHOMBIC);
 }
 
-} // namespace molcore
+} // namespace molcpp

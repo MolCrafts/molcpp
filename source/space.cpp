@@ -1,8 +1,8 @@
-#include "molcore/space.hpp"
+#include "molcpp/space.hpp"
 #include <xtensor/xbuilder.hpp>
 #include <xtensor/xfixed.hpp>
 
-namespace molcore
+namespace molcpp
 {
 
 Box::Box() : _matrix{xt::eye<double>(3)}, _style{Style::ORTHORHOMBIC} {}
@@ -18,4 +18,4 @@ bool Box::isin(const xt::xarray<double> &xyz) const
 {
     return true;
 }
-} // namespace molcore
+} // namespace molcpp

@@ -1,9 +1,9 @@
 #include <string>
 
-#include "molcore/molcore.hpp"
+#include "molcpp/molcpp.hpp"
 
 exported_class::exported_class()
-    : m_name {"molcore"}
+    : m_name {"molcpp"}
 {
 }
 

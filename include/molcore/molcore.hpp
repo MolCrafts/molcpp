@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "molcore/molcore_export.hpp"
+#include "molcpp/molcpp_export.hpp"
 
 /**
  * A note about the MSVC warning C4251:
