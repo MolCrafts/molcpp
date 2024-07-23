@@ -13,6 +13,8 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # ---- Declare library ----
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 

@@ -6,7 +6,9 @@
     "configurations": [
         {
             "name": "linux",
-            "intelliSenseMode": "linux-gcc-x86"
+            "intelliSenseMode": "linux-gcc-x86",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "compileCommands": "${workspaceFolder}/build/dev-linux/compile_commands.json"
         }
     ]
 }

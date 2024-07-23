@@ -1,11 +1,24 @@
-cmake_minimum_required(VERSION 3.15...3.29)
+cmake_minimum_required(VERSION 3.24)
 
-project(molcpp_python LANGUAGES CXX)
+project(molcpp LANGUAGES CXX)
+set(Python_FIND_VIRTUALENV ONLY)
+find_package(Python 3.10 COMPONENTS Interpreter Development.Module REQUIRED NumPy)
 
-set(PYBIND11_FINDPYTHON ON)
-find_package(pybind11 CONFIG REQUIRED)
+include(CMakePrintHelpers)
+cmake_print_variables(Python_ROOT_DIR)
+cmake_print_variables(Python_EXECUTABLE)
 
-pybind11_add_module(molcpp_python 
+find_package(pybind11 REQUIRED CONFIG)
+find_package(xtensor REQUIRED)
+find_package(xtensor-python REQUIRED)
+pybind11_add_module(molcpp 
     space.cpp
 )
+find_package(molcpp REQUIRED CONFIG)
 
+target_link_libraries(molcpp PUBLIC pybind11::module xtensor-python)
+target_link_libraries(molcpp PRIVATE Python::NumPy)
+target_link_libraries(molcpp PUBLIC molcpp::molcpp)
+
+target_compile_definitions(molcpp PRIVATE VERSION_INFO=0.1.0)
+install(TARGETS molcpp LIBRARY DESTINATION .)
