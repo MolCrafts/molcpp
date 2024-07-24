@@ -69,6 +69,15 @@
       }
     },
     {
+      "name": "rel-linux",
+      "inherits": ["release-base"],
+      "binaryDir": "${sourceDir}/build/rel-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
       "name": "python",
       "inherits": ["release-base"],
       "binaryDir": "${sourceDir}/build/python",

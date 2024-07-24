@@ -22,6 +22,9 @@
                 "--preset",
                 "dev-linux"
             ],
+            "dependsOn": [
+                "config-dev-linux"
+            ],
             "group": {
                 "kind": "build"
             },
@@ -35,7 +38,6 @@
                 "dev-linux"
             ],
             "dependsOn": [
-                "config-dev-linux",
                 "build-dev-linux"
             ],
             "group": {
