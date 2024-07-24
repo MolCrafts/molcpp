@@ -3,7 +3,6 @@
     "doctest",
     "igraph",
     "xtensor",
-    "xtensor-blas",
-    "pybind11"
+    "xtensor-blas"
   ]
 }
