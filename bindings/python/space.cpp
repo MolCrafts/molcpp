@@ -2,7 +2,11 @@
 #define FORCE_IMPORT_ARRAY
 #include "xtensor-python/pyarray.hpp"
 
+#include "molcpp/space.hpp"
+
 namespace py = pybind11;
+
+using namespace molcpp;
 
 PYBIND11_MODULE(molcpp, m) {
 
@@ -18,6 +22,6 @@ PYBIND11_MODULE(molcpp, m) {
         .def("get_inv", &Box::get_inv)
         .def("get_lengths", &Box::get_lengths)
         .def("get_angles", &Box::get_angles)
-        .def("get_volume", &Box::get_volume)
+        .def("get_volume", &Box::get_volume);
 
 }
