@@ -7,6 +7,8 @@
 namespace py = pybind11;
 using namespace molcpp;
 
+using namespace molcpp;
+
 PYBIND11_MODULE(molcpp, m) {
 
     xt::import_numpy();
