@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOLCPP_TYPES_HPP
+#define MOLCPP_TYPES_HPP
 
 #include <xtensor/xfixed.hpp>
 
@@ -35,3 +36,4 @@ template <typename... Args> class Property
 };
 
 } // namespace molcpp
+#endif // MOLCPP_TYPES_HPP

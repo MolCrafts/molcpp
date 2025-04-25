@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.22)
 
 include(cmake/prelude.cmake)
 
@@ -10,29 +10,26 @@ project(
     LANGUAGES CXX
 )
 
-include(cmake/project-is-top-level.cmake)
-include(cmake/variables.cmake)
-
 # ---- Declare library ----
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-add_subdirectory(source)
-add_library(molcpp::molcpp ALIAS molcpp_molcpp)
+if(BUILD_SHARED_LIBS)
+  add_library(molcpp SHARED)
+else()
+  add_library(molcpp STATIC)
+endif()
+add_subdirectory(src)
 
 include(GenerateExportHeader)
 generate_export_header(
-    molcpp_molcpp
+    molcpp
     BASE_NAME molcpp
     EXPORT_FILE_NAME export/molcpp/export.hpp
     CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
-if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(molcpp_molcpp PUBLIC MOLCPP_STATIC_DEFINE)
-endif()
-
 set_target_properties(
-    molcpp_molcpp PROPERTIES
+    molcpp PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN YES
     VERSION "${PROJECT_VERSION}"
@@ -42,34 +39,20 @@ set_target_properties(
 )
 
 target_include_directories(
-    molcpp_molcpp ${warning_guard}
+    molcpp ${warning_guard}
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
 
 target_include_directories(
-    molcpp_molcpp SYSTEM
+    molcpp SYSTEM
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
 
-target_compile_features(molcpp_molcpp PUBLIC cxx_std_20)
+target_compile_features(molcpp PUBLIC cxx_std_20)
 
-# ---- Install rules ----
-
-if(NOT CMAKE_SKIP_INSTALL_RULES)
-  include(cmake/install-rules.cmake)
-endif()
-
-# ---- Developer mode ----
-if(molcpp_DEVELOPER_MODE)
-  if(NOT PROJECT_IS_TOP_LEVEL)
-    message(
-      AUTHOR_WARNING
-      "Developer mode is intended for developers of molcpp"
-    )
-  endif()
-  include(cmake/dev-mode.cmake)
-else()
-  include(cmake/rel-mode.cmake)
+if (MOLCPP_DEV)
+    enable_testing()
+    add_subdirectory(tests)
 endif()

@@ -2,12 +2,11 @@
   "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 22,
-    "patch": 0
+    "minor": 22
   },
   "configurePresets": [
     {
-      "name": "cmake-base",
+      "name": "base",
       "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_CXX_EXTENSIONS": "OFF",
@@ -17,60 +16,18 @@
       }
     },
     {
-      "name": "cmake-pedantic",
-      "hidden": true,
-      "inherits": "cmake-base",
-      "warnings": {
-        "dev": false,
-        "deprecated": true,
-        "uninitialized": true,
-        "unusedCli": true,
-        "systemVars": false
-      },
-      "errors": {
-        "dev": false,
-        "deprecated": true
-      }
-    },
-    {
-      "name": "dev-base",
-      "hidden": true,
-      "inherits": ["cmake-base", "cmake-pedantic"],
+      "name": "dev",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build/dev",
       "cacheVariables": {
-        "molcpp_DEVELOPER_MODE": "ON"
-      }
-    },
-    {
-      "name": "release-base",
-      "hidden": true,
-      "inherits": ["cmake-base", "cmake-pedantic"],
-      "cacheVariables": {
-        "molcpp_DEVELOPER_MODE": "OFF"
-      }
-    },
-    {
-      "name": "clang-tidy",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/"
-      }
-    },
-    {
-      "name": "flags-gcc-clang",
-      "hidden": true
-    },
-    {
-      "name": "dev-linux",
-      "inherits": ["dev-base"],
-      "binaryDir": "${sourceDir}/build/dev-linux",
-      "cacheVariables": {
+        "MOLCPP_DEV": "ON",
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
     },
     {
       "name": "python",
-      "inherits": ["release-base"],
+      "inherits": "base",
       "binaryDir": "${sourceDir}/build/python",
       "cacheVariables": {
         "molcpp_BUILD_PYTHON": "ON"
@@ -79,8 +36,8 @@
   ],
   "buildPresets": [
     {
-      "name": "dev-linux",
-      "configurePreset": "dev-linux",
+      "name": "dev",
+      "configurePreset": "dev",
       "configuration": "Debug",
       "jobs": 12
     },
@@ -90,12 +47,11 @@
       "configuration": "Release",
       "jobs": 12
     }
-  ]
-  ,
+  ],
   "testPresets": [
     {
-      "name": "dev-linux",
-      "configurePreset": "dev-linux",
+      "name": "dev",
+      "configurePreset": "dev",
       "configuration": "Debug",
       "output": {
         "outputOnFailure": true

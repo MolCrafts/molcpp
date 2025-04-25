@@ -1,8 +1,9 @@
-#ifndef MOL_HPP
-#define MOL_HPP
+#ifndef MOLCPP_HPP
+#define MOLCPP_HPP
 
 #include "molcpp/export.hpp"
+#include "molcpp/types.hpp"
+#include "molcpp/box.hpp"
+#include "molcpp/compute.hpp"
 
-#include "molcpp/space.hpp"
-
-#endif
+#endif // MOLCPP_HPP

@@ -1,0 +1,8 @@
+{
+    "name": "MolCrafts - molcpp",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "features": {
+        "ghcr.io/molcrafts/features/molcpp:latest": {}
+    },
+    "remoteUser": "root"
+}

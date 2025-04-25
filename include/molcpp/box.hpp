@@ -1,7 +1,8 @@
-#pragma once
+#ifndef MOLCPP_BOX_HPP
+#define MOLCPP_BOX_HPP
 
-#include "molcpp/export.hpp"
 #include "molcpp/types.hpp"
+#include "molcpp/export.hpp"
 
 #include "xtensor-blas/xlinalg.hpp"
 #include <initializer_list>
@@ -201,3 +202,4 @@ bool MOLCPP_EXPORT operator==(const Box &rhs, const Box &lhs);
 bool MOLCPP_EXPORT operator!=(const Box &rhs, const Box &lhs);
 
 } // namespace molcpp
+#endif // MOLCPP_BOX_HPP

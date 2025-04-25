@@ -1,4 +1,4 @@
-#include "molcpp/space.hpp"
+#include "molcpp/box.hpp"
 #include "xtensor-blas/xlinalg.hpp"
 #include <xtensor/xarray.hpp>
 #include <xtensor/xmath.hpp>

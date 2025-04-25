@@ -1,5 +1,5 @@
 #include "doctest/doctest.h"
-#include "molcpp/space.hpp"
+#include "molcpp/box.hpp"
 #include "molcpp/types.hpp"
 
 #include <xtensor/xarray.hpp>
